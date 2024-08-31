@@ -26,3 +26,5 @@ black==22.10.0
 
 # For generating fake data (useful for seeders and factories)
 Faker==15.1.1
+
+googletrans==3.1.0a0
