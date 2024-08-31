@@ -1,5 +1,5 @@
 from .model_generator import ModelGenerator
-from .controller_generator import ControllerGenerator
+from .controller_generator.controller_generator import ControllerGenerator
 from .migration_generator import MigrationGenerator
 from .request_generator import RequestGenerator
 from .resource_generator import ResourceGenerator

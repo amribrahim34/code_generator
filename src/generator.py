@@ -23,7 +23,8 @@ class CodeGenerator:
     def _initialize_backend_generators(self):
         return [
             ModelGenerator(),
-            ControllerGenerator(),
+            ControllerGenerator(self.config),  
+            # ControllerGenerator(),
             MigrationGenerator(),
             RequestGenerator(),
             ResourceGenerator(),
