@@ -1,1 +1,1 @@
-from .generator import generate_views
+from .generator import ViewGenerator

@@ -35,6 +35,8 @@ class ListViewGenerator(FileGenerator):
         output_path = os.path.join(self.frontend_dir, f'{model_name}List.vue')
         return {output_path: view_content}
 
+        
+
     def _generate_table_columns(self, attributes: List[Dict]) -> str:
         columns = []
         for attr in attributes:
