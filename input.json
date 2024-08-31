@@ -1,0 +1,49 @@
+{
+  "models": [
+    {
+      "name": "User",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "name", "type": "string" },
+        { "name": "email", "type": "string", "unique": true },
+        { "name": "password", "type": "string" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "hasMany", "model": "Post" },
+        { "type": "hasMany", "model": "Comment" }
+      ]
+    },
+    {
+      "name": "Post",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "title", "type": "string" },
+        { "name": "content", "type": "text" },
+        { "name": "user_id", "type": "unsignedBigInteger" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "hasMany", "model": "Comment" }
+      ]
+    },
+    {
+      "name": "Comment",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "content", "type": "text" },
+        { "name": "user_id", "type": "unsignedBigInteger" },
+        { "name": "post_id", "type": "unsignedBigInteger" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "belongsTo", "model": "Post" }
+      ]
+    }
+  ]
+}

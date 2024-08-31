@@ -1,0 +1,84 @@
+{
+  "output_directory": "./generated_code",
+  "indent_size": 4,
+
+  "naming": {
+    "model": "PascalCase",
+    "controller": "PascalCase",
+    "migration": "snake_case",
+    "table": "snake_case"
+  },
+  "template_dir": "src/templates",
+  "frontend": {
+    "output_dir": "./frontend",
+    "component_dir": "components",
+    "route_dir": "routes",
+    "store_dir": "stores",
+    "type_dir": "types",
+    "view_dir": "views"
+  },
+  "backend": {
+    "output_dir": "./backend"
+  },
+  "extensions": {
+    "php": ".php",
+    "migration": ".php"
+  },
+
+  "namespaces": {
+    "model": "App\\Models",
+    "controller": "App\\Http\\Controllers",
+    "request": "App\\Http\\Requests",
+    "resource": "App\\Http\\Resources",
+    "repository": "App\\Repositories"
+  },
+
+  "database": {
+    "engine": "mysql",
+    "charset": "utf8mb4",
+    "collation": "utf8mb4_unicode_ci"
+  },
+
+  "generators": [
+    "model",
+    "controller",
+    "migration",
+    "request",
+    "resource",
+    "repository",
+    "repository_interface"
+  ],
+
+  "model": {
+    "use_soft_deletes": true,
+    "timestamps": true,
+    "fillable_attributes": true
+  },
+
+  "controller": {
+    "use_repository": true,
+    "use_form_requests": true
+  },
+
+  "migration": {
+    "use_big_integers": true
+  },
+
+  "repository": {
+    "include_custom_methods": false
+  },
+
+  "relationships": {
+    "use_inverse_relations": true,
+    "generate_pivot_tables": true
+  },
+
+  "laravel_version": "10.x",
+
+  "features": {
+    "generate_api_routes": true,
+    "generate_factories": true,
+    "generate_seeders": true,
+    "use_uuid": false
+  }
+}
