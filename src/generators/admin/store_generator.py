@@ -6,7 +6,7 @@ class StoreGenerator:
         self.config = config
         self.models = models
         self.template_path = os.path.join(self.config['template_dir'], 'admin/store_stub.ts')
-        self.output_dir = os.path.join(self.config['frontend']['output_dir'], self.config['frontend']['store_dir'])
+        self.output_dir = os.path.join(self.config['frontend']['output_dir'] , 'src', self.config['frontend']['store_dir'])
 
     def generate(self , model):
         if not os.path.exists(self.output_dir):
@@ -83,24 +83,3 @@ def generate_stores(config: Dict, models: List[Dict]):
     generator = StoreGenerator(config, models)
     return generator.generate()
 
-if __name__ == "__main__":
-    # This is just for testing purposes
-    test_config = {
-        'template_dir': './templates',
-        'frontend': {
-            'output_dir': './output',
-            'store_dir': 'stores'
-        }
-    }
-    test_models = [
-        {
-            'name': 'User',
-            'attributes': [
-                {'name': 'id', 'type': 'bigIncrements'},
-                {'name': 'name', 'type': 'string'},
-                {'name': 'email', 'type': 'string'},
-                {'name': 'password', 'type': 'string'},
-            ]
-        }
-    ]
-    generate_stores(test_config, test_models)

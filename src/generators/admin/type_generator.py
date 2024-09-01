@@ -6,7 +6,7 @@ class TypeGenerator:
         self.config = config
         self.models = models
         self.template_path = os.path.join(self.config['template_dir'], 'admin', 'type_stub.ts')
-        self.output_dir = os.path.join(self.config['frontend']['output_dir'], self.config['frontend']['type_dir'])
+        self.output_dir = os.path.join(self.config['frontend']['output_dir'] ,'src', self.config['frontend']['type_dir'])
 
     def generate(self , model):
         if not os.path.exists(self.output_dir):
@@ -81,34 +81,3 @@ def generate_types(config: Dict, models: List[Dict]):
     generator = TypeGenerator(config, models)
     return generator.generate()
 
-if __name__ == "__main__":
-    # This is just for testing purposes
-    test_config = {
-        'template_dir': './templates',
-        'frontend': {
-            'output_dir': './output',
-            'type_dir': 'types'
-        }
-    }
-    test_models = [
-        {
-            'name': 'User',
-            'attributes': [
-                {'name': 'id', 'type': 'bigIncrements'},
-                {'name': 'name', 'type': 'string'},
-                {'name': 'email', 'type': 'string'},
-                {'name': 'password', 'type': 'string'},
-            ]
-        },
-        {
-            'name': 'Post',
-            'attributes': [
-                {'name': 'id', 'type': 'bigIncrements'},
-                {'name': 'title', 'type': 'string'},
-                {'name': 'content', 'type': 'text'},
-                {'name': 'userId', 'type': 'unsignedBigInteger'},
-            ]
-        }
-    ]
-    generated_files = generate_types(test_config, test_models)
-    print(generated_files)

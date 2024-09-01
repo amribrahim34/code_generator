@@ -24,7 +24,6 @@ class CodeGenerator:
         return [
             ModelGenerator(),
             ControllerGenerator(self.config),  
-            # ControllerGenerator(),
             MigrationGenerator(),
             RequestGenerator(),
             ResourceGenerator(),
@@ -63,9 +62,9 @@ class CodeGenerator:
             raise ValueError("The schema does not contain a 'models' key.")
         return output
 
-    def save_to_files(self, generated_code, output_path):
-        for filename, content in generated_code.items():
-            file_path = os.path.join(output_path, filename)
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            with open(file_path, 'w') as file:
-                file.write(content)
+    # def save_to_files(self, generated_code, output_path):
+    #     for filename, content in generated_code.items():
+    #         file_path = os.path.join(output_path, filename)
+    #         os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    #         with open(file_path, 'w') as file:
+    #             file.write(content)

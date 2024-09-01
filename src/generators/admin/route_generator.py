@@ -8,6 +8,7 @@ class RouteGenerator:
         frontend_config = self.config.get('frontend', {})
         self.output_dir = os.path.join(
             frontend_config.get('output_dir', 'frontend'),
+            'src',
             frontend_config.get('route_dir', 'routes')
         )
         self.template_path = os.path.join(self.config.get('template_dir', 'templates'), 'admin/route_stub.ts')
@@ -99,19 +100,3 @@ class RouteGenerator:
 def generate_routes(config: Dict, models: List[Dict]):
     generator = RouteGenerator(config, models)
     generator.generate()
-
-if __name__ == "__main__":
-    # This is just for testing purposes
-    test_config = {
-        'template_dir': './templates',
-        'frontend': {
-            'output_dir': './output',
-            'route_dir': 'router'
-        }
-    }
-    test_models = [
-        {'name': 'User'},
-        {'name': 'Post'},
-        {'name': 'Comment'}
-    ]
-    generate_routes(test_config, test_models)

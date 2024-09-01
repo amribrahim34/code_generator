@@ -1,0 +1,173 @@
+{
+  "models": [
+    {
+      "name": "Brand",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "name", "type": "string" },
+        { "name": "logo_url", "type": "string", "nullable": true },
+        { "name": "is_active", "type": "boolean", "default": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "hasMany", "model": "Product" }]
+    },
+    {
+      "name": "Category",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "name", "type": "string" },
+        { "name": "parent_id", "type": "unsignedBigInteger", "nullable": true },
+        { "name": "is_active", "type": "boolean", "default": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Category", "foreignKey": "parent_id" },
+        { "type": "hasMany", "model": "Product" }
+      ]
+    },
+    {
+      "name": "Customer",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "first_name", "type": "string" },
+        { "name": "last_name", "type": "string" },
+        { "name": "email", "type": "string", "unique": true },
+        { "name": "phone", "type": "string", "nullable": true },
+        { "name": "is_active", "type": "boolean", "default": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "hasMany", "model": "Order" }]
+    },
+    {
+      "name": "Product",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "name", "type": "string" },
+        { "name": "description", "type": "text", "nullable": true },
+        { "name": "price", "type": "decimal", "precision": 10, "scale": 2 },
+        { "name": "brand_id", "type": "unsignedBigInteger", "nullable": true },
+        {
+          "name": "category_id",
+          "type": "unsignedBigInteger",
+          "nullable": true
+        },
+        { "name": "stock_quantity", "type": "integer", "default": 0 },
+        { "name": "is_active", "type": "boolean", "default": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Brand" },
+        { "type": "belongsTo", "model": "Category" },
+        { "type": "hasMany", "model": "ProductImage" },
+        { "type": "hasMany", "model": "OrderItem" }
+      ]
+    },
+    {
+      "name": "ProductImage",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "product_id", "type": "unsignedBigInteger" },
+        { "name": "image_url", "type": "string" },
+        { "name": "is_primary", "type": "boolean", "default": false },
+        { "name": "created_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "belongsTo", "model": "Product" }]
+    },
+    {
+      "name": "Order",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "customer_id", "type": "unsignedBigInteger" },
+        { "name": "order_date", "type": "timestamp" },
+        {
+          "name": "total_amount",
+          "type": "decimal",
+          "precision": 10,
+          "scale": 2
+        },
+        {
+          "name": "status",
+          "type": "enum",
+          "options": [
+            "pending",
+            "processing",
+            "shipped",
+            "delivered",
+            "cancelled"
+          ],
+          "default": "pending"
+        }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Customer" },
+        { "type": "hasMany", "model": "OrderItem" }
+      ]
+    },
+    {
+      "name": "OrderItem",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "order_id", "type": "unsignedBigInteger" },
+        { "name": "product_id", "type": "unsignedBigInteger" },
+        { "name": "quantity", "type": "integer" },
+        { "name": "price", "type": "decimal", "precision": 10, "scale": 2 }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Order" },
+        { "type": "belongsTo", "model": "Product" }
+      ]
+    },
+    {
+      "name": "Coupon",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "code", "type": "string", "unique": true },
+        {
+          "name": "discount_type",
+          "type": "enum",
+          "options": ["percentage", "fixed"]
+        },
+        {
+          "name": "discount_value",
+          "type": "decimal",
+          "precision": 10,
+          "scale": 2
+        },
+        { "name": "start_date", "type": "date", "nullable": true },
+        { "name": "end_date", "type": "date", "nullable": true },
+        { "name": "is_active", "type": "boolean", "default": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": []
+    },
+    {
+      "name": "Page",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "title", "type": "string" },
+        { "name": "content", "type": "text", "nullable": true },
+        { "name": "slug", "type": "string", "unique": true },
+        { "name": "is_published", "type": "boolean", "default": false },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": []
+    },
+    {
+      "name": "Setting",
+      "attributes": [
+        { "name": "id", "type": "bigIncrements" },
+        { "name": "setting_key", "type": "string", "unique": true },
+        { "name": "setting_value", "type": "text", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": []
+    }
+  ]
+}
