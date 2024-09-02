@@ -1,2 +1,4 @@
-frontend
-generated_code
+output
+app
+database
+code_generator.log

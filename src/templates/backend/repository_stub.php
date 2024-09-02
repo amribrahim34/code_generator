@@ -2,7 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Models\{model_name};
+use {model_namespace}\{model_name};
+use {interface_namespace}\{interface_name};
 
 class {class_name} implements {interface_name}
 {{
@@ -39,4 +40,7 @@ class {class_name} implements {interface_name}
     {{
         return $this->model->destroy($id);
     }}
+
+    {custom_methods}
+
 }}
