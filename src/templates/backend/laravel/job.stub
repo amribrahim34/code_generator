@@ -1,0 +1,43 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use {{ model_namespace }}\{{ model_name }};
+
+class {{ job_name }} implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected ${{ model_variable }};
+
+    /**
+     * Create a new job instance.
+     *
+     * @param {{ model_name }} ${{ model_variable }}
+     * @return void
+     */
+    public function __construct({{ model_name }} ${{ model_variable }})
+    {
+        $this->{{ model_variable }} = ${{ model_variable }};
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        // Implement the job logic here
+        // You can access the model using $this->{{ model_variable }}
+        
+        // Example:
+        // $this->{{ model_variable }}->someAttribute = 'new value';
+        // $this->{{ model_variable }}->save();
+    }
+}

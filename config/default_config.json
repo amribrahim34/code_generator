@@ -1,98 +1,329 @@
 {
-  "output_directory": "./output",
-  "indent_size": 4,
-
+  "project": {
+    "name": "LaravelVueGenerator",
+    "version": "2.0.0",
+    "description": "Advanced code generator for Laravel backend and Vue.js frontend"
+  },
+  "output": {
+    "base_directory": "./output",
+    "backend_directory": "backend",
+    "frontend_directory": "frontend",
+    "api_docs_directory": "api-docs"
+  },
+  "indent": {
+    "size": 4,
+    "style": "space"
+  },
   "naming": {
     "model": "PascalCase",
     "controller": "PascalCase",
     "migration": "snake_case",
-    "table": "snake_case"
+    "table": "snake_case",
+    "component": "PascalCase",
+    "store": "camelCase",
+    "route": "kebab-case"
   },
-  "template_dir": "src/templates",
-  "model_template_path": "backend/model_stub.php",
+  "templates": {
+    "directory": "src/templates",
+    "backend": {
+      "model": "backend/laravel/model.stub",
+      "migration": "backend/laravel/migration.stub",
+      "controller": "backend/laravel/controller.stub",
+      "api_controller": "backend/laravel/api_controller.stub",
+      "request": "backend/laravel/request.stub",
+      "resource": "backend/laravel/resource.stub",
+      "collection": "backend/laravel/collection.stub",
+      "policy": "backend/laravel/policy.stub",
+      "factory": "backend/laravel/factory.stub",
+      "seeder": "backend/laravel/seeder.stub",
+      "observer": "backend/laravel/observer.stub",
+      "event": "backend/laravel/event.stub",
+      "listener": "backend/laravel/listener.stub",
+      "job": "backend/laravel/job.stub",
+      "notification": "backend/laravel/notification.stub",
+      "mail": "backend/laravel/mail.stub",
+      "test": "backend/laravel/test.stub",
+      "repository": "backend/laravel/repository.stub",
+      "repository_interface": "backend/laravel/repository_interface.stub",
+      "service": "backend/laravel/service.stub",
+      "trait": "backend/laravel/trait.stub",
+      "middleware": "backend/laravel/middleware.stub",
+      "console_command": "backend/laravel/console_command.stub",
+      "provider": "backend/laravel/provider.stub",
+      "exception": "backend/laravel/exception.stub",
+      "pivot_table": "backend/laravel/pivot_table.stub",
+      "view": "backend/laravel/view.stub",
+      "route": "backend/laravel/route.stub",
+      "config": "backend/laravel/config.stub",
+      "language": "backend/laravel/language.stub"
+    },
+    "frontend": {
+      "component": "frontend/vue/component.vue",
+      "store_module": "frontend/vue/store_module.js",
+      "router": "frontend/vue/router.js",
+      "types": "frontend/vue/types.d.ts",
+      "admin_panel": "frontend/vue/admin_panel.vue"
+    }
+  },
   "frontend": {
-    "output_dir": "./output/frontend",
-    "component_dir": "components",
+    "framework": "vue",
+    "version": "3.x",
+    "use_typescript": true,
+    "use_composition_api": true,
+    "output_dir": "admin",
     "route_dir": "routes",
-    "store_dir": "stores",
-    "type_dir": "types",
-    "view_dir": "views"
+    "state_management": "vuex",
+    "ui_framework": "primevue",
+    "component_structure": {
+      "components": "src/components",
+      "views": "src/views",
+      "store": "src/store",
+      "router": "src/router",
+      "types": "src/types",
+      "assets": "src/assets",
+      "layouts": "src/layouts"
+    }
   },
   "backend": {
-    "output_dir": "./output/backend"
+    "framework": "laravel",
+    "version": "10.x",
+    "generators": [
+      "model",
+      "migration",
+      "controller",
+      "api_controller",
+      "request",
+      "resource",
+      "collection",
+      "policy",
+      "factory",
+      "seeder",
+      "observer",
+      "event",
+      "listener",
+      "job",
+      "notification",
+      "mail",
+      "test",
+      "repository",
+      "repository_interface",
+      "service",
+      "trait",
+      "middleware",
+      "console_command",
+      "provider",
+      "exception",
+      "pivot_table",
+      "view",
+      "route",
+      "config",
+      "language"
+    ],
+    "structure": {
+      "models": "app/Models",
+      "controllers": "app/Http/Controllers",
+      "api_controllers": "app/Http/Controllers/API",
+      "requests": "app/Http/Requests",
+      "resources": "app/Http/Resources",
+      "policies": "app/Policies",
+      "repositories": "app/Repositories",
+      "services": "app/Services",
+      "observers": "app/Observers",
+      "events": "app/Events",
+      "listeners": "app/Listeners",
+      "jobs": "app/Jobs",
+      "notifications": "app/Notifications",
+      "mails": "app/Mail",
+      "migrations": "database/migrations",
+      "factories": "database/factories",
+      "seeders": "database/seeders",
+      "tests": "tests",
+      "traits": "app/Traits",
+      "middlewares": "app/Http/Middleware",
+      "commands": "app/Console/Commands",
+      "providers": "app/Providers",
+      "exceptions": "app/Exceptions",
+      "views": "resources/views",
+      "routes": "routes",
+      "config": "config",
+      "lang": "lang"
+    }
   },
-  "extensions": {
-    "php": ".php",
-    "migration": ".php",
-    "vue": ".vue",
-    "ts": ".ts"
-  },
-
-  "namespaces": {
-    "model": "App\\Models",
-    "controller": "App\\Http\\Controllers",
-    "request": "App\\Http\\Requests",
-    "resource": "App\\Http\\Resources",
-    "repository": "App\\Repositories"
-  },
-
   "database": {
     "engine": "mysql",
     "charset": "utf8mb4",
-    "collation": "utf8mb4_unicode_ci"
+    "collation": "utf8mb4_unicode_ci",
+    "use_uuid": false,
+    "use_soft_deletes": true
   },
-
-  "generators": [
-    "model",
-    "controller",
-    "migration",
-    "request",
-    "resource",
-    "repository",
-    "repository_interface",
-    "component",
-    "view",
-    "store",
-    "type"
-  ],
-
-  "model": {
-    "use_soft_deletes": true,
-    "timestamps": true,
-    "fillable_attributes": true
+  "api": {
+    "version": "v1",
+    "prefix": "api",
+    "documentation": {
+      "type": "swagger",
+      "auto_generate": true
+    }
   },
-
-  "controller": {
-    "use_repository": true,
-    "use_form_requests": true
+  "generators": {
+    "backend": [
+      {
+        "name": "model",
+        "module": "src.generators.backend.laravel.model_generator",
+        "class": "ModelGenerator"
+      },
+      {
+        "name": "migration",
+        "module": "src.generators.backend.laravel.migration_generator",
+        "class": "MigrationGenerator"
+      },
+      {
+        "name": "controller",
+        "module": "src.generators.backend.laravel.controller_generator",
+        "class": "ControllerGenerator"
+      },
+      {
+        "name": "request",
+        "module": "src.generators.backend.laravel.request_generator",
+        "class": "RequestGenerator"
+      },
+      {
+        "name": "factory",
+        "module": "src.generators.backend.laravel.factory_generator",
+        "class": "FactoryGenerator"
+      },
+      {
+        "name": "seeder",
+        "module": "src.generators.backend.laravel.seeder_generator",
+        "class": "SeederGenerator"
+      },
+      {
+        "name": "observer",
+        "module": "src.generators.backend.laravel.observer_generator",
+        "class": "ObserverGenerator"
+      },
+      {
+        "name": "event",
+        "module": "src.generators.backend.laravel.event_generator",
+        "class": "EventGenerator"
+      },
+      {
+        "name": "listener",
+        "module": "src.generators.backend.laravel.listener_generator",
+        "class": "ListenerGenerator"
+      },
+      {
+        "name": "job",
+        "module": "src.generators.backend.laravel.job_generator",
+        "class": "JobGenerator"
+      },
+      {
+        "name": "notification",
+        "module": "src.generators.backend.laravel.notification_generator",
+        "class": "NotificationGenerator"
+      },
+      {
+        "name": "mail",
+        "module": "src.generators.backend.laravel.mail_generator",
+        "class": "MailGenerator"
+      },
+      {
+        "name": "test",
+        "module": "src.generators.backend.laravel.unit_test_generator",
+        "class": "TestGenerator"
+      },
+      {
+        "name": "repository",
+        "module": "src.generators.backend.laravel.repository_generator",
+        "class": "RepositoryGenerator"
+      },
+      {
+        "name": "repository_interface",
+        "module": "src.generators.backend.laravel.repository_interface_generator",
+        "class": "RepositoryInterfaceGenerator"
+      },
+      {
+        "name": "service",
+        "module": "src.generators.backend.laravel.service_generator",
+        "class": "ServiceGenerator"
+      },
+      {
+        "name": "trait",
+        "module": "src.generators.backend.laravel.trait_generator",
+        "class": "TraitGenerator"
+      },
+      {
+        "name": "resource",
+        "module": "src.generators.backend.laravel.resource_generator",
+        "class": "ResourceGenerator"
+      }
+    ],
+    "frontend": [
+      {
+        "name": "router",
+        "module": "src.generators.frontend.vue.router_generator",
+        "class": "RouterGenerator"
+      }
+    ]
   },
-
-  "migration": {
-    "use_big_integers": true
+  "features": {
+    "authentication": {
+      "enabled": true,
+      "type": "jwt"
+    },
+    "authorization": {
+      "enabled": true,
+      "use_policies": true
+    },
+    "testing": {
+      "generate_tests": true,
+      "test_framework": "phpunit"
+    },
+    "localization": {
+      "enabled": true,
+      "default_locale": "en",
+      "supported_locales": ["en", "es", "fr"]
+    },
+    "caching": {
+      "enabled": true,
+      "driver": "redis"
+    },
+    "queues": {
+      "enabled": true,
+      "driver": "redis"
+    },
+    "real_time": {
+      "enabled": false,
+      "driver": "pusher"
+    }
   },
-
-  "repository": {
-    "include_custom_methods": false
-  },
-
   "relationships": {
     "use_inverse_relations": true,
-    "generate_pivot_tables": true
+    "generate_pivot_tables": true,
+    "naming": {
+      "foreign_key": "{table}_id",
+      "pivot_table": "{table1}_{table2}"
+    }
   },
-
-  "laravel_version": "10.x",
-
-  "features": {
-    "generate_api_routes": true,
-    "generate_factories": true,
-    "generate_seeders": true,
-    "use_uuid": false
-  },
-
-  "python_version": "3.9",
-
-  "generator_options": {
+  "code_style": {
+    "psr_standards": true,
     "use_type_hints": true,
-    "use_docstrings": true
+    "use_return_types": true,
+    "use_docblocks": true
+  },
+  "security": {
+    "hash_user_passwords": true,
+    "use_csrf_protection": true,
+    "use_xss_protection": true,
+    "use_sql_injection_protection": true
+  },
+  "performance": {
+    "use_eager_loading": true,
+    "use_lazy_loading": true,
+    "use_query_caching": true
+  },
+  "deployment": {
+    "use_docker": false,
+    "use_ci_cd": false,
+    "preferred_hosting": "heroku"
   }
 }

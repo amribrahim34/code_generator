@@ -1,0 +1,45 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ event_namespace }}\{{ event_name }};
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
+
+class {{ listener_name }} implements ShouldQueue
+{
+    use InteractsWithQueue;
+
+    /**
+     * Create the event listener.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Handle the event.
+     *
+     * @param  \{{ event_namespace }}\{{ event_name }}  $event
+     * @return void
+     */
+    public function handle({{ event_name }} $event)
+    {
+        ${{ model_variable }} = $event->{{ model_variable }};
+        Log::info('{{ model_name }} {{ event_type|lower }}: ' . ${{ model_variable }}->id);
+        
+        // Add your custom logic here
+        // For example:
+        // if ($event instanceof {{ model_name }}CreatedEvent) {
+        //     // Send a welcome email
+        // } elseif ($event instanceof {{ model_name }}UpdatedEvent) {
+        //     // Sync with external service
+        // } elseif ($event instanceof {{ model_name }}DeletedEvent) {
+        //     // Clean up associated resources
+        // }
+    }
+}

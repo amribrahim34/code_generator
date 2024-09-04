@@ -1,0 +1,56 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use App\Models\User;
+
+abstract class TestCase extends BaseTestCase
+{
+    use CreatesApplication;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Set up environment-specific configurations
+        $this->setupEnvironment();
+    }
+
+    protected function setupEnvironment(): void
+    {
+        // Environment-specific setup
+        switch ('{{ test_type }}') {
+            case 'Admin':
+                $this->setupAdminEnvironment();
+                break;
+            case 'CustomerWebsite':
+                $this->setupCustomerWebsiteEnvironment();
+                break;
+            case 'MobileApp':
+                $this->setupMobileAppEnvironment();
+                break;
+        }
+    }
+
+    protected function setupAdminEnvironment(): void
+    {
+        // Set up admin user and authentication
+        $admin = User::factory()->create(['is_admin' => true]);
+        $this->actingAs($admin, 'api');
+    }
+
+    protected function setupCustomerWebsiteEnvironment(): void
+    {
+        // Set up customer user and authentication
+        $customer = User::factory()->create(['is_customer' => true]);
+        $this->actingAs($customer, 'web');
+    }
+
+    protected function setupMobileAppEnvironment(): void
+    {
+        // Set up mobile app user and authentication
+        $mobileUser = User::factory()->create(['is_mobile_user' => true]);
+        $this->actingAs($mobileUser, 'api');
+    }
+}

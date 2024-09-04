@@ -1,0 +1,22 @@
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import routes from './index';
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    ...routes,
+    {
+      path: '/:catchAll(.*)',
+      name: 'NotFound',
+      component: () => import('@/views/NotFound.vue')
+    }
+  ] as RouteRecordRaw[]
+});
+
+router.beforeEach((to, from, next) => {
+  // Add any global navigation guards here
+  // For example, check authentication status
+  next();
+});
+
+export default router;

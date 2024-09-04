@@ -1,0 +1,64 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ model_namespace }}\{{ model_name }};
+use Illuminate\Support\Facades\Log;
+
+class {{ observer_name }}
+{
+    /**
+     * Handle the {{ model_name }} "created" event.
+     *
+     * @param  \{{ model_namespace }}\{{ model_name }}  ${{ model_variable }}
+     * @return void
+     */
+    public function created({{ model_name }} ${{ model_variable }})
+    {
+        Log::info('{{ model_name }} created: ' . ${{ model_variable }}->id);
+    }
+
+    /**
+     * Handle the {{ model_name }} "updated" event.
+     *
+     * @param  \{{ model_namespace }}\{{ model_name }}  ${{ model_variable }}
+     * @return void
+     */
+    public function updated({{ model_name }} ${{ model_variable }})
+    {
+        Log::info('{{ model_name }} updated: ' . ${{ model_variable }}->id);
+    }
+
+    /**
+     * Handle the {{ model_name }} "deleted" event.
+     *
+     * @param  \{{ model_namespace }}\{{ model_name }}  ${{ model_variable }}
+     * @return void
+     */
+    public function deleted({{ model_name }} ${{ model_variable }})
+    {
+        Log::info('{{ model_name }} deleted: ' . ${{ model_variable }}->id);
+    }
+
+    /**
+     * Handle the {{ model_name }} "restored" event.
+     *
+     * @param  \{{ model_namespace }}\{{ model_name }}  ${{ model_variable }}
+     * @return void
+     */
+    public function restored({{ model_name }} ${{ model_variable }})
+    {
+        Log::info('{{ model_name }} restored: ' . ${{ model_variable }}->id);
+    }
+
+    /**
+     * Handle the {{ model_name }} "force deleted" event.
+     *
+     * @param  \{{ model_namespace }}\{{ model_name }}  ${{ model_variable }}
+     * @return void
+     */
+    public function forceDeleted({{ model_name }} ${{ model_variable }})
+    {
+        Log::info('{{ model_name }} force deleted: ' . ${{ model_variable }}->id);
+    }
+}

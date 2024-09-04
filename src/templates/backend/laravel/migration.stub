@@ -1,0 +1,49 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class {{ class_name }} extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('{{ table_name }}', function (Blueprint $table) {
+            $table->id();
+            {% for attribute in attributes %}
+            $table->{{ attribute.type }}('{{ attribute.name }}')
+                {%- if attribute.nullable %}->nullable(){% endif %}
+                {%- if attribute.unique %}->unique(){% endif %}
+                {%- if attribute.default is not none %}->default({{ attribute.default }}){% endif %};
+            {% endfor %}
+
+            {% for relationship in relationships %}
+            {% if relationship.type == 'belongsTo' %}
+            $table->foreignId('{{ relationship.foreign_key }}')->constrained('{{ relationship.related_model|to_snake_case|pluralize }}');
+            {% endif %}
+            {% endfor %}
+
+            {% if use_timestamps %}
+            $table->timestamps();
+            {% endif %}
+            {% if use_soft_deletes %}
+            $table->softDeletes();
+            {% endif %}
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('{{ table_name }}');
+    }
+}

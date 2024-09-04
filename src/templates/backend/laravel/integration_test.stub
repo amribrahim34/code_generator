@@ -1,0 +1,147 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ model_namespace }}\{{ model_name }};
+use App\Repositories\{{ test_type }}\{{ model_name }}Repository;
+use App\Services\{{ test_type }}\{{ model_name }}Service;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\{{ test_type }}\TestCase;
+
+class {{ test_name }} extends TestCase
+{
+    use RefreshDatabase, WithFaker;
+
+    protected ${{ model_variable }}Repository;
+    protected ${{ model_variable }}Service;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->{{ model_variable }}Repository = app({{ model_name }}Repository::class);
+        $this->{{ model_variable }}Service = app({{ model_name }}Service::class);
+    }
+
+    /**
+     * Test creating a new {{ model_name }} through the service.
+     *
+     * @return void
+     */
+    public function testCreate{{ model_name }}ThroughService()
+    {
+        $data = [
+            {% for attribute in attributes %}
+            '{{ attribute.name }}' => $this->faker->{{ attribute.faker_method }},
+            {% endfor %}
+        ];
+
+        ${{ model_variable }} = $this->{{ model_variable }}Service->create($data);
+
+        $this->assertInstanceOf({{ model_name }}::class, ${{ model_variable }});
+        $this->assertDatabaseHas('{{ table_name }}', $data);
+    }
+
+    /**
+     * Test retrieving a {{ model_name }} through the repository.
+     *
+     * @return void
+     */
+    public function testRetrieve{{ model_name }}ThroughRepository()
+    {
+        ${{ model_variable }} = {{ model_name }}::factory()->create();
+
+        $retrieved{{ model_name }} = $this->{{ model_variable }}Repository->find(${{ model_variable }}->id);
+
+        $this->assertInstanceOf({{ model_name }}::class, $retrieved{{ model_name }});
+        $this->assertEquals(${{ model_variable }}->id, $retrieved{{ model_name }}->id);
+    }
+
+    /**
+     * Test updating a {{ model_name }} through the service.
+     *
+     * @return void
+     */
+    public function testUpdate{{ model_name }}ThroughService()
+    {
+        ${{ model_variable }} = {{ model_name }}::factory()->create();
+
+        $data = [
+            {% for attribute in attributes %}
+            '{{ attribute.name }}' => $this->faker->{{ attribute.faker_method }},
+            {% endfor %}
+        ];
+
+        $updated{{ model_name }} = $this->{{ model_variable }}Service->update(${{ model_variable }}->id, $data);
+
+        $this->assertInstanceOf({{ model_name }}::class, $updated{{ model_name }});
+        $this->assertDatabaseHas('{{ table_name }}', $data);
+    }
+
+    /**
+     * Test deleting a {{ model_name }} through the repository.
+     *
+     * @return void
+     */
+    public function testDelete{{ model_name }}ThroughRepository()
+    {
+        ${{ model_variable }} = {{ model_name }}::factory()->create();
+
+        $this->{{ model_variable }}Repository->delete(${{ model_variable }}->id);
+
+        $this->assertDatabaseMissing('{{ table_name }}', ['id' => ${{ model_variable }}->id]);
+    }
+
+    /**
+     * Test retrieving {{ model_name }} with relationships.
+     *
+     * @return void
+     */
+    public function testRetrieve{{ model_name }}WithRelationships()
+    {
+        ${{ model_variable }} = {{ model_name }}::factory()->create();
+
+        {% for relationship in relationships %}
+        // Create related {{ relationship.related_model }}
+        $related{{ relationship.related_model }} = \{{ model_namespace }}\{{ relationship.related_model }}::factory()->create();
+        ${{ model_variable }}->{{ relationship.name }}()->associate($related{{ relationship.related_model }});
+        ${{ model_variable }}->save();
+        {% endfor %}
+
+        $retrieved{{ model_name }} = $this->{{ model_variable }}Repository->findWithRelations(${{ model_variable }}->id);
+
+        $this->assertInstanceOf({{ model_name }}::class, $retrieved{{ model_name }});
+        {% for relationship in relationships %}
+        $this->assertInstanceOf(\{{ model_namespace }}\{{ relationship.related_model }}::class, $retrieved{{ model_name }}->{{ relationship.name }});
+        {% endfor %}
+    }
+
+    /**
+     * Test {{ model_name }} validation in the service.
+     *
+     * @return void
+     */
+    public function test{{ model_name }}ValidationInService()
+    {
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+
+        $invalidData = [
+            // Add invalid data here
+        ];
+
+        $this->{{ model_variable }}Service->create($invalidData);
+    }
+
+    /**
+     * Test {{ model_name }} business logic in the service.
+     *
+     * @return void
+     */
+    public function test{{ model_name }}BusinessLogicInService()
+    {
+        // Add test for specific business logic in the service
+        // This will depend on the specific requirements of your {{ model_name }} service
+        $this->assertTrue(true);
+    }
+}

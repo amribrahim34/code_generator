@@ -1,0 +1,102 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ model_namespace }}\{{ model_name }};
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\{{ test_type }}\TestCase;
+
+class {{ test_name }} extends TestCase
+{
+    use RefreshDatabase, WithFaker;
+
+    /**
+     * Test creating a new {{ model_name }}.
+     *
+     * @return void
+     */
+    public function testCreate{{ model_name }}()
+    {
+        $data = [
+            {% for attribute in attributes %}
+            '{{ attribute.name }}' => $this->faker->{{ attribute.faker_method }},
+            {% endfor %}
+        ];
+
+        $response = $this->postJson('/api/{{ test_type|lower }}/{{ table_name }}', $data);
+
+        $response->assertStatus(201)
+                 ->assertJsonStructure([
+                    'data' => [
+                        {% for attribute in attributes %}
+                        '{{ attribute.name }}',
+                        {% endfor %}
+                    ]
+                 ]);
+
+        $this->assertDatabaseHas('{{ table_name }}', $data);
+    }
+
+    /**
+     * Test retrieving a {{ model_name }}.
+     *
+     * @return void
+     */
+    public function testRetrieve{{ model_name }}()
+    {
+        ${{ model_variable }} = {{ model_name }}::factory()->create();
+
+        $response = $this->getJson("/api/{{ test_type|lower }}/{{ table_name }}/{${{ model_variable }}->id}");
+
+        $response->assertStatus(200)
+                 ->assertJson([
+                    'data' => ${{ model_variable }}->toArray()
+                 ]);
+    }
+
+    /**
+     * Test updating a {{ model_name }}.
+     *
+     * @return void
+     */
+    public function testUpdate{{ model_name }}()
+    {
+        ${{ model_variable }} = {{ model_name }}::factory()->create();
+
+        $data = [
+            {% for attribute in attributes %}
+            '{{ attribute.name }}' => $this->faker->{{ attribute.faker_method }},
+            {% endfor %}
+        ];
+
+        $response = $this->putJson("/api/{{ test_type|lower }}/{{ table_name }}/{${{ model_variable }}->id}", $data);
+
+        $response->assertStatus(200)
+                 ->assertJsonStructure([
+                    'data' => [
+                        {% for attribute in attributes %}
+                        '{{ attribute.name }}',
+                        {% endfor %}
+                    ]
+                 ]);
+
+        $this->assertDatabaseHas('{{ table_name }}', $data);
+    }
+
+    /**
+     * Test deleting a {{ model_name }}.
+     *
+     * @return void
+     */
+    public function testDelete{{ model_name }}()
+    {
+        ${{ model_variable }} = {{ model_name }}::factory()->create();
+
+        $response = $this->deleteJson("/api/{{ test_type|lower }}/{{ table_name }}/{${{ model_variable }}->id}");
+
+        $response->assertStatus(204);
+
+        $this->assertDatabaseMissing('{{ table_name }}', ['id' => ${{ model_variable }}->id]);
+    }
+}

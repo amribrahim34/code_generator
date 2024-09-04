@@ -1,0 +1,109 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+{% if use_soft_deletes %}
+use Illuminate\Database\Eloquent\SoftDeletes;
+{% endif %}
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
+
+class {{ model_name }} extends Model
+{
+    use HasFactory;
+    {% if use_soft_deletes %}
+    use SoftDeletes;
+    {% endif %}
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = '{{ table_name }}';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        {% for attribute in fillable %}
+        '{{ attribute }}',
+        {% endfor %}
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        {% if casts %}
+        {% for attribute, cast in casts.items() %}
+        '{{ attribute }}' => '{{ cast }}',
+        {% endfor %}
+        {% endif %}
+    ];
+
+    {% if not use_timestamps %}
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+    {% endif %}
+
+    {% for relationship in relationships %}
+    /**
+     * Get the {{ relationship.method_name }} associated with the {{ model_name }}.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\{{ relationship.type|capitalize }}
+     */
+    public function {{ relationship.method_name }}(): {{ relationship.type|capitalize }}
+    {
+        return $this->{{ relationship.type }}({{ relationship.related_model }}::class{% if relationship.foreign_key %}, '{{ relationship.foreign_key }}'{% endif %}{% if relationship.local_key %}, '{{ relationship.local_key }}'{% endif %});
+    }
+
+    {% endfor %}
+    /**
+     * Get the created at attribute.
+     *
+     * @param  string  $value
+     * @return \Illuminate\Support\Carbon
+     */
+    public function getCreatedAtAttribute($value): Carbon
+    {
+        return Carbon::parse($value);
+    }
+
+    /**
+     * Get the updated at attribute.
+     *
+     * @param  string  $value
+     * @return \Illuminate\Support\Carbon
+     */
+    public function getUpdatedAtAttribute($value): Carbon
+    {
+        return Carbon::parse($value);
+    }
+
+    {% if use_soft_deletes %}
+    /**
+     * Get the deleted at attribute.
+     *
+     * @param  string  $value
+     * @return \Illuminate\Support\Carbon|null
+     */
+    public function getDeletedAtAttribute($value): ?Carbon
+    {
+        return $value ? Carbon::parse($value) : null;
+    }
+    {% endif %}
+}

@@ -1,0 +1,73 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class {{ resource_name }} extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toArray($request)
+    {
+        return [
+           {{ attributes }}
+           {{ relationships }}
+        ];
+    }
+
+    {% if resource_type == 'Admin' %}
+    /**
+     * Get additional data that should be returned with the resource array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function with($request)
+    {
+        return [
+            'meta' => [
+                'admin_info' => 'This resource is for admin use only',
+            ],
+        ];
+    }
+    {% endif %}
+
+    {% if resource_type == 'CustomerWebsite' %}
+    /**
+     * Get additional data that should be returned with the resource array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function with($request)
+    {
+        return [
+            'meta' => [
+                'website_version' => config('app.website_version'),
+            ],
+        ];
+    }
+    {% endif %}
+
+    {% if resource_type == 'MobileApp' %}
+    /**
+     * Get additional data that should be returned with the resource array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function with($request)
+    {
+        return [
+            'meta' => [
+                'app_version' => config('app.mobile_version'),
+            ],
+        ];
+    }
+    {% endif %}
+}

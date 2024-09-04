@@ -1,0 +1,198 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Http\Controllers\Controller;
+use App\Models\{{ model_name }};
+use {{ request_namespace }}\{{ request_class }};
+use {{ resource_namespace }}\{{ resource_class }};
+use {{ repository_namespace }}\{{ repository_interface }};
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+/**
+ * @OA\Tag(
+ *     name="{{ model_plural }}",
+ *     description="{{ model_name }} management"
+ * )
+ */
+class {{ class_name }} extends Controller
+{
+    protected ${{ model_variable }}Repository;
+
+    public function __construct({{ repository_interface }} ${{ model_variable }}Repository)
+    {
+        $this->{{ model_variable }}Repository = ${{ model_variable }}Repository;
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/{{ api_version }}/{{ model_plural }}",
+     *     summary="List all {{ model_plural }}",
+     *     tags={"{{ model_plural }}"},
+     *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer")),
+     *     @OA\Response(response="200", description="Paginated list of {{ model_plural }}")
+     * )
+     */
+    public function index(Request $request)
+    {
+        $perPage = $request->input('per_page', 15);
+        ${{ model_plural }} = $this->{{ model_variable }}Repository->paginate($perPage);
+        return {{ resource_class }}::collection(${{ model_plural }});
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/{{ api_version }}/{{ model_plural }}",
+     *     summary="Create a new {{ model_name }}",
+     *     tags={"{{ model_plural }}"},
+     *     @OA\RequestBody(required=true, @OA\JsonContent(ref="#/components/schemas/{{ request_class }}")),
+     *     @OA\Response(response="201", description="{{ model_name }} created successfully")
+     * )
+     */
+    public function store({{ request_class }} $request)
+    {
+        ${{ model_variable }} = $this->{{ model_variable }}Repository->create($request->validated());
+        return new {{ resource_class }}(${{ model_variable }});
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/{{ api_version }}/{{ model_plural }}/{id}",
+     *     summary="Get a specific {{ model_name }}",
+     *     tags={"{{ model_plural }}"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response="200", description="{{ model_name }} details")
+     * )
+     */
+    public function show($id)
+    {
+        ${{ model_variable }} = $this->{{ model_variable }}Repository->findOrFail($id);
+        return new {{ resource_class }}(${{ model_variable }});
+    }
+
+    /**
+     * @OA\Put(
+     *     path="/api/{{ api_version }}/{{ model_plural }}/{id}",
+     *     summary="Update a {{ model_name }}",
+     *     tags={"{{ model_plural }}"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\RequestBody(required=true, @OA\JsonContent(ref="#/components/schemas/{{ request_class }}")),
+     *     @OA\Response(response="200", description="{{ model_name }} updated successfully")
+     * )
+     */
+    public function update({{ request_class }} $request, $id)
+    {
+        ${{ model_variable }} = $this->{{ model_variable }}Repository->update($id, $request->validated());
+        return new {{ resource_class }}(${{ model_variable }});
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/{{ api_version }}/{{ model_plural }}/{id}",
+     *     summary="Delete a {{ model_name }}",
+     *     tags={"{{ model_plural }}"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response="204", description="{{ model_name }} deleted successfully")
+     * )
+     */
+    public function destroy($id)
+    {
+        $this->{{ model_variable }}Repository->delete($id);
+        return response()->noContent();
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/{{ api_version }}/{{ model_plural }}/bulk-import",
+     *     summary="Bulk import {{ model_plural }}",
+     *     tags={"{{ model_plural }}"},
+     *     @OA\RequestBody(required=true, @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/{{ request_class }}"))),
+     *     @OA\Response(response="201", description="{{ model_plural }} imported successfully")
+     * )
+     */
+    public function bulkImport(Request $request)
+    {
+        ${{ model_plural }} = $this->{{ model_variable }}Repository->bulkCreate($request->all());
+        return {{ resource_class }}::collection(${{ model_plural }});
+    }
+
+    /**
+     * @OA\Put(
+     *     path="/api/{{ api_version }}/{{ model_plural }}/bulk-update",
+     *     summary="Bulk update {{ model_plural }}",
+     *     tags={"{{ model_plural }}"},
+     *     @OA\RequestBody(required=true, @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/{{ request_class }}"))),
+     *     @OA\Response(response="200", description="{{ model_plural }} updated successfully")
+     * )
+     */
+    public function bulkUpdate(Request $request)
+    {
+        ${{ model_plural }} = $this->{{ model_variable }}Repository->bulkUpdate($request->all());
+        return {{ resource_class }}::collection(${{ model_plural }});
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/{{ api_version }}/{{ model_plural }}/bulk-delete",
+     *     summary="Bulk delete {{ model_plural }}",
+     *     tags={"{{ model_plural }}"},
+     *     @OA\RequestBody(required=true, @OA\JsonContent(type="array", @OA\Items(type="integer"))),
+     *     @OA\Response(response="204", description="{{ model_plural }} deleted successfully")
+     * )
+     */
+    public function bulkDelete(Request $request)
+    {
+        $this->{{ model_variable }}Repository->bulkDelete($request->all());
+        return response()->noContent();
+    }
+
+    // Additional methods specific to {{ controller_type }} controller
+    {% if controller_type == 'Admin' %}
+    /**
+     * @OA\Get(
+     *     path="/api/{{ api_version }}/{{ model_plural }}/export",
+     *     summary="Export {{ model_plural }} data",
+     *     tags={"{{ model_plural }}"},
+     *     @OA\Response(response="200", description="Exported {{ model_plural }} data")
+     * )
+     */
+    public function export()
+    {
+        // Implementation for exporting {{ model_plural }}
+    }
+    {% endif %}
+
+    {% if controller_type == 'Website' %}
+    /**
+     * @OA\Get(
+     *     path="/api/{{ api_version }}/{{ model_plural }}/featured",
+     *     summary="Get featured {{ model_plural }}",
+     *     tags={"{{ model_plural }}"},
+     *     @OA\Response(response="200", description="List of featured {{ model_plural }}")
+     * )
+     */
+    public function featured()
+    {
+        // Implementation for getting featured {{ model_plural }}
+    }
+    {% endif %}
+
+    {% if controller_type == 'MobileApp' %}
+    /**
+     * @OA\Get(
+     *     path="/api/{{ api_version }}/{{ model_plural }}/nearby",
+     *     summary="Get nearby {{ model_plural }}",
+     *     tags={"{{ model_plural }}"},
+     *     @OA\Parameter(name="latitude", in="query", required=true, @OA\Schema(type="number")),
+     *     @OA\Parameter(name="longitude", in="query", required=true, @OA\Schema(type="number")),
+     *     @OA\Response(response="200", description="List of nearby {{ model_plural }}")
+     * )
+     */
+    public function nearby(Request $request)
+    {
+        // Implementation for getting nearby {{ model_plural }}
+    }
+    {% endif %}
+}

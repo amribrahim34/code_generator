@@ -1,0 +1,113 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ model_namespace }}\{{ model_name }};
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\UploadedFile;
+
+interface {{ interface_name }}
+{
+    /**
+     * Get all records.
+     *
+     * @return Collection
+     */
+    public function all(): Collection;
+
+    /**
+     * Get paginated records.
+     *
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    public function paginate(int $perPage = 15): LengthAwarePaginator;
+
+    /**
+     * Create a new record.
+     *
+     * @param array $data
+     * @return {{ model_name }}
+     */
+    public function create(array $data): {{ model_name }};
+
+    /**
+     * Update an existing record.
+     *
+     * @param {{ model_name }} ${{ model_variable }}
+     * @param array $data
+     * @return bool
+     */
+    public function update({{ model_name }} ${{ model_variable }}, array $data): bool;
+
+    /**
+     * Delete a record.
+     *
+     * @param {{ model_name }} ${{ model_variable }}
+     * @return bool
+     */
+    public function delete({{ model_name }} ${{ model_variable }}): bool;
+
+    /**
+     * Find a record by its ID.
+     *
+     * @param int|string $id
+     * @return {{ model_name }}|null
+     */
+    public function find($id): ?{{ model_name }};
+
+    /**
+     * Bulk import records from an Excel file.
+     *
+     * @param UploadedFile $file
+     * @return array
+     */
+    public function bulkImport(UploadedFile $file): array;
+
+    /**
+     * Bulk export records to an Excel file.
+     *
+     * @return string The path to the exported file
+     */
+    public function bulkExport(): string;
+
+    {% if repo_type == 'Admin' %}
+    /**
+     * Get soft deleted records.
+     *
+     * @return Collection
+     */
+    public function getTrashed(): Collection;
+
+    /**
+     * Restore a soft deleted record.
+     *
+     * @param int|string $id
+     * @return bool
+     */
+    public function restore($id): bool;
+    {% endif %}
+
+    {% if repo_type == 'CustomerWebsite' %}
+    /**
+     * Get featured records.
+     *
+     * @param int $limit
+     * @return Collection
+     */
+    public function getFeatured(int $limit = 5): Collection;
+    {% endif %}
+
+    {% if repo_type == 'MobileApp' %}
+    /**
+     * Get records by location.
+     *
+     * @param float $latitude
+     * @param float $longitude
+     * @param float $radius
+     * @return Collection
+     */
+    public function getByLocation(float $latitude, float $longitude, float $radius): Collection;
+    {% endif %}
+}

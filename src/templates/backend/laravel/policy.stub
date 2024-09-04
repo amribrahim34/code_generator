@@ -1,0 +1,122 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ model_namespace }}\{{ model_name }};
+use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
+
+class {{ policy_name }}
+{
+    use HandlesAuthorization;
+
+    /**
+     * Determine whether the user can view any models.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewAny(User $user)
+    {
+        {% if use_authorization %}
+        return $user->can('view_any_{{ model_variable }}');
+        {% else %}
+        return true;
+        {% endif %}
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \{{ model_namespace }}\{{ model_name }}  ${{ model_variable }}
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function view(User $user, {{ model_name }} ${{ model_variable }})
+    {
+        {% if use_authorization %}
+        return $user->can('view_{{ model_variable }}');
+        {% else %}
+        return true;
+        {% endif %}
+    }
+
+    /**
+     * Determine whether the user can create models.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function create(User $user)
+    {
+        {% if use_authorization %}
+        return $user->can('create_{{ model_variable }}');
+        {% else %}
+        return true;
+        {% endif %}
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \{{ model_namespace }}\{{ model_name }}  ${{ model_variable }}
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function update(User $user, {{ model_name }} ${{ model_variable }})
+    {
+        {% if use_authorization %}
+        return $user->can('update_{{ model_variable }}');
+        {% else %}
+        return true;
+        {% endif %}
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \{{ model_namespace }}\{{ model_name }}  ${{ model_variable }}
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function delete(User $user, {{ model_name }} ${{ model_variable }})
+    {
+        {% if use_authorization %}
+        return $user->can('delete_{{ model_variable }}');
+        {% else %}
+        return true;
+        {% endif %}
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \{{ model_namespace }}\{{ model_name }}  ${{ model_variable }}
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function restore(User $user, {{ model_name }} ${{ model_variable }})
+    {
+        {% if use_authorization %}
+        return $user->can('restore_{{ model_variable }}');
+        {% else %}
+        return false;
+        {% endif %}
+    }
+
+    /**
+     * Determine whether the user can permanently delete the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \{{ model_namespace }}\{{ model_name }}  ${{ model_variable }}
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function forceDelete(User $user, {{ model_name }} ${{ model_variable }})
+    {
+        {% if use_authorization %}
+        return $user->can('force_delete_{{ model_variable }}');
+        {% else %}
+        return false;
+        {% endif %}
+    }
+}

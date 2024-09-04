@@ -1,0 +1,93 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ model_namespace }}\{{ model_name }};
+use {{ interface_namespace }};
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\{{ model_name }}Import;
+use App\Exports\{{ model_name }}Export;
+use Illuminate\Support\Facades\DB;
+
+class {{ repository_name }} implements {{ model_name }}RepositoryInterface
+{
+    protected $model;
+
+    public function __construct({{ model_name }} $model)
+    {
+        $this->model = $model;
+    }
+
+    public function all(): Collection
+    {
+        return $this->model->all();
+    }
+
+    public function paginate($perPage = 15): LengthAwarePaginator
+    {
+        return $this->model->paginate($perPage);
+    }
+
+    public function create(array $data): {{ model_name }}
+    {
+        return $this->model->create($data);
+    }
+
+    public function update({{ model_name }} ${{ model_variable }}, array $data): bool
+    {
+        return ${{ model_variable }}->update($data);
+    }
+
+    public function delete({{ model_name }} ${{ model_variable }}): bool
+    {
+        return ${{ model_variable }}->delete();
+    }
+
+    public function find($id): ?{{ model_name }}
+    {
+        return $this->model->find($id);
+    }
+
+    public function bulkImport($file)
+    {
+        DB::beginTransaction();
+        try {
+            Excel::import(new {{ model_name }}Import, $file);
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function bulkExport()
+    {
+        return Excel::download(new {{ model_name }}Export, '{{ table_name }}.xlsx');
+    }
+
+    {% if repo_type == 'Admin' %}
+    public function getStatistics(): array
+    {
+        // Implement admin-specific statistics
+        return [];
+    }
+    {% endif %}
+
+    {% if repo_type == 'CustomerWebsite' %}
+    public function getFeatured(): Collection
+    {
+        return $this->model->where('is_featured', true)->get();
+    }
+    {% endif %}
+
+    {% if repo_type == 'MobileApp' %}
+    public function getNearby($latitude, $longitude, $distance = 10): Collection
+    {
+        // Implement nearby search logic
+        return collect();
+    }
+    {% endif %}
+}

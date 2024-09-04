@@ -1,0 +1,34 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Support\ServiceProvider;
+{% for binding in bindings %}
+use App\Repositories\Interfaces\{{ binding.interface }};
+use App\Repositories\{{ provider_type }}\{{ binding.implementation }};
+{% endfor %}
+
+class {{ provider_name }} extends ServiceProvider
+{
+    /**
+     * Register services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        {% for binding in bindings %}
+        $this->app->bind({{ binding.interface }}::class, {{ binding.implementation }}::class);
+        {% endfor %}
+    }
+
+    /**
+     * Bootstrap services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        //
+    }
+}

@@ -1,0 +1,44 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+use {{ model_namespace }}\{{ model_name }};
+
+class {{ mail_name }} extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public ${{ model_variable }};
+
+    /**
+     * Create a new message instance.
+     *
+     * @param {{ model_name }} ${{ model_variable }}
+     * @return void
+     */
+    public function __construct({{ model_name }} ${{ model_variable }})
+    {
+        $this->{{ model_variable }} = ${{ model_variable }};
+    }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        return $this->view('emails.{{ model_variable }}.{{ mail_type|lower }}')
+                    ->subject('{{ model_name }} {{ mail_type }}')
+                    ->with([
+                        '{{ model_variable }}' => $this->{{ model_variable }},
+                        {% for attribute in attributes %}
+                        '{{ attribute.name }}' => $this->{{ model_variable }}->{{ attribute.name }},
+                        {% endfor %}
+                    ]);
+    }
+}

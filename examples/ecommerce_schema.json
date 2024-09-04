@@ -1,0 +1,351 @@
+{
+  "models": [
+    {
+      "name": "User",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "string" },
+        { "name": "email", "type": "string", "unique": true },
+        { "name": "email_verified_at", "type": "timestamp", "nullable": true },
+        { "name": "password", "type": "string" },
+        {
+          "name": "remember_token",
+          "type": "string",
+          "length": 100,
+          "nullable": true
+        },
+        { "name": "is_admin", "type": "boolean", "default": false },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "hasOne", "model": "Customer" },
+        { "type": "hasMany", "model": "Order" }
+      ]
+    },
+    {
+      "name": "Brand",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "string" },
+        { "name": "slug", "type": "string", "unique": true },
+        { "name": "description", "type": "text", "nullable": true },
+        { "name": "logo_url", "type": "string", "nullable": true },
+        { "name": "website", "type": "string", "nullable": true },
+        { "name": "is_featured", "type": "boolean", "default": false },
+        { "name": "is_active", "type": "boolean", "default": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "hasMany", "model": "Product" }]
+    },
+    {
+      "name": "Category",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "string" },
+        { "name": "slug", "type": "string", "unique": true },
+        { "name": "description", "type": "text", "nullable": true },
+        { "name": "parent_id", "type": "uuid", "nullable": true },
+        { "name": "image_url", "type": "string", "nullable": true },
+        { "name": "is_featured", "type": "boolean", "default": false },
+        { "name": "is_active", "type": "boolean", "default": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Category", "foreignKey": "parent_id" },
+        { "type": "hasMany", "model": "Category", "foreignKey": "parent_id" },
+        { "type": "hasMany", "model": "Product" }
+      ]
+    },
+    {
+      "name": "Customer",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "user_id", "type": "uuid", "unique": true },
+        { "name": "first_name", "type": "string" },
+        { "name": "last_name", "type": "string" },
+        { "name": "phone", "type": "string", "nullable": true },
+        { "name": "date_of_birth", "type": "date", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "hasMany", "model": "Order" },
+        { "type": "hasMany", "model": "Address" }
+      ]
+    },
+    {
+      "name": "Address",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "customer_id", "type": "uuid" },
+        { "name": "address_line1", "type": "string" },
+        { "name": "address_line2", "type": "string", "nullable": true },
+        { "name": "city", "type": "string" },
+        { "name": "state", "type": "string" },
+        { "name": "postal_code", "type": "string" },
+        { "name": "country", "type": "string" },
+        { "name": "is_default", "type": "boolean", "default": false },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "belongsTo", "model": "Customer" }]
+    },
+    {
+      "name": "Product",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "string" },
+        { "name": "slug", "type": "string", "unique": true },
+        { "name": "description", "type": "text", "nullable": true },
+        { "name": "price", "type": "decimal", "precision": 10, "scale": 2 },
+        {
+          "name": "sale_price",
+          "type": "decimal",
+          "precision": 10,
+          "scale": 2,
+          "nullable": true
+        },
+        {
+          "name": "cost",
+          "type": "decimal",
+          "precision": 10,
+          "scale": 2,
+          "nullable": true
+        },
+        { "name": "sku", "type": "string", "unique": true },
+        { "name": "barcode", "type": "string", "nullable": true },
+        { "name": "brand_id", "type": "uuid", "nullable": true },
+        { "name": "category_id", "type": "uuid", "nullable": true },
+        { "name": "stock_quantity", "type": "integer", "default": 0 },
+        {
+          "name": "weight",
+          "type": "decimal",
+          "precision": 8,
+          "scale": 2,
+          "nullable": true
+        },
+        {
+          "name": "width",
+          "type": "decimal",
+          "precision": 8,
+          "scale": 2,
+          "nullable": true
+        },
+        {
+          "name": "height",
+          "type": "decimal",
+          "precision": 8,
+          "scale": 2,
+          "nullable": true
+        },
+        {
+          "name": "depth",
+          "type": "decimal",
+          "precision": 8,
+          "scale": 2,
+          "nullable": true
+        },
+        { "name": "is_featured", "type": "boolean", "default": false },
+        { "name": "is_active", "type": "boolean", "default": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Brand" },
+        { "type": "belongsTo", "model": "Category" },
+        { "type": "hasMany", "model": "ProductImage" },
+        { "type": "hasMany", "model": "ProductVariant" },
+        { "type": "hasMany", "model": "OrderItem" },
+        { "type": "belongsToMany", "model": "Tag", "table": "product_tag" }
+      ]
+    },
+    {
+      "name": "ProductVariant",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "product_id", "type": "uuid" },
+        { "name": "sku", "type": "string", "unique": true },
+        { "name": "name", "type": "string" },
+        { "name": "price", "type": "decimal", "precision": 10, "scale": 2 },
+        {
+          "name": "sale_price",
+          "type": "decimal",
+          "precision": 10,
+          "scale": 2,
+          "nullable": true
+        },
+        { "name": "stock_quantity", "type": "integer", "default": 0 },
+        { "name": "is_active", "type": "boolean", "default": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "belongsTo", "model": "Product" }]
+    },
+    {
+      "name": "ProductImage",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "product_id", "type": "uuid" },
+        { "name": "image_url", "type": "string" },
+        { "name": "alt_text", "type": "string", "nullable": true },
+        { "name": "is_primary", "type": "boolean", "default": false },
+        { "name": "sort_order", "type": "integer", "default": 0 },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "belongsTo", "model": "Product" }]
+    },
+    {
+      "name": "Tag",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "string" },
+        { "name": "slug", "type": "string", "unique": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsToMany", "model": "Product", "table": "product_tag" }
+      ]
+    },
+    {
+      "name": "Order",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "user_id", "type": "uuid" },
+        { "name": "order_number", "type": "string", "unique": true },
+        { "name": "order_date", "type": "timestamp" },
+        {
+          "name": "status",
+          "type": "enum",
+          "options": [
+            "pending",
+            "processing",
+            "shipped",
+            "delivered",
+            "cancelled"
+          ]
+        },
+        { "name": "subtotal", "type": "decimal", "precision": 10, "scale": 2 },
+        { "name": "tax", "type": "decimal", "precision": 10, "scale": 2 },
+        { "name": "shipping", "type": "decimal", "precision": 10, "scale": 2 },
+        { "name": "total", "type": "decimal", "precision": 10, "scale": 2 },
+        { "name": "billing_address_id", "type": "uuid" },
+        { "name": "shipping_address_id", "type": "uuid" },
+        { "name": "payment_method", "type": "string" },
+        { "name": "notes", "type": "text", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "hasMany", "model": "OrderItem" },
+        {
+          "type": "belongsTo",
+          "model": "Address",
+          "foreignKey": "billing_address_id"
+        },
+        {
+          "type": "belongsTo",
+          "model": "Address",
+          "foreignKey": "shipping_address_id"
+        }
+      ]
+    },
+    {
+      "name": "OrderItem",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "order_id", "type": "uuid" },
+        { "name": "product_id", "type": "uuid" },
+        { "name": "product_variant_id", "type": "uuid", "nullable": true },
+        { "name": "quantity", "type": "integer" },
+        { "name": "price", "type": "decimal", "precision": 10, "scale": 2 },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Order" },
+        { "type": "belongsTo", "model": "Product" },
+        { "type": "belongsTo", "model": "ProductVariant" }
+      ]
+    },
+    {
+      "name": "Coupon",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "code", "type": "string", "unique": true },
+        { "name": "description", "type": "string", "nullable": true },
+        {
+          "name": "discount_type",
+          "type": "enum",
+          "options": ["percentage", "fixed"]
+        },
+        {
+          "name": "discount_value",
+          "type": "decimal",
+          "precision": 10,
+          "scale": 2
+        },
+        {
+          "name": "min_order_value",
+          "type": "decimal",
+          "precision": 10,
+          "scale": 2,
+          "nullable": true
+        },
+        {
+          "name": "max_discount",
+          "type": "decimal",
+          "precision": 10,
+          "scale": 2,
+          "nullable": true
+        },
+        { "name": "start_date", "type": "date" },
+        { "name": "end_date", "type": "date" },
+        { "name": "usage_limit", "type": "integer", "nullable": true },
+        { "name": "used_count", "type": "integer", "default": 0 },
+        { "name": "is_active", "type": "boolean", "default": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": []
+    },
+    {
+      "name": "Review",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "product_id", "type": "uuid" },
+        { "name": "user_id", "type": "uuid" },
+        { "name": "rating", "type": "integer" },
+        { "name": "title", "type": "string", "nullable": true },
+        { "name": "content", "type": "text" },
+        { "name": "is_approved", "type": "boolean", "default": false },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Product" },
+        { "type": "belongsTo", "model": "User" }
+      ]
+    },
+    {
+      "name": "Wishlist",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "user_id", "type": "uuid" },
+        { "name": "product_id", "type": "uuid" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "belongsTo", "model": "Product" }
+      ]
+    }
+  ]
+}

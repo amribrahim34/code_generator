@@ -1,368 +1,414 @@
-# Laravel Code Generator
-
-## Table of Contents
-
-1. [Introduction](#introduction)
-2. [Features](#features)
-3. [System Requirements](#system-requirements)
-4. [Installation](#installation)
-5. [Usage](#usage)
-6. [Project Structure](#project-structure)
-7. [Configuration](#configuration)
-8. [Customization](#customization)
-9. [Backend Generation](#backend-generation)
-10. [Frontend Generation](#frontend-generation)
-11. [API Documentation](#api-documentation)
-12. [Testing](#testing)
-13. [Contributing](#contributing)
-14. [Troubleshooting](#troubleshooting)
-15. [Changelog](#changelog)
-16. [License](#license)
-
-## Introduction
-
-The Laravel Code Generator is an advanced, Python-based tool designed to streamline the development process for Laravel and Vue.js applications. By automating the creation of both backend and frontend components, it significantly reduces development time and ensures consistency across your project.
-
-This tool takes a JSON schema as input and generates a complete set of Laravel backend components and Vue.js frontend components for admin panels. It's particularly useful for rapid prototyping, creating MVPs, or kickstarting large-scale projects with a solid foundation.
-
-## Features
-
-### Backend Generation
-
-- **Models**: Eloquent models with relationships, fillable attributes, and type-hinted properties
-- **Migrations**: Database migrations with proper column types and foreign key constraints
-- **Controllers**: RESTful API controllers with standard CRUD operations
-- **Requests**: Form request classes for validation
-- **Resources**: API resources for data transformation
-- **Repositories**: Repository classes and interfaces for data access abstraction
-- **Policies**: Authorization policies integrated with Laravel's policy system
-- **Factories**: Model factories for database seeding and testing
-- **Seeders**: Database seeders for initial data population
-
-### Frontend Generation
-
-- **Vue Components**:
-  - List views with sorting, filtering, and pagination
-  - Form components for creating and editing models
-  - Modal components for quick edits and confirmations
-- **Vuex Store**:
-  - Store modules for each model with actions, mutations, and getters
-  - TypeScript support for type-safe state management
-- **Vue Router**: Automatic route generation for generated components
-- **Admin Panel**: A complete admin panel layout with sidebar navigation
-- **UI Components**: Integration with PrimeVue for a rich set of UI components
-
-### Additional Features
-
-- **Swagger Documentation**: Automatic generation of OpenAPI (Swagger) documentation for API endpoints
-- **Relationship Handling**: Support for various types of Eloquent relationships
-- **Customizable Templates**: Easily modifiable Jinja2 templates for all generated components
-- **Configuration System**: Flexible JSON-based configuration for customizing the generation process
-- **Type Safety**: TypeScript integration for frontend code to ensure type safety
-- **Code Style**: Generated code adheres to Laravel and Vue.js best practices and coding standards
-
-## System Requirements
-
-- Python 3.7+
-- Laravel 8.x+ (for the generated backend code)
-- Vue.js 3.x+ (for the generated frontend code)
-- Composer (for Laravel dependencies)
-- Node.js 14+ and npm 6+ (for frontend dependencies)
-- Git (for version control and installation)
-
-## Installation
-
-1. Clone the repository:
-
-   ```
-   git clone https://github.com/your-username/laravel-code-generator.git
-   ```
-
-2. Navigate to the project directory:
-
-   ```
-   cd laravel-code-generator
-   ```
-
-3. Create and activate a virtual environment (optional but recommended):
-
-   ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-   ```
-
-4. Install the required Python dependencies:
-
-   ```
-   pip install -r requirements.txt
-   ```
-
-5. Install frontend dependencies:
-
-   ```
-   cd frontend
-   npm install
-   ```
-
-6. Copy the example configuration file:
-
-   ```
-   cp config/default_config.example.json config/default_config.json
-   ```
-
-7. Edit `config/default_config.json` to match your project requirements.
-
-## Usage
-
-1. Prepare your input schema JSON file. You can use the provided example in `input_examples/ecommerce_schema.json` as a starting point.
-
-2. Run the code generator:
-
-   ```
-   python src/main.py --schema path/to/your/schema.json --config config/default_config.json
-   ```
-
-3. The generated code will be output to the directories specified in your configuration.
-
-4. Review the generated code and make any necessary adjustments.
-
-5. Integrate the generated code into your Laravel and Vue.js projects.
-
-## Project Structure
-
-```
-laravel-code-generator/
-├── src/
-│   ├── core/
-│   │   ├── models/
-│   │   │   └── schema.py
-│   │   ├── interfaces/
-│   │   │   └── generator.py
-│   │   └── utils/
-│   │       └── string_utils.py
-│   ├── infrastructure/
-│   │   ├── config_loader.py
-│   │   ├── schema_parser.py
-│   │   └── template_reader.py
-│   ├── generators/
-│   │   ├── backend/
-│   │   │   ├── model_generator.py
-│   │   │   ├── migration_generator.py
-│   │   │   ├── controller_generator.py
-│   │   │   ├── request_generator.py
-│   │   │   ├── resource_generator.py
-│   │   │   ├── repository_generator.py
-│   │   │   ├── policy_generator.py
-│   │   │   ├── factory_generator.py
-│   │   │   └── seeder_generator.py
-│   │   └── frontend/
-│   │       ├── component_generator.py
-│   │       ├── store_generator.py
-│   │       ├── router_generator.py
-│   │       └── admin_panel_generator.py
-│   ├── templates/
-│   │   ├── backend/
-│   │   └── frontend/
-│   └── main.py
-├── tests/
-│   ├── unit/
-│   └── integration/
-├── config/
-│   └── default_config.json
-├── input_examples/
-│   └── ecommerce_schema.json
-├── output/
-│   ├── backend/
-│   └── frontend/
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   └── package.json
-├── requirements.txt
-├── setup.py
-└── README.md
-```
-
-## Configuration
-
-The `config/default_config.json` file allows you to customize various aspects of the code generation process. Key configuration options include:
-
-- `output_directory`: Root directory for generated code
-- `backend`: Configuration for backend generation
-  - `output_dir`: Directory for Laravel backend code
-  - `namespace`: Base namespace for Laravel classes
-  - `use_soft_deletes`: Enable soft deletes in models
-- `frontend`: Configuration for frontend generation
-  - `output_dir`: Directory for Vue.js frontend code
-  - `use_typescript`: Enable TypeScript for frontend code
-- `database`: Database configuration (engine, charset, collation)
-- `naming`: Naming conventions for files and classes
-- `templates`: Custom paths for code templates
-- `swagger`: Configuration for Swagger documentation generation
-
-Refer to the comments in the configuration file for detailed explanations of each option.
-
-## Customization
-
-### Modifying Templates
-
-You can customize the generated code by modifying the template files in the `src/templates/` directory. Templates use the Jinja2 templating engine.
-
-1. Locate the template you want to modify (e.g., `src/templates/backend/model_stub.php`)
-2. Make your desired changes, using Jinja2 syntax for dynamic content
-3. The changes will be reflected in subsequent code generations
-
-### Adding New Generators
-
-To add a new generator:
-
-1. Create a new Python file in `src/generators/backend/` or `src/generators/frontend/`
-2. Implement the `Generator` interface defined in `src/core/interfaces/generator.py`
-3. Add appropriate templates in `src/templates/`
-4. Register the new generator in `src/main.py`
-
-Example of a new generator class:
-
-```python
-from src.core.interfaces.generator import Generator
-
-class NewGenerator(Generator):
-    def __init__(self, config):
-        self.config = config
-
-    def generate(self, model):
-        # Implementation here
-        pass
-```
-
-## Backend Generation
-
-The backend generation creates the following Laravel components:
-
-### Models
-
-- Located in `app/Models/`
-- Includes fillable attributes, relationships, and type-hinted properties
-- Supports soft deletes if enabled in config
-
-### Migrations
-
-- Located in `database/migrations/`
-- Creates tables with appropriate column types
-- Handles foreign key constraints for relationships
-
-### Controllers
-
-- Located in `app/Http/Controllers/`
-- Implements RESTful API actions (index, store, show, update, destroy)
-- Uses repository pattern for data access
-
-### Requests
-
-- Located in `app/Http/Requests/`
-- Implements form validation rules based on model attributes
-
-### Resources
-
-- Located in `app/Http/Resources/`
-- Transforms model data for API responses
-
-### Repositories
-
-- Located in `app/Repositories/`
-- Implements data access logic
-- Includes an interface and concrete implementation
-
-### Policies
-
-- Located in `app/Policies/`
-- Defines authorization rules for model actions
-
-### Factories
-
-- Located in `database/factories/`
-- Creates model factories for testing and seeding
-
-### Seeders
-
-- Located in `database/seeders/`
-- Populates the database with initial data
-
-## Frontend Generation
-
-The frontend generation creates a Vue.js 3 admin panel with the following components:
-
-### Vue Components
-
-- List views (`src/views/`)
-- Form components (`src/components/forms/`)
-- Modal components (`src/components/modals/`)
-
-### Vuex Store
-
-- Store modules for each model (`src/store/modules/`)
-- Actions for API calls
-- Mutations for state updates
-- Getters for derived state
-
-### Vue Router
-
-- Route configuration (`src/router/index.js`)
-- Automatic route generation for list and form views
-
-### Admin Panel
-
-- Layout component with sidebar navigation
-- Integration with PrimeVue UI components
-
-### TypeScript Support
-
-- Type definitions for models and store state
-- Type-safe component props and emits
-
-## API Documentation
-
-The generator creates Swagger (OpenAPI) documentation for your API endpoints:
-
-- Located in `public/api-docs/`
-- Includes endpoint descriptions, request parameters, and response schemas
-- Can be viewed using Swagger UI
-
-## Testing
-
-To run the test suite:
-
-```
-python -m pytest tests/
-```
-
-This will execute both unit and integration tests. Ensure you have a test database configured in your `.env.testing` file.
-
-## Contributing
-
-We welcome contributions to the Laravel Code Generator! Please follow these steps:
-
-1. Fork the repository
-2. Create a new branch: `git checkout -b feature-name`
-3. Make your changes and commit them: `git commit -m 'Add some feature'`
-4. Push to the branch: `git push origin feature-name`
-5. Submit a pull request
-
-Please ensure your code adheres to our coding standards and include tests for new features.
-
-## Troubleshooting
-
-If you encounter any issues:
-
-1. Check the logs in `storage/logs/laravel.log`
-2. Ensure all dependencies are installed and up to date
-3. Verify your configuration in `config/default_config.json`
-4. Check the [GitHub Issues](https://github.com/your-username/laravel-code-generator/issues) page for known problems or to report a new issue
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.
-
-## License
-
-The Laravel Code Generator is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Unified Code Generator Structure and Flow
+
+## 1. Core (Domain Layer)
+
+### Entities
+
+#### 1.1 schema.py
+
+- **Purpose**: Represents the overall structure of the input schema.
+- **Contents**:
+  - `Schema` class:
+    - Properties: `models` (List[Model]), `global_options` (Dict)
+    - Methods:
+      - `add_model(model: Model) -> None`
+      - `get_model(name: str) -> Model`
+      - `validate() -> List[str]`
+      - `to_dict() -> Dict`
+  - `SchemaValidator` class:
+    - Methods:
+      - `validate_relationships() -> List[str]`
+      - `validate_unique_model_names() -> List[str]`
+- **Usage**: Central to schema parsing and validation. The `ParseInputSchema` use case creates and populates a `Schema` instance.
+
+#### 1.2 model.py
+
+- **Purpose**: Represents a single model in the schema.
+- **Contents**:
+  - `Model` class:
+    - Properties: `name` (str), `table_name` (str), `attributes` (List[Attribute]), `relationships` (List[Relationship]), `options` (Dict)
+    - Methods:
+      - `add_attribute(attribute: Attribute) -> None`
+      - `add_relationship(relationship: Relationship) -> None`
+      - `get_primary_key() -> Attribute`
+      - `get_fillable_attributes() -> List[Attribute]`
+      - `generate_laravel_model_code() -> str`
+      - `generate_vue_interface_code() -> str`
+- **Usage**: Used by various generators to create model-specific code for both backend and frontend.
+
+#### 1.3 relationship.py
+
+- **Purpose**: Represents relationships between models.
+- **Contents**:
+  - `Relationship` class:
+    - Properties: `type` (str), `related_model` (str), `foreign_key` (str), `local_key` (str)
+    - Methods:
+      - `to_laravel_method() -> str`
+      - `to_typescript_property() -> str`
+- **Usage**: Used in model generation to create relationship methods and properties.
+
+#### 1.4 attribute.py
+
+- **Purpose**: Represents individual attributes of a model.
+- **Contents**:
+  - `Attribute` class:
+    - Properties: `name` (str), `type` (str), `nullable` (bool), `default` (Any), `unique` (bool)
+    - Methods:
+      - `to_migration_column() -> str`
+      - `to_typescript_property() -> str`
+      - `to_form_input() -> str`
+- **Usage**: Used by various generators to create attribute-specific code.
+
+### Use Cases
+
+#### 1.5 generate_backend_code.py
+
+- **Purpose**: Orchestrates backend code generation.
+- **Contents**:
+  - `GenerateBackendCode` class:
+    - Methods:
+      - `execute(schema: Schema) -> Dict[str, str]`
+      - `generate_models() -> Dict[str, str]`
+      - `generate_migrations() -> Dict[str, str]`
+      - `generate_controllers() -> Dict[str, str]`
+- **Usage**: Called by the `BackendGenerationService` to generate all backend code.
+
+#### 1.6 generate_frontend_code.py
+
+- **Purpose**: Orchestrates frontend code generation.
+- **Contents**:
+  - `GenerateFrontendCode` class:
+    - Methods:
+      - `execute(schema: Schema) -> Dict[str, str]`
+      - `generate_components() -> Dict[str, str]`
+      - `generate_store_modules() -> Dict[str, str]`
+      - `generate_routes() -> str`
+- **Usage**: Called by the `FrontendGenerationService` to generate all frontend code.
+
+#### 1.7 generate_api_documentation.py
+
+- **Purpose**: Generates API documentation.
+- **Contents**:
+  - `GenerateAPIDocumentation` class:
+    - Methods:
+      - `execute(schema: Schema) -> str`
+      - `generate_swagger_json() -> Dict`
+- **Usage**: Called to create Swagger/OpenAPI documentation.
+
+#### 1.8 parse_input_schema.py
+
+- **Purpose**: Parses and validates the input schema.
+- **Contents**:
+  - `ParseInputSchema` class:
+    - Methods:
+      - `execute(schema_data: Dict) -> Schema`
+      - `validate_schema_structure(schema_data: Dict) -> None`
+- **Usage**: First step in the generation process, creating the `Schema` object.
+
+### Interfaces (Ports)
+
+#### 1.9 schema_parser.py
+
+- **Purpose**: Defines schema parsing interface.
+- **Contents**:
+  - `ISchemaParser` interface:
+    - Methods:
+      - `parse(schema_data: Dict) -> Schema`
+      - `validate(schema_data: Dict) -> None`
+- **Usage**: Implemented by concrete schema parsers.
+
+#### 1.10 template_renderer.py
+
+- **Purpose**: Defines template rendering interface.
+- **Contents**:
+  - `ITemplateRenderer` interface:
+    - Methods:
+      - `render(template_name: str, context: Dict) -> str`
+      - `load_template(template_name: str) -> str`
+- **Usage**: Implemented by concrete template renderers.
+
+#### 1.11 code_generator.py
+
+- **Purpose**: Defines code generator interface.
+- **Contents**:
+  - `ICodeGenerator` interface:
+    - Methods:
+      - `generate(model: Model) -> str`
+      - `get_file_path(model: Model) -> str`
+- **Usage**: Implemented by all code generators.
+
+#### 1.12 config_loader.py
+
+- **Purpose**: Defines configuration loading interface.
+- **Contents**:
+  - `IConfigLoader` interface:
+    - Methods:
+      - `load(config_path: str) -> Dict`
+      - `get(key: str, default: Any = None) -> Any`
+- **Usage**: Implemented by configuration loaders.
+
+#### 1.13 output_writer.py
+
+- **Purpose**: Defines interface for writing output files.
+- **Contents**:
+  - `IOutputWriter` interface:
+    - Methods:
+      - `write_file(file_path: str, content: str) -> None`
+      - `create_directory(directory_path: str) -> None`
+- **Usage**: Implemented by concrete output writers.
+
+#### 1.14 logger.py
+
+- **Purpose**: Defines logging interface.
+- **Contents**:
+  - `ILogger` interface:
+    - Methods:
+      - `info(message: str) -> None`
+      - `warning(message: str) -> None`
+      - `error(message: str) -> None`
+- **Usage**: Implemented by concrete loggers.
+
+## 2. Application Layer
+
+### Services
+
+#### 2.1 backend_generation_service.py
+
+- **Purpose**: Coordinates backend code generation.
+- **Contents**:
+  - `BackendGenerationService` class:
+    - Methods:
+      - `generate(schema: Schema) -> GenerationResponseDTO`
+- **Usage**: Called by the main application to generate backend code.
+
+#### 2.2 frontend_generation_service.py
+
+- **Purpose**: Coordinates frontend code generation.
+- **Contents**:
+  - `FrontendGenerationService` class:
+    - Methods:
+      - `generate(schema: Schema) -> GenerationResponseDTO`
+- **Usage**: Called by the main application to generate frontend code.
+
+#### 2.3 api_documentation_service.py
+
+- **Purpose**: Manages API documentation generation.
+- **Contents**:
+  - `APIDocumentationService` class:
+    - Methods:
+      - `generate(schema: Schema) -> str`
+- **Usage**: Called to generate API documentation.
+
+#### 2.4 schema_validation_service.py
+
+- **Purpose**: Validates input schemas.
+- **Contents**:
+  - `SchemaValidationService` class:
+    - Methods:
+      - `validate(schema_data: Dict) -> List[str]`
+- **Usage**: Called before schema parsing to ensure valid input.
+
+### DTOs
+
+#### 2.5 generation_request_dto.py
+
+- **Purpose**: Represents generation request data.
+- **Contents**:
+  - `GenerationRequestDTO` class:
+    - Properties: `schema_data` (Dict), `config` (Dict)
+- **Usage**: Used to pass generation request data between layers.
+
+#### 2.6 generation_response_dto.py
+
+- **Purpose**: Represents generation response data.
+- **Contents**:
+  - `GenerationResponseDTO` class:
+    - Properties: `generated_files` (Dict[str, str]), `warnings` (List[str]), `errors` (List[str])
+- **Usage**: Used to return generation results.
+
+## 3. Infrastructure Layer
+
+### Adapters
+
+#### 3.1 json_schema_parser.py
+
+- **Purpose**: Implements JSON schema parsing.
+- **Contents**:
+  - `JSONSchemaParser` class (implements `ISchemaParser`):
+    - Methods:
+      - `parse(schema_data: Dict) -> Schema`
+      - `validate(schema_data: Dict) -> None`
+- **Usage**: Used to parse JSON input schemas.
+
+#### 3.2 jinja_template_renderer.py
+
+- **Purpose**: Implements Jinja2 template rendering.
+- **Contents**:
+  - `JinjaTemplateRenderer` class (implements `ITemplateRenderer`):
+    - Methods:
+      - `render(template_name: str, context: Dict) -> str`
+      - `load_template(template_name: str) -> str`
+- **Usage**: Used by generators to render templates.
+
+#### 3.3 file_system_output_writer.py
+
+- **Purpose**: Implements file system writing.
+- **Contents**:
+  - `FileSystemOutputWriter` class (implements `IOutputWriter`):
+    - Methods:
+      - `write_file(file_path: str, content: str) -> None`
+      - `create_directory(directory_path: str) -> None`
+- **Usage**: Used to write generated code to files.
+
+#### 3.4 json_config_loader.py
+
+- **Purpose**: Implements JSON configuration loading.
+- **Contents**:
+  - `JSONConfigLoader` class (implements `IConfigLoader`):
+    - Methods:
+      - `load(config_path: str) -> Dict`
+      - `get(key: str, default: Any = None) -> Any`
+- **Usage**: Used to load and access configuration.
+
+#### 3.5 console_logger.py
+
+- **Purpose**: Implements console logging.
+- **Contents**:
+  - `ConsoleLogger` class (implements `ILogger`):
+    - Methods:
+      - `info(message: str) -> None`
+      - `warning(message: str) -> None`
+      - `error(message: str) -> None`
+- **Usage**: Used for logging throughout the application.
+
+### External Services
+
+#### 3.6 swagger_generator.py
+
+- **Purpose**: Generates Swagger/OpenAPI documentation.
+- **Contents**:
+  - `SwaggerGenerator` class:
+    - Methods:
+      - `generate(schema: Schema) -> Dict`
+- **Usage**: Used by API documentation service.
+
+## 4. Presentation Layer
+
+### CLI
+
+#### 4.1 command_line_interface.py
+
+- **Purpose**: Provides CLI for the generator.
+- **Contents**:
+  - `CommandLineInterface` class:
+    - Methods:
+      - `run() -> None`
+      - `parse_arguments() -> argparse.Namespace`
+- **Usage**: Entry point for CLI usage of the generator.
+
+### API
+
+#### 4.2 restful_api.py
+
+- **Purpose**: Provides RESTful API for the generator.
+- **Contents**:
+  - `RESTfulAPI` class:
+    - Methods:
+      - `generate_code() -> Response`
+      - `get_schema() -> Response`
+- **Usage**: Entry point for API usage of the generator (for future expansion).
+
+## 5. Generators
+
+### Backend (Laravel)
+
+#### 5.1 model_generator.py
+
+- **Purpose**: Generates Laravel Eloquent models.
+- **Contents**:
+  - `LaravelModelGenerator` class (implements `ICodeGenerator`):
+    - Methods:
+      - `generate(model: Model) -> str`
+      - `generate_relationship_method(relationship: Relationship) -> str`
+      - `get_file_path(model: Model) -> str`
+- **Usage**: Used to generate Laravel model classes.
+
+#### 5.2 migration_generator.py
+
+- **Purpose**: Generates Laravel migrations.
+- **Contents**:
+  - `LaravelMigrationGenerator` class (implements `ICodeGenerator`):
+    - Methods:
+      - `generate(model: Model) -> str`
+      - `generate_column_definition(attribute: Attribute) -> str`
+      - `generate_foreign_key_constraints(model: Model) -> List[str]`
+      - `get_file_path(model: Model) -> str`
+- **Usage**: Used to generate Laravel migration files.
+
+#### 5.3 controller_generator.py
+
+- **Purpose**: Generates Laravel controllers.
+- **Contents**:
+  - `LaravelControllerGenerator` class (implements `ICodeGenerator`):
+    - Methods:
+      - `generate(model: Model) -> str`
+      - `generate_index_method(model: Model) -> str`
+      - `generate_store_method(model: Model) -> str`
+      - `generate_update_method(model: Model) -> str`
+      - `get_file_path(model: Model) -> str`
+- **Usage**: Used to generate Laravel controller classes.
+
+#### 5.4 request_generator.py
+
+- **Purpose**: Generates Laravel form requests.
+- **Contents**:
+  - `LaravelRequestGenerator` class (implements `ICodeGenerator`):
+    - Methods:
+      - `generate(model: Model, operation: str) -> str`
+      - `generate_validation_rules(model: Model, operation: str) -> Dict[str, str]`
+      - `get_file_path(model: Model, operation: str) -> str`
+- **Usage**: Used to generate Laravel form request classes.
+
+#### 5.5 resource_generator.py
+
+- **Purpose**: Generates Laravel API resources.
+- **Contents**:
+  - `LaravelResourceGenerator` class (implements `ICodeGenerator`):
+    - Methods:
+      - `generate(model: Model) -> str`
+      - `generate_to_array_method(model: Model) -> str`
+      - `get_file_path(model: Model) -> str`
+- **Usage**: Used to generate Laravel API resource classes.
+
+#### 5.6 repository_generator.py
+
+- **Purpose**: Generates Laravel repositories.
+- **Contents**:
+  - `LaravelRepositoryGenerator` class (implements `ICodeGenerator`):
+    - Methods:
+      - `generate(model: Model) -> str`
+      - `generate_crud_methods(model: Model) -> str`
+      - `get_file_path(model: Model) -> str`
+- **Usage**: Used to generate Laravel repository classes.
+
+#### 5.7 repository_interface_generator.py
+
+- **Purpose**: Generates Laravel repository interfaces.
+- **Contents**:
+  - `LaravelRepositoryInterfaceGenerator` class (implements `ICodeGenerator`):
+    - Methods:
+      - `generate(model: Model) -> str`
+      - `generate_method_signatures(model: Model) -> str`
+      - `get_file_path(model: Model) -> str`
+- **Usage**: Used to generate Laravel repository interface files.
+
+#### 5.8 policy_generator.py
+
+- **Purpose**: Generates Laravel policies.
+- **Contents**:
+  - `LaravelPolicyGenerator` class (implements `ICodeGenerator`):
+    - Methods:
+      - `generate(model: Model) -> str`
+      - `generate_policy_methods(model: Model) -> str`
+      - `get_file_path(model: Model) -> str`
+- **Usage**:

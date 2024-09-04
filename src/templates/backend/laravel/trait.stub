@@ -1,0 +1,100 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Builder;
+
+trait {{ trait_name }}
+{
+    {% if trait_type == 'Filterable' %}
+    /**
+     * Scope a query to filter by given attributes.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  array  $filters
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilter(Builder $query, array $filters)
+    {
+        foreach ($filters as $field => $value) {
+            if (in_array($field, $this->filterable ?? [])) {
+                $query->where($field, $value);
+            }
+        }
+
+        return $query;
+    }
+
+    /**
+     * The attributes that are filterable.
+     *
+     * @var array
+     */
+    protected $filterable = [
+        {% for attribute in attributes %}
+        '{{ attribute.name }}',
+        {% endfor %}
+    ];
+    {% endif %}
+
+    {% if trait_type == 'Searchable' %}
+    /**
+     * Scope a query to search in given attributes.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $search
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearch(Builder $query, $search)
+    {
+        return $query->where(function ($query) use ($search) {
+            foreach ($this->searchable as $field) {
+                $query->orWhere($field, 'LIKE', "%{$search}%");
+            }
+        });
+    }
+
+    /**
+     * The attributes that are searchable.
+     *
+     * @var array
+     */
+    protected $searchable = [
+        {% for attribute in attributes %}
+        '{{ attribute.name }}',
+        {% endfor %}
+    ];
+    {% endif %}
+
+    {% if trait_type == 'Sortable' %}
+    /**
+     * Scope a query to sort by given attribute.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $field
+     * @param  string  $direction
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSort(Builder $query, $field = 'created_at', $direction = 'desc')
+    {
+        if (in_array($field, $this->sortable)) {
+            return $query->orderBy($field, $direction);
+        }
+
+        return $query;
+    }
+
+    /**
+     * The attributes that are sortable.
+     *
+     * @var array
+     */
+    protected $sortable = [
+        {% for attribute in attributes %}
+        '{{ attribute.name }}',
+        {% endfor %}
+        'created_at',
+        'updated_at',
+    ];
+    {% endif %}
+}

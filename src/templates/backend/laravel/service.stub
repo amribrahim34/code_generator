@@ -1,0 +1,75 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ model_namespace }}\{{ model_name }};
+use {{ repository_namespace }}\{{ model_name }}RepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+class {{ service_name }}
+{
+    protected ${{ model_variable }}Repository;
+
+    public function __construct({{ model_name }}RepositoryInterface ${{ model_variable }}Repository)
+    {
+        $this->{{ model_variable }}Repository = ${{ model_variable }}Repository;
+    }
+
+    public function getAll(): Collection
+    {
+        return $this->{{ model_variable }}Repository->all();
+    }
+
+    public function getPaginated(int $perPage = 15): LengthAwarePaginator
+    {
+        return $this->{{ model_variable }}Repository->paginate($perPage);
+    }
+
+    public function findById(int $id): ?{{ model_name }}
+    {
+        return $this->{{ model_variable }}Repository->find($id);
+    }
+
+    public function create(array $data): {{ model_name }}
+    {
+        // Add any business logic here before creation
+        return $this->{{ model_variable }}Repository->create($data);
+    }
+
+    public function update({{ model_name }} ${{ model_variable }}, array $data): bool
+    {
+        // Add any business logic here before update
+        return $this->{{ model_variable }}Repository->update(${{ model_variable }}, $data);
+    }
+
+    public function delete({{ model_name }} ${{ model_variable }}): bool
+    {
+        // Add any business logic here before deletion
+        return $this->{{ model_variable }}Repository->delete(${{ model_variable }});
+    }
+
+    {% if service_type == 'Admin' %}
+    public function getStatistics(): array
+    {
+        // Implement admin-specific statistics
+        return [];
+    }
+    {% endif %}
+
+    {% if service_type == 'CustomerWebsite' %}
+    public function getFeatured(): Collection
+    {
+        return $this->{{ model_variable }}Repository->getFeatured();
+    }
+    {% endif %}
+
+    {% if service_type == 'MobileApp' %}
+    public function getNearby(float $latitude, float $longitude, float $radius = 10): Collection
+    {
+        return $this->{{ model_variable }}Repository->getByLocation($latitude, $longitude, $radius);
+    }
+    {% endif %}
+
+    // Add more methods as needed for your business logic
+}

@@ -1,0 +1,69 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+use {{ model_namespace }}\{{ model_name }};
+
+class {{ notification_name }} extends Notification implements ShouldQueue
+{
+    use Queueable;
+
+    protected ${{ model_variable }};
+
+    /**
+     * Create a new notification instance.
+     *
+     * @param {{ model_name }} ${{ model_variable }}
+     * @return void
+     */
+    public function __construct({{ model_name }} ${{ model_variable }})
+    {
+        $this->{{ model_variable }} = ${{ model_variable }};
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function via($notifiable)
+    {
+        return ['mail', 'database'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+                    ->line('{{ model_name }} has been {{ notification_type|lower }}.')
+                    ->action('View {{ model_name }}', url('/{{ model_variable }}s/' . $this->{{ model_variable }}->id))
+                    ->line('Thank you for using our application!');
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function toArray($notifiable)
+    {
+        return [
+            'id' => $this->{{ model_variable }}->id,
+            'type' => '{{ model_name }} {{ notification_type }}',
+            {% for attribute in attributes %}
+            '{{ attribute.name }}' => $this->{{ model_variable }}->{{ attribute.name }},
+            {% endfor %}
+        ];
+    }
+}

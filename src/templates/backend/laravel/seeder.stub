@@ -1,0 +1,50 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Seeder;
+use {{ model_namespace }}\{{ model_name }};
+use Illuminate\Support\Facades\DB;
+
+class {{ seeder_name }} extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        // Clear the table before seeding
+        DB::table('{{ table_name }}')->truncate();
+
+        {% if seeder_type == 'Admin' %}
+        // Create admin-specific data
+        {{ model_name }}::factory()->count(10)->create([
+            'is_admin' => true,
+            // Add other admin-specific attributes here
+        ]);
+        {% elif seeder_type == 'CustomerWebsite' %}
+        // Create customer website-specific data
+        {{ model_name }}::factory()->count(50)->create([
+            'is_verified' => true,
+            // Add other customer website-specific attributes here
+        ]);
+        {% elif seeder_type == 'MobileApp' %}
+        // Create mobile app-specific data
+        {{ model_name }}::factory()->count(100)->create([
+            'device_type' => $this->faker->randomElement(['ios', 'android']),
+            // Add other mobile app-specific attributes here
+        ]);
+        {% endif %}
+
+        // Add some custom entries
+        {{ model_name }}::create([
+            {% for attribute in attributes %}
+            '{{ attribute.name }}' => '{{ "Custom " ~ attribute.name }}',
+            {% endfor %}
+        ]);
+
+        $this->command->info('{{ model_name }} table seeded!');
+    }
+}
