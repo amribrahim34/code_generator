@@ -1,0 +1,77 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+
+const [[screen_name]] = () => {
+  const [data, setData] = useState([]);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('API_ENDPOINT/[[kebab_name]]s');
+      setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.item}
+      onPress={() => navigation.navigate('[[pascal_name]]Details', { id: item.id })}
+    >
+      [[for attribute in attributes]]
+      <Text style={styles.itemText}>[[attribute.label]]: {item.[[attribute.name]]}</Text>
+      [[endfor]]
+    </TouchableOpacity>
+  );
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate('[[pascal_name]]Form')}
+      >
+        <Text style={styles.addButtonText}>Add New [[model_name]]</Text>
+      </TouchableOpacity>
+      <FlatList
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  item: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  itemText: {
+    fontSize: 16,
+  },
+  addButton: {
+    backgroundColor: '#007AFF',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  addButtonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 16,
+  },
+});
+
+export default [[screen_name]];

@@ -1,0 +1,99 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import axios from 'axios';
+
+const [[screen_name]] = () => {
+  const [data, setData] = useState(null);
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`API_ENDPOINT/[[kebab_name]]s/${route.params.id}`);
+      setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleEdit = () => {
+    navigation.navigate('[[pascal_name]]Form', { id: route.params.id });
+  };
+
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`API_ENDPOINT/[[kebab_name]]s/${route.params.id}`);
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  };
+
+  if (!data) {
+    return <Text>Loading...</Text>;
+  }
+
+  return (
+    <ScrollView style={styles.container}>
+      [[for attribute in attributes]]
+      <View style={styles.row}>
+        <Text style={styles.label}>[[attribute.label]]:</Text>
+        <Text style={styles.value}>{data.[[attribute.name]]}</Text>
+      </View>
+      [[endfor]]
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
+          <Text style={styles.buttonText}>Edit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+          <Text style={styles.buttonText}>Delete</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  row: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginRight: 10,
+  },
+  value: {
+    fontSize: 16,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 20,
+  },
+  editButton: {
+    backgroundColor: '#007AFF',
+    padding: 10,
+    borderRadius: 5,
+  },
+  deleteButton: {
+    backgroundColor: '#FF3B30',
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+});
+
+export default [[screen_name]];

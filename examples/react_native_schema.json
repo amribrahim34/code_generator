@@ -1,0 +1,252 @@
+{
+  "appName": "EcommerceAdminApp",
+  "version": "1.0.0",
+  "description": "Admin panel for managing an e-commerce platform",
+  "models": [
+    {
+      "name": "Product",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "string",
+          "primary": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "price",
+          "type": "number",
+          "required": true
+        },
+        {
+          "name": "stockQuantity",
+          "type": "number",
+          "required": true
+        },
+        {
+          "name": "category",
+          "type": "reference",
+          "reference": "Category",
+          "required": true
+        },
+        {
+          "name": "images",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "string",
+          "primary": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "description",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "string",
+          "primary": true
+        },
+        {
+          "name": "customer",
+          "type": "reference",
+          "reference": "Customer",
+          "required": true
+        },
+        {
+          "name": "items",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "product": {
+                "type": "reference",
+                "reference": "Product"
+              },
+              "quantity": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        {
+          "name": "totalAmount",
+          "type": "number",
+          "required": true
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "enum": [
+            "pending",
+            "processing",
+            "shipped",
+            "delivered",
+            "cancelled"
+          ],
+          "required": true
+        },
+        {
+          "name": "createdAt",
+          "type": "date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "Customer",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "string",
+          "primary": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "phone",
+          "type": "string"
+        },
+        {
+          "name": "address",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "screens": [
+    {
+      "name": "Dashboard",
+      "components": ["SalesSummary", "RecentOrders", "LowStockAlert"]
+    },
+    {
+      "name": "ProductList",
+      "components": ["ProductTable", "ProductFilter", "AddProductButton"]
+    },
+    {
+      "name": "ProductDetails",
+      "components": ["ProductForm", "ProductImages"]
+    },
+    {
+      "name": "CategoryList",
+      "components": ["CategoryTable", "AddCategoryButton"]
+    },
+    {
+      "name": "OrderList",
+      "components": ["OrderTable", "OrderFilter"]
+    },
+    {
+      "name": "OrderDetails",
+      "components": [
+        "OrderSummary",
+        "CustomerInfo",
+        "OrderItems",
+        "UpdateStatusButton"
+      ]
+    },
+    {
+      "name": "CustomerList",
+      "components": ["CustomerTable", "CustomerFilter"]
+    },
+    {
+      "name": "CustomerDetails",
+      "components": ["CustomerInfo", "CustomerOrders"]
+    }
+  ],
+  "navigation": {
+    "type": "drawer",
+    "screens": [
+      {
+        "name": "Dashboard",
+        "icon": "dashboard"
+      },
+      {
+        "name": "Products",
+        "icon": "shopping-bag",
+        "screens": ["ProductList", "ProductDetails"]
+      },
+      {
+        "name": "Categories",
+        "icon": "list",
+        "screens": ["CategoryList"]
+      },
+      {
+        "name": "Orders",
+        "icon": "shopping-cart",
+        "screens": ["OrderList", "OrderDetails"]
+      },
+      {
+        "name": "Customers",
+        "icon": "users",
+        "screens": ["CustomerList", "CustomerDetails"]
+      }
+    ]
+  },
+  "state": {
+    "product": {
+      "actions": [
+        "fetchProducts",
+        "fetchProduct",
+        "createProduct",
+        "updateProduct",
+        "deleteProduct"
+      ]
+    },
+    "category": {
+      "actions": [
+        "fetchCategories",
+        "fetchCategory",
+        "createCategory",
+        "updateCategory",
+        "deleteCategory"
+      ]
+    },
+    "order": {
+      "actions": ["fetchOrders", "fetchOrder", "updateOrderStatus"]
+    },
+    "customer": {
+      "actions": ["fetchCustomers", "fetchCustomer"]
+    },
+    "dashboard": {
+      "actions": [
+        "fetchSalesSummary",
+        "fetchRecentOrders",
+        "fetchLowStockProducts"
+      ]
+    }
+  }
+}

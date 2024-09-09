@@ -23,6 +23,9 @@ class CommandLineInterface:
         parser.add_argument("--config", default="config/default_config.json", help="Path to the configuration JSON file")
         parser.add_argument("--output", default="output", help="Output directory for generated code")
         parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], help="Set the logging level")
+        parser.add_argument("--backend-only", action="store_true", help="Generate only backend code")
+        parser.add_argument("--frontend-only", action="store_true", help="Generate only frontend code")
+        parser.add_argument("--mobile-only", action="store_true", help="Generate only React Native mobile code")
         return parser
 
     def _setup_logger(self) -> logging.Logger:
@@ -44,7 +47,10 @@ class CommandLineInterface:
         self.config_manager.load_config()
         self.config_manager.update_config({
             "schema_path": args.schema,
-            "output_directory": args.output
+            "output_directory": args.output,
+            "generate_backend": not (args.frontend_only or args.mobile_only),
+            "generate_frontend": not (args.backend_only or args.mobile_only),
+            "generate_mobile": not (args.backend_only or args.frontend_only)
         })
         self.config_manager.validate_config()
 

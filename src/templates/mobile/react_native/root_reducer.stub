@@ -1,0 +1,12 @@
+import { combineReducers } from 'redux';
+[[for model in models]]
+import [[model.snake_name]]Reducer from './reducers/[[model.snake_name]]Reducer';
+[[endfor]]
+
+const rootReducer = combineReducers({
+  [[for model in models]]
+  [[model.snake_name]]: [[model.snake_name]]Reducer,
+  [[endfor]]
+});
+
+export default rootReducer;

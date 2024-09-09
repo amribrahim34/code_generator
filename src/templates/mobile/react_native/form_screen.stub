@@ -1,0 +1,99 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import axios from 'axios';
+
+const [[screen_name]] = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const [formData, setFormData] = useState({
+    [[for attribute in attributes]]
+    [[attribute.name]]: '',
+    [[endfor]]
+  });
+
+  useEffect(() => {
+    if (route.params?.id) {
+      fetchData(route.params.id);
+    }
+  }, [route.params?.id]);
+
+  const fetchData = async (id) => {
+    try {
+      const response = await axios.get(`API_ENDPOINT/[[kebab_name]]s/${id}`);
+      setFormData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (route.params?.id) {
+        await axios.put(`API_ENDPOINT/[[kebab_name]]s/${route.params.id}`, formData);
+      } else {
+        await axios.post('API_ENDPOINT/[[kebab_name]]s', formData);
+      }
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  };
+
+  return (
+    <ScrollView style={styles.container}>
+      [[for attribute in attributes]]
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>[[attribute.label]][[if attribute.is_required]]*[[endif]]</Text>
+        <TextInput
+          style={styles.input}
+          value={formData.[[attribute.name]]}
+          onChangeText={(text) => setFormData({ ...formData, [[attribute.name]]: text })}
+          [[if attribute.type == 'number']]
+          keyboardType="numeric"
+          [[elif attribute.type == 'boolean']]
+          keyboardType="numeric"
+          placeholder="0 for false, 1 for true"
+          [[endif]]
+        />
+      </View>
+      [[endfor]]
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Submit</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  inputContainer: {
+    marginBottom: 15,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    fontSize: 16,
+  },
+  submitButton: {
+    backgroundColor: '#007AFF',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: 'white',
+    fontSize: 18,
+  },
+});
+
+export default [[screen_name]];

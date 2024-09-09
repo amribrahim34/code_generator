@@ -1,0 +1,43 @@
+import {
+    FETCH_[[snake_name]]S_REQUEST,
+    FETCH_[[snake_name]]S_SUCCESS,
+    FETCH_[[snake_name]]S_FAILURE,
+    CREATE_[[snake_name]]_SUCCESS,
+    UPDATE_[[snake_name]]_SUCCESS,
+    DELETE_[[snake_name]]_SUCCESS,
+  } from '../actions/[[snake_name]]Actions';
+  
+  const initialState = {
+    [[camel_name]]s: [],
+    loading: false,
+    error: null,
+  };
+  
+  const [[camel_name]]Reducer = (state = initialState, action) => {
+    switch (action.type) {
+      case FETCH_[[snake_name]]S_REQUEST:
+        return { ...state, loading: true };
+      case FETCH_[[snake_name]]S_SUCCESS:
+        return { ...state, loading: false, [[camel_name]]s: action.payload, error: null };
+      case FETCH_[[snake_name]]S_FAILURE:
+        return { ...state, loading: false, error: action.payload };
+      case CREATE_[[snake_name]]_SUCCESS:
+        return { ...state, [[camel_name]]s: [...state.[[camel_name]]s, action.payload] };
+      case UPDATE_[[snake_name]]_SUCCESS:
+        return {
+          ...state,
+          [[camel_name]]s: state.[[camel_name]]s.map(([[camel_name]]) =>
+            [[camel_name]].id === action.payload.id ? action.payload : [[camel_name]]
+          ),
+        };
+      case DELETE_[[snake_name]]_SUCCESS:
+        return {
+          ...state,
+          [[camel_name]]s: state.[[camel_name]]s.filter(([[camel_name]]) => [[camel_name]].id !== action.payload),
+        };
+      default:
+        return state;
+    }
+  };
+  
+  export default [[camel_name]]Reducer;

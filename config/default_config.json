@@ -280,6 +280,28 @@
         "module": "src.generators.frontend.vue.store_generator",
         "class": "StoreGenerator"
       }
+    ],
+    "react_native": [
+      {
+        "name": "component",
+        "module": "src.generators.mobile.react_native.component_generator",
+        "class": "ComponentGenerator"
+      },
+      {
+        "name": "screen",
+        "module": "src.generators.mobile.react_native.screen_generator",
+        "class": "ScreenGenerator"
+      },
+      {
+        "name": "navigation",
+        "module": "src.generators.mobile.react_native.navigation_generator",
+        "class": "NavigationGenerator"
+      },
+      {
+        "name": "store",
+        "module": "src.generators.mobile.react_native.store_generator",
+        "class": "StoreGenerator"
+      }
     ]
   },
   "features": {

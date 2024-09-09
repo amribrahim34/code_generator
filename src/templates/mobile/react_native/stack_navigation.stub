@@ -1,0 +1,32 @@
+import React from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+[[if use_typescript]]import { StackNavigationOptions } from '@react-navigation/stack';[[endif]]
+import [[pascal_name]]List from '../components/[[pascal_name]]/[[pascal_name]]List';
+import [[pascal_name]]Form from '../components/[[pascal_name]]/[[pascal_name]]Form';
+import [[pascal_name]]Details from '../components/[[pascal_name]]/[[pascal_name]]Details';
+
+const Stack = createStackNavigator();
+
+const [[pascal_name]]StackNavigator = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="[[pascal_name]]List"
+        component={[[pascal_name]]List}
+        options={{ title: '[[model_name]] List' }}
+      />
+      <Stack.Screen 
+        name="[[pascal_name]]Form"
+        component={[[pascal_name]]Form}
+        options={{ title: 'Add/Edit [[model_name]]' }}
+      />
+      <Stack.Screen 
+        name="[[pascal_name]]Details"
+        component={[[pascal_name]]Details}
+        options={{ title: '[[model_name]] Details' }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+export default [[pascal_name]]StackNavigator;

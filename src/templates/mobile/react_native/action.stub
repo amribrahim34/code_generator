@@ -1,0 +1,67 @@
+import axios from 'axios';
+
+// Action Types
+export const FETCH_[[snake_name]]S_REQUEST = 'FETCH_[[snake_name]]S_REQUEST';
+export const FETCH_[[snake_name]]S_SUCCESS = 'FETCH_[[snake_name]]S_SUCCESS';
+export const FETCH_[[snake_name]]S_FAILURE = 'FETCH_[[snake_name]]S_FAILURE';
+
+export const CREATE_[[snake_name]]_REQUEST = 'CREATE_[[snake_name]]_REQUEST';
+export const CREATE_[[snake_name]]_SUCCESS = 'CREATE_[[snake_name]]_SUCCESS';
+export const CREATE_[[snake_name]]_FAILURE = 'CREATE_[[snake_name]]_FAILURE';
+
+export const UPDATE_[[snake_name]]_REQUEST = 'UPDATE_[[snake_name]]_REQUEST';
+export const UPDATE_[[snake_name]]_SUCCESS = 'UPDATE_[[snake_name]]_SUCCESS';
+export const UPDATE_[[snake_name]]_FAILURE = 'UPDATE_[[snake_name]]_FAILURE';
+
+export const DELETE_[[snake_name]]_REQUEST = 'DELETE_[[snake_name]]_REQUEST';
+export const DELETE_[[snake_name]]_SUCCESS = 'DELETE_[[snake_name]]_SUCCESS';
+export const DELETE_[[snake_name]]_FAILURE = 'DELETE_[[snake_name]]_FAILURE';
+
+// Action Creators
+export const fetch[[pascal_name]]s = () => {
+  return async (dispatch) => {
+    dispatch({ type: FETCH_[[snake_name]]S_REQUEST });
+    try {
+      const response = await axios.get('API_ENDPOINT/[[snake_name]]s');
+      dispatch({ type: FETCH_[[snake_name]]S_SUCCESS, payload: response.data });
+    } catch (error) {
+      dispatch({ type: FETCH_[[snake_name]]S_FAILURE, payload: error.message });
+    }
+  };
+};
+
+export const create[[pascal_name]] = ([[camel_name]]Data) => {
+  return async (dispatch) => {
+    dispatch({ type: CREATE_[[snake_name]]_REQUEST });
+    try {
+      const response = await axios.post('API_ENDPOINT/[[snake_name]]s', [[camel_name]]Data);
+      dispatch({ type: CREATE_[[snake_name]]_SUCCESS, payload: response.data });
+    } catch (error) {
+      dispatch({ type: CREATE_[[snake_name]]_FAILURE, payload: error.message });
+    }
+  };
+};
+
+export const update[[pascal_name]] = (id, [[camel_name]]Data) => {
+  return async (dispatch) => {
+    dispatch({ type: UPDATE_[[snake_name]]_REQUEST });
+    try {
+      const response = await axios.put(`API_ENDPOINT/[[snake_name]]s/${id}`, [[camel_name]]Data);
+      dispatch({ type: UPDATE_[[snake_name]]_SUCCESS, payload: response.data });
+    } catch (error) {
+      dispatch({ type: UPDATE_[[snake_name]]_FAILURE, payload: error.message });
+    }
+  };
+};
+
+export const delete[[pascal_name]] = (id) => {
+  return async (dispatch) => {
+    dispatch({ type: DELETE_[[snake_name]]_REQUEST });
+    try {
+      await axios.delete(`API_ENDPOINT/[[snake_name]]s/${id}`);
+      dispatch({ type: DELETE_[[snake_name]]_SUCCESS, payload: id });
+    } catch (error) {
+      dispatch({ type: DELETE_[[snake_name]]_FAILURE, payload: error.message });
+    }
+  };
+};
