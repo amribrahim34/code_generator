@@ -2,6 +2,7 @@ from typing import Dict, Any, List
 import json
 import os
 import importlib
+import shutil
 from src.core.entities.schema import Schema
 from src.core.interfaces.config_loader import IConfigLoader
 from src.core.interfaces.logger import ILogger
@@ -24,6 +25,7 @@ class BackendGenerationService:
             output_writer,
             template_renderer
         )
+        self.output_dir = None
 
     def _initialize_generators(self):
         generators = []
@@ -34,8 +36,8 @@ class BackendGenerationService:
                 module = importlib.import_module(gen_config['module'])
                 generator_class = getattr(module, gen_config['class'])
                 generators.append(generator_class(self.config_loader, self.template_renderer))
-                self.logger.info(f"this is a loaded generator name {gen_config['name']}")
-                self.logger.info(f"this is a loaded generator module {gen_config['module']}")
+                # self.logger.info(f"this is a loaded generator name {gen_config['name']}")
+                # self.logger.info(f"this is a loaded generator module {gen_config['module']}")
             except Exception as e:
                 self.logger.error(f"Failed to initialize generator {gen_config['name']}: {str(e)}")
         return generators
@@ -54,7 +56,7 @@ class BackendGenerationService:
 
         # response = self.generate_backend_code.execute(schema)
         response = GenerationResponseDTO()
-
+        self.copy_template()
         generated_files = {}
         for generator in self.generators:
             generated_files.update(generator.generate(schema))
@@ -63,7 +65,7 @@ class BackendGenerationService:
         # Post-processing and additional tasks
         self._update_composer_json(response)
         self._update_env_file(response)
-        # self._generate_docker_files(response)
+        self._generate_docker_files(response)
 
         # self.logger.info("Backend code generation completed successfully")
         
@@ -74,13 +76,13 @@ class BackendGenerationService:
     def _update_composer_json(self, response: GenerationResponseDTO):
         """Update the composer.json file with any necessary dependencies."""
         try:
-            composer_path = os.path.join(self.output_writer.base_path, "composer.json")
+            composer_path = os.path.join(self.output_writer.base_path ,"backend", "composer.json")
             if not os.path.exists(composer_path):
                 # Create a default composer.json if it doesn't exist
                 composer_data = {
                     "require": {
-                        "php": "^7.3|^8.0",
-                        "laravel/framework": "^8.75"
+                        "php": "^8.1",
+                        "laravel/framework": "^10.10",
                     }
                 }
             else:
@@ -89,13 +91,13 @@ class BackendGenerationService:
 
             # Add or update dependencies
             composer_data['require'].update({
-                "laravel/sanctum": "^2.15",
+                "laravel/sanctum": "^3.3",
                 "spatie/laravel-permission": "^5.5"
             })
 
             # Write updated composer.json
             updated_content = json.dumps(composer_data, indent=4)
-            self.output_writer.write_file("composer.json", updated_content)
+            self.output_writer.write_file("backend/composer.json", updated_content)
             response.add_generated_file("composer.json", updated_content)
 
             self.logger.info("composer.json updated successfully")
@@ -107,7 +109,7 @@ class BackendGenerationService:
     def _update_env_file(self, response: GenerationResponseDTO):
         """Update the .env file with necessary configuration."""
         try:
-            env_path = os.path.join(self.output_writer.base_path, ".env")
+            env_path = os.path.join(self.output_writer.base_path,"backend" ,".env")
             if not os.path.exists(env_path):
                 # Create a default .env if it doesn't exist
                 env_content = "APP_NAME=Laravel\nDB_CONNECTION=mysql\nDB_HOST=127.0.0.1\nDB_PORT=3306\n"
@@ -124,7 +126,7 @@ class BackendGenerationService:
 
             # Write updated .env file
             updated_content = '\n'.join(f"{k}={v}" for k, v in env_dict.items())
-            self.output_writer.write_file(".env", updated_content)
+            self.output_writer.write_file("backend/.env", updated_content)
             response.add_generated_file(".env", updated_content)
 
             self.logger.info(".env file updated successfully")
@@ -137,8 +139,8 @@ class BackendGenerationService:
         """Generate Docker-related files for the backend."""
         try:
             # Generate Dockerfile
-            dockerfile_path = 'Dockerfile'
-            dockerfile_content = self._render_template_safe('Dockerfile', {
+            dockerfile_path = 'backend/Dockerfile'
+            dockerfile_content = self._render_template_safe('backend/laravel/dockerFile.stub', {
                 'php_version': self.config_loader.get('php_version', '8.1')
             })
             if dockerfile_content:
@@ -146,8 +148,8 @@ class BackendGenerationService:
                 response.add_generated_file(dockerfile_path, dockerfile_content)
 
             # Generate docker-compose.yml
-            docker_compose_path = 'docker-compose.yml'
-            docker_compose_content = self._render_template_safe('docker-compose.yml', {
+            docker_compose_path = 'backend/docker-compose.yml'
+            docker_compose_content = self._render_template_safe('backend/laravel/docker-compose.stub', {
                 'app_name': self.config_loader.get('app_name', 'laravel'),
                 'database_name': self.config_loader.get('database_name', 'laravel')
             })
@@ -168,3 +170,31 @@ class BackendGenerationService:
         except Exception as e:
             self.logger.warning(f"Error rendering template {template_name}: {str(e)}")
             return ""
+        
+    
+    def copy_template(self) -> str:
+        self.logger.info("copying empty backend template")
+        
+        # Get the directory of the current file
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        # Navigate to the project root
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))
+        
+        # Construct the path to the template
+        source = os.path.join(project_root, "src", "templates", "backend", "laravel", "template")
+        
+        self.output_dir = os.path.join(project_root, "output", "backend")
+        
+        self.logger.info(f"Attempting to copy from: {source}")
+        self.logger.info(f"Copying to: {self.output_dir}")
+        
+        if not os.path.exists(source):
+            self.logger.error(f"Source directory does not exist: {source}")
+            return ""
+
+        if os.path.exists(self.output_dir):
+            shutil.rmtree(self.output_dir)
+        
+        shutil.copytree(source, self.output_dir)
+        return self.output_dir

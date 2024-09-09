@@ -1,4 +1,6 @@
 import importlib
+import shutil
+import os
 from typing import Dict, Any, List
 from src.core.entities.schema import Schema
 from src.core.interfaces.config_loader import IConfigLoader
@@ -55,6 +57,9 @@ class FrontendGenerationService:
         response = GenerationResponseDTO()
 
         try:
+            # Copy the frontend template
+            self.copy_template()
+            
             generated_files = {}
             for generator in self.generators:
                 generated_files.update(generator.generate(schema))
@@ -176,3 +181,30 @@ class FrontendGenerationService:
             stats["files_per_type"][file_type] = stats["files_per_type"].get(file_type, 0) + 1
 
         return stats
+    
+    def copy_template(self) -> str:
+        self.logger.info("Copying empty frontend template")
+        
+        # Get the directory of the current file
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        # Navigate to the project root
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))
+        
+        # Construct the path to the frontend template
+        source = os.path.join(project_root, "src", "templates", "frontend", "vue", "template")
+        
+        self.output_dir = os.path.join(project_root, "output", "admin")
+        
+        self.logger.info(f"Attempting to copy from: {source}")
+        self.logger.info(f"Copying to: {self.output_dir}")
+        
+        if not os.path.exists(source):
+            self.logger.error(f"Source directory does not exist: {source}")
+            return ""
+
+        if os.path.exists(self.output_dir):
+            shutil.rmtree(self.output_dir)
+        
+        shutil.copytree(source, self.output_dir)
+        return self.output_dir
