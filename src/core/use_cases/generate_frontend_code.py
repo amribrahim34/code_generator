@@ -27,7 +27,7 @@ class GenerateFrontendCode:
 
         try:
             generated_files['components'] = self.generate_components()
-            generated_files['store_modules'] = self.generate_store_modules()
+            generated_files['stores'] = self.generate_store_modules()
             generated_files['routes'] = self.generate_routes()
 
             self.logger.info("Frontend code generation completed successfully")

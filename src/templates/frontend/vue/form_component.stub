@@ -1,0 +1,94 @@
+<template>
+  <div class="{{ model_kebab }}-form">
+    <h1>{{ '{{ isEditing ? "Edit" : "Create" }}' }} {{ model_name }}</h1>
+    
+    <form @submit.prevent="submitForm">
+      {% for attribute in attributes %}
+      <div class="form-group">
+        <label for="{{ attribute.name }}">{{ attribute.name }}</label>
+        <input
+          v-model="form.{{ attribute.name }}"
+          :name="{{ attribute.name }}"
+          :type="getInputType('{{ attribute.type }}')"
+          :required="{{ attribute.required|lower }}"
+        />
+      </div>
+      {% endfor %}
+      
+      <button type="submit">{{ '{{ isEditing ? "Update" : "Create" }}' }}</button>
+      <button type="button" @click="cancel">Cancel</button>
+    </form>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref, computed } from 'vue';
+import { use{{ model_name }}Store } from '@/store/{{ model_kebab }}';
+
+export default defineComponent({
+  name: '{{ model_name }}Form',
+  props: {
+    id: {
+      type: String,
+      default: null,
+    },
+  },
+  setup(props) {
+    const {{ model_name_lower }}Store = use{{ model_name }}Store();
+    const isEditing = computed(() => !!props.id);
+
+    const form = ref({
+      {% for attribute in attributes %}
+      {{ attribute.name }}: '',
+      {% endfor %}
+    });
+
+    if (isEditing.value) {
+      // Load existing item data if editing
+      // Implement this logic
+    }
+
+    const submitForm = async () => {
+      try {
+        if (isEditing.value) {
+          await {{ model_name_lower }}Store.update(props.id, form.value);
+        } else {
+          await {{ model_name_lower }}Store.create(form.value);
+        }
+        // Handle successful submission (e.g., show message, redirect)
+      } catch (error) {
+        // Handle error (e.g., show error message)
+      }
+    };
+
+    const cancel = () => {
+      // Implement cancel logic (e.g., return to list view)
+    };
+
+    const getInputType = (attributeType: string) => {
+      // Map attribute types to HTML input types
+      const typeMap: { [key: string]: string } = {
+        string: 'text',
+        integer: 'number',
+        float: 'number',
+        boolean: 'checkbox',
+        date: 'date',
+        // Add more type mappings as needed
+      };
+      return typeMap[attributeType] || 'text';
+    };
+
+    return {
+      isEditing,
+      form,
+      submitForm,
+      cancel,
+      getInputType,
+    };
+  },
+});
+</script>
+
+<style scoped>
+/* Add your styles here */
+</style>

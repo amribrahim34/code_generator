@@ -25,7 +25,7 @@ class StoreGenerator(ICodeGenerator):
 
         # Generate individual stores files for each model
         for model in schema.models:
-            self.logger.warning(f"Generating store for model: {model.name}")
+            # self.logger.warning(f"Generating store for model: {model.name}")
             store_content = self.prepare_context(model)
             # self.logger.warning(f"Generating store for model , store content: {store_content}")
             file_path = os.path.join(self.store_dir, f"{to_kebab_case(model.name)}Store.ts")
@@ -36,7 +36,7 @@ class StoreGenerator(ICodeGenerator):
     
     def prepare_context(self, model: Dict) -> Dict[str, str]:
         model_name = model.name
-        self.logger.warning(f"prepare context Generating store for model: {model_name}")
+        # self.logger.warning(f"prepare context Generating store for model: {model_name}")
         model_name_pascal = to_pascal_case(model.name)
         model_name_camel = to_camel_case(model.name)
         template = 'frontend/vue/store.stub'

@@ -1,0 +1,88 @@
+<template>
+  <div class="{{ model_kebab }}-list">
+    <h1>{{ model_name }} List</h1>
+    
+    <!-- Search and filter controls -->
+    <div class="controls">
+      <input v-model="searchQuery" placeholder="Search..." />
+      <!-- Add more filter controls as needed -->
+    </div>
+
+    <!-- Data table -->
+    <table>
+      <thead>
+        <tr>
+          {% for attribute in attributes %}
+          <th @click="sort('{{ attribute.name }}')">{{ attribute.name }}</th>
+          {% endfor %}
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in paginatedItems" :key="item.id">
+          {% for attribute in attributes %}
+          <td>{{ '{{ item.' + attribute.name + ' }}' }}</td>
+          {% endfor %}
+          <td>
+            <button @click="viewDetails(item)">View</button>
+            <button @click="editItem(item)">Edit</button>
+            <button @click="deleteItem(item)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination controls -->
+    <div class="pagination">
+      <!-- Add pagination controls here -->
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref, computed } from 'vue';
+import { use{{ model_name }}Store } from '@/store/{{ model_kebab }}';
+
+export default defineComponent({
+  name: '{{ model_name }}List',
+  setup() {
+    const {{ model_name.lower() }}Store = use{{ model_name }}Store();
+    const searchQuery = ref('');
+    const currentPage = ref(1);
+    const itemsPerPage = ref(10);
+
+    const paginatedItems = computed(() => {
+      // Implement pagination logic here
+    });
+
+    const sort = (column: string) => {
+      // Implement sorting logic here
+    };
+
+    const viewDetails = (item: any) => {
+      // Implement view details logic here
+    };
+
+    const editItem = (item: any) => {
+      // Implement edit item logic here
+    };
+
+    const deleteItem = (item: any) => {
+      // Implement delete item logic here
+    };
+
+    return {
+      searchQuery,
+      paginatedItems,
+      sort,
+      viewDetails,
+      editItem,
+      deleteItem,
+    };
+  },
+});
+</script>
+
+<style scoped>
+/* Add your styles here */
+</style>

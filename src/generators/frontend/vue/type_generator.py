@@ -25,7 +25,7 @@ class TypeGenerator(ICodeGenerator):
 
         # Generate individual types files for each model
         for model in schema.models:
-            self.logger.warning(f"Generating type for model: {model.name}")
+            # self.logger.warning(f"Generating type for model: {model.name}")
             type_content = self.prepare_context(model)
             # self.logger.warning(f"Generating type for model , type content: {type_content}")
             file_path = os.path.join(self.type_dir, f"{to_kebab_case(model.name)}Type.ts")
@@ -42,7 +42,7 @@ class TypeGenerator(ICodeGenerator):
         model_name = model.name
         model_attributes = self._generate_model_attributes(model.attributes)
 
-        self.logger.warning(f"prepare context Generating type for model: {model_name}")
+        # self.logger.warning(f"prepare context Generating type for model: {model_name}")
         # self.logger.warning(f"these are the attr: {model_attributes}")
         model_name_pascal = to_pascal_case(model.name)
         model_name_camel = to_camel_case(model.name)

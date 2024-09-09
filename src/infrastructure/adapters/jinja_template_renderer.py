@@ -3,6 +3,7 @@ from typing import Dict, Any, Optional, List
 from jinja2 import Environment, FileSystemLoader, select_autoescape ,Template
 from src.core.interfaces.template_renderer import ITemplateRenderer
 from src.utilities.string_utils import to_pascal_case, to_snake_case, pluralize
+import logging
 
 class JinjaTemplateRenderer(ITemplateRenderer):
     def __init__(self, template_dir: str):
@@ -13,6 +14,7 @@ class JinjaTemplateRenderer(ITemplateRenderer):
             trim_blocks=True,
             lstrip_blocks=True
         )
+        self.logger = logging.getLogger(__name__)
          # Add custom filters
         self._env.filters['to_snake_case'] = to_snake_case
         self._env.filters['pluralize'] = pluralize
@@ -25,7 +27,9 @@ class JinjaTemplateRenderer(ITemplateRenderer):
 
     def render(self, template_name: str, context: Dict[str, Any]) -> str:
         try:
+            # self.logger.warning(f'this is in jinja adapter , render method, this is the template name {template_name}')
             template = self._env.get_template(template_name)
+            # self.logger.warning(f'this is in jinja adapter , render method, this is the template {template}')
             return template.render(**context)
         except Exception as e:
             raise ValueError(f"Error rendering template {template_name}: {str(e)}")
@@ -61,11 +65,13 @@ class JinjaTemplateRenderer(ITemplateRenderer):
     def render_with_custom_delimiter(self, template_name: str, context: Dict[str, Any]):
         try:
             # Get the template
+            # self.logger.warning(f'this is in jinja adapter , render_with_custom_delimiter method, this is the template name {template_name}')
+            # self.logger.warning(f'this is in jinja adapter , render_with_custom_delimiter method, this is the template context {context}')
             jinja_template = self._env.get_template(template_name)
             
             # Render the template with the original environment
             # This gives us the template content as a string
-            template_content = jinja_template.render()
+            template_content = jinja_template.render(context)
             
             # Create a new Template with custom delimiters
             custom_template = Template(template_content, variable_start_string='[[', variable_end_string=']]')
@@ -73,4 +79,39 @@ class JinjaTemplateRenderer(ITemplateRenderer):
             # Render the template with the provided context
             return custom_template.render(**context)
         except Exception as e:
+            raise ValueError(f"Error rendering template {template_name}: {str(e)}")
+    
+    def render_with_bracts_delimiter(self, template_name: str, context: Dict[str, Any]):
+        try:
+            print(f"Debug - Loading template: {template_name}")
+            print(f"Debug - Template directory: {self._template_dir}")
+            
+            # Create a new environment with custom delimiters
+            custom_env = Environment(
+                loader=FileSystemLoader(self._template_dir),
+                autoescape=select_autoescape(['html', 'xml']),
+                variable_start_string='[[',
+                variable_end_string=']]',
+                block_start_string='[%',
+                block_end_string='%]',
+                comment_start_string='[#',
+                comment_end_string='#]',
+                trim_blocks=True,
+                lstrip_blocks=True
+            )
+
+            with open(os.path.join(self._template_dir, template_name), 'r') as f:
+                print(f"Debug - Template content:\n{f.read()}")
+                
+            # Get the template using the custom environment
+            template = custom_env.get_template(template_name)
+            print(f"Debug - Template loaded successfully")
+
+            rendered_content = template.render(**context)
+            print(f"Debug - Template rendered successfully")
+            print(f"Debug - First 100 characters of rendered content: {rendered_content[:100]}")
+
+            return rendered_content
+        except Exception as e:
+            print(f"Debug - Error details: {str(e)}")
             raise ValueError(f"Error rendering template {template_name}: {str(e)}")
