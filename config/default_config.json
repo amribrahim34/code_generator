@@ -72,7 +72,9 @@
     "use_composition_api": true,
     "output_dir": "admin",
     "route_dir": "routes",
-    "state_management": "vuex",
+    "store_dir": "stores",
+    "type_dir": "types",
+    "state_management": "pinia",
     "ui_framework": "primevue",
     "component_structure": {
       "components": "src/components",
@@ -262,6 +264,21 @@
         "name": "router",
         "module": "src.generators.frontend.vue.router_generator",
         "class": "RouterGenerator"
+      },
+      {
+        "name": "type",
+        "module": "src.generators.frontend.vue.type_generator",
+        "class": "TypeGenerator"
+      },
+      {
+        "name": "component",
+        "module": "src.generators.frontend.vue.component_generator",
+        "class": "ComponentGenerator"
+      },
+      {
+        "name": "store",
+        "module": "src.generators.frontend.vue.store_generator",
+        "class": "StoreGenerator"
       }
     ]
   },
