@@ -9,7 +9,7 @@ class MigrationGenerator:
     def __init__(self, config_loader: IConfigLoader, template_renderer: ITemplateRenderer):
         self.config_loader = config_loader
         self.template_renderer = template_renderer
-    
+
     def generate(self, schema: Schema) -> Dict[str, str]:
         generated_files = {}
         
@@ -96,18 +96,19 @@ class MigrationGenerator:
     def _prepare_attributes(self, attributes: List[Any]) -> List[Dict[str, Any]]:
         prepared_attributes = []
         for attr in attributes:
-            attribute_dict = {
-                'name': attr.name,
-                'type': to_camel_case(attr.type),  # Convert type to camel case
-                'nullable': attr.nullable,
-                'unique': attr.unique,
-            }
-            
-            # Only include 'default' if it's not a special field like 'id' or 'created_at'
-            if attr.name.lower() not in ['id', 'created_at', 'updated_at']:
-                attribute_dict['default'] = attr.default
-            
-            prepared_attributes.append(attribute_dict)
+            if attr.name.lower() != 'id':  # Ignore the 'id' field
+                attribute_dict = {
+                    'name': attr.name,
+                    'type': to_camel_case(attr.type),  # Convert type to camel case
+                    'nullable': attr.nullable,
+                    'unique': attr.unique,
+                }
+                
+                # Only include 'default' if it's not a special field like 'created_at'
+                if attr.name.lower() not in ['created_at', 'updated_at']:
+                    attribute_dict['default'] = attr.default
+                
+                prepared_attributes.append(attribute_dict)
         
         return prepared_attributes
 
@@ -119,5 +120,6 @@ class MigrationGenerator:
                     'type': rel.type,
                     'related_model': rel.related_model,
                     'foreign_key': rel.foreign_key or f"{to_snake_case(rel.related_model)}_id",
+                    'foreign_key_type': 'unsignedBigInteger',  # Match the type used for 'id' in the stub
                 })
         return prepared_relationships
