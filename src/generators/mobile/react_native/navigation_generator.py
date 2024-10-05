@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Union
 from src.core.interfaces.code_generator import ICodeGenerator
 from src.core.entities.schema import Schema, Model
 from src.core.interfaces.template_renderer import ITemplateRenderer

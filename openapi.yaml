@@ -1,0 +1,136 @@
+components:
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+info:
+  description: API for managing projects, plans, and users in the FastStack application
+  title: FastStack API
+  version: 1.0.0
+openapi: 3.0.0
+paths:
+  /generate:
+    post:
+      description: Generate code based on the provided schema
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                generate_backend:
+                  default: true
+                  type: boolean
+                generate_frontend:
+                  default: true
+                  type: boolean
+                generate_mobile:
+                  default: true
+                  type: boolean
+                schema:
+                  description: JSON schema file
+                  format: binary
+                  type: string
+              required:
+              - schema
+              type: object
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  api_documentation:
+                    type: object
+                  backend:
+                    type: object
+                  frontend:
+                    type: object
+                  mobile:
+                    type: object
+                type: object
+          description: Successful code generation
+      summary: Generate code
+  /plans:
+    get:
+      responses:
+        '200':
+          description: Successful response
+      summary: List all plans
+    post:
+      responses:
+        '201':
+          description: Plan created
+      summary: Create a new plan
+  /plans/{plan_id}:
+    delete:
+      responses:
+        '200':
+          description: Plan deleted
+      summary: Delete a plan
+    get:
+      responses:
+        '200':
+          description: Successful response
+      summary: Get a plan
+    put:
+      responses:
+        '200':
+          description: Plan updated
+      summary: Update a plan
+  /projects:
+    get:
+      responses:
+        '200':
+          description: Successful response
+      summary: List all projects
+    post:
+      responses:
+        '201':
+          description: Project created
+      summary: Create a new project
+  /projects/{project_id}:
+    delete:
+      responses:
+        '200':
+          description: Project deleted
+      summary: Delete a project
+    get:
+      responses:
+        '200':
+          description: Successful response
+      summary: Get a project
+    put:
+      responses:
+        '200':
+          description: Project updated
+      summary: Update a project
+  /users:
+    get:
+      responses:
+        '200':
+          description: Successful response
+      summary: List all users
+    post:
+      responses:
+        '201':
+          description: User created
+      summary: Create a new user
+  /users/{user_id}:
+    delete:
+      responses:
+        '200':
+          description: User deleted
+      summary: Delete a user
+    get:
+      responses:
+        '200':
+          description: Successful response
+      summary: Get a user
+    put:
+      responses:
+        '200':
+          description: User updated
+      summary: Update a user
+security:
+- bearerAuth: []

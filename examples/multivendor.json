@@ -1,0 +1,787 @@
+[
+  {
+    "name": "User",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "email", "type": "string", "unique": true },
+      { "name": "password", "type": "string" },
+      {
+        "name": "role",
+        "type": "enum",
+        "enum_values": [
+          "customer",
+          "vendor",
+          "admin",
+          "super_admin",
+          "support_staff"
+        ]
+      },
+      { "name": "phone_number", "type": "string", "nullable": true },
+      { "name": "address", "type": "text", "nullable": true },
+      { "name": "profile_image", "type": "string", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "hasOne", "model": "Vendor" },
+      { "type": "hasMany", "model": "Order" },
+      { "type": "hasMany", "model": "Review" },
+      { "type": "hasOne", "model": "UserPreference" },
+      { "type": "hasMany", "model": "Recommendation" },
+      { "type": "belongsToMany", "model": "AdminRole", "table": "user_roles" }
+    ]
+  },
+  {
+    "name": "Category",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "parent_category_id", "type": "bigint", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      {
+        "type": "belongsTo",
+        "model": "Category",
+        "foreignKey": "parent_category_id"
+      },
+      {
+        "type": "hasMany",
+        "model": "Category",
+        "foreignKey": "parent_category_id"
+      },
+      { "type": "hasMany", "model": "Product" }
+    ]
+  },
+  {
+    "name": "Vendor",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "store_name", "type": "string" },
+      { "name": "store_logo", "type": "string", "nullable": true },
+      { "name": "store_description", "type": "text", "nullable": true },
+      { "name": "address", "type": "text", "nullable": true },
+      {
+        "name": "approval_status",
+        "type": "enum",
+        "enum_values": ["pending", "approved", "rejected"],
+        "default": "pending"
+      },
+      {
+        "name": "commission_rate",
+        "type": "decimal",
+        "precision": 5,
+        "scale": 2,
+        "default": 0.0
+      },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "hasMany", "model": "Product" },
+      {
+        "type": "hasMany",
+        "model": "Order",
+        "foreignKey": "assigned_vendor_id"
+      },
+      { "type": "hasOne", "model": "VendorSale" }
+    ]
+  },
+  {
+    "name": "Product",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "vendor_id", "type": "bigint" },
+      { "name": "category_id", "type": "bigint" },
+      { "name": "name", "type": "string" },
+      { "name": "description", "type": "text", "nullable": true },
+      { "name": "price", "type": "decimal", "precision": 10, "scale": 2 },
+      { "name": "stock", "type": "integer" },
+      { "name": "low_stock_threshold", "type": "integer", "default": 10 },
+      { "name": "color", "type": "string", "nullable": true },
+      { "name": "dimensions", "type": "json", "nullable": true },
+      { "name": "material", "type": "string", "nullable": true },
+      {
+        "name": "weight",
+        "type": "decimal",
+        "precision": 10,
+        "scale": 2,
+        "nullable": true
+      },
+      { "name": "image_url", "type": "string", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Vendor" },
+      { "type": "belongsTo", "model": "Category" },
+      { "type": "hasMany", "model": "OrderItem" },
+      { "type": "hasMany", "model": "Review" },
+      { "type": "hasMany", "model": "CartItem" },
+      { "type": "hasMany", "model": "Recommendation" },
+      {
+        "type": "belongsToMany",
+        "model": "Promotion",
+        "table": "product_promotions"
+      },
+      { "type": "hasMany", "model": "InventoryLog" }
+    ]
+  },
+  {
+    "name": "Order",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "coupon_id", "type": "bigint", "nullable": true },
+      { "name": "assigned_vendor_id", "type": "bigint", "nullable": true },
+      { "name": "total_price", "type": "decimal", "precision": 10, "scale": 2 },
+      {
+        "name": "shipping_cost",
+        "type": "decimal",
+        "precision": 10,
+        "scale": 2,
+        "default": 0.0
+      },
+      {
+        "name": "status",
+        "type": "enum",
+        "enum_values": ["pending", "processing", "completed", "cancelled"],
+        "default": "pending"
+      },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "belongsTo", "model": "Coupon" },
+      {
+        "type": "belongsTo",
+        "model": "Vendor",
+        "foreignKey": "assigned_vendor_id"
+      },
+      { "type": "hasMany", "model": "OrderItem" },
+      { "type": "hasOne", "model": "Payment" }
+    ]
+  },
+  {
+    "name": "OrderItem",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "order_id", "type": "bigint" },
+      { "name": "product_id", "type": "bigint" },
+      { "name": "quantity", "type": "integer" },
+      { "name": "price", "type": "decimal", "precision": 10, "scale": 2 },
+      { "name": "total_price", "type": "decimal", "precision": 10, "scale": 2 },
+      { "name": "created_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Order" },
+      { "type": "belongsTo", "model": "Product" }
+    ]
+  },
+  {
+    "name": "Cart",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      {
+        "name": "total_price",
+        "type": "decimal",
+        "precision": 10,
+        "scale": 2,
+        "nullable": true
+      },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "hasMany", "model": "CartItem" }
+    ]
+  },
+  {
+    "name": "CartItem",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "cart_id", "type": "bigint" },
+      { "name": "product_id", "type": "bigint" },
+      { "name": "quantity", "type": "integer" },
+      { "name": "price", "type": "decimal", "precision": 10, "scale": 2 },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Cart" },
+      { "type": "belongsTo", "model": "Product" }
+    ]
+  },
+  {
+    "name": "Review",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "product_id", "type": "bigint" },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "rating", "type": "integer", "min": 1, "max": 5 },
+      { "name": "comment", "type": "text", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Product" },
+      { "type": "belongsTo", "model": "User" }
+    ]
+  },
+  {
+    "name": "UserPreference",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "favorite_colors", "type": "json", "nullable": true },
+      { "name": "favorite_wallpapers", "type": "json", "nullable": true },
+      {
+        "name": "favorite_furniture_style_id",
+        "type": "bigint",
+        "nullable": true
+      },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      {
+        "type": "belongsTo",
+        "model": "FurnitureStyle",
+        "foreignKey": "favorite_furniture_style_id"
+      }
+    ]
+  },
+  {
+    "name": "Recommendation",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "product_id", "type": "bigint" },
+      {
+        "name": "recommendation_type",
+        "type": "enum",
+        "enum_values": ["wallpaper", "paint", "furniture", "fabric"]
+      },
+      { "name": "scan_data", "type": "json", "nullable": true },
+      { "name": "created_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "belongsTo", "model": "Product" }
+    ]
+  },
+  {
+    "name": "Payment",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "order_id", "type": "bigint" },
+      {
+        "name": "payment_method",
+        "type": "enum",
+        "enum_values": ["credit_card", "paypal", "cash_on_delivery"]
+      },
+      {
+        "name": "payment_status",
+        "type": "enum",
+        "enum_values": ["pending", "completed", "failed"],
+        "default": "pending"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal",
+        "precision": 10,
+        "scale": 2
+      },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "belongsTo", "model": "Order" }]
+  },
+  {
+    "name": "VendorSale",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "vendor_id", "type": "bigint" },
+      {
+        "name": "total_sales",
+        "type": "decimal",
+        "precision": 10,
+        "scale": 2,
+        "default": 0
+      },
+      { "name": "last_updated", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "belongsTo", "model": "Vendor" }]
+  },
+  {
+    "name": "Coupon",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "code", "type": "string", "unique": true },
+      {
+        "name": "discount_type",
+        "type": "enum",
+        "enum_values": ["percentage", "fixed_amount"]
+      },
+      {
+        "name": "discount_value",
+        "type": "decimal",
+        "precision": 10,
+        "scale": 2
+      },
+      { "name": "start_date", "type": "datetime", "nullable": true },
+      { "name": "end_date", "type": "datetime", "nullable": true },
+      { "name": "usage_limit", "type": "integer", "nullable": true },
+      { "name": "times_used", "type": "integer", "default": 0 },
+      { "name": "created_by", "type": "bigint", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User", "foreignKey": "created_by" },
+      { "type": "hasMany", "model": "Order" }
+    ]
+  },
+  {
+    "name": "Promotion",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "description", "type": "text", "nullable": true },
+      {
+        "name": "discount_type",
+        "type": "enum",
+        "enum_values": ["percentage", "fixed_amount"]
+      },
+      {
+        "name": "discount_value",
+        "type": "decimal",
+        "precision": 10,
+        "scale": 2
+      },
+      { "name": "start_date", "type": "datetime" },
+      { "name": "end_date", "type": "datetime" },
+      { "name": "created_by", "type": "bigint" },
+      { "name": "is_active", "type": "boolean", "default": true },
+      { "name": "usage_limit", "type": "integer", "nullable": true },
+      { "name": "times_used", "type": "integer", "default": 0 },
+      {
+        "name": "minimum_purchase_amount",
+        "type": "decimal",
+        "precision": 10,
+        "scale": 2,
+        "nullable": true
+      },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User", "foreignKey": "created_by" },
+      {
+        "type": "belongsToMany",
+        "model": "Product",
+        "table": "product_promotions"
+      },
+      {
+        "type": "belongsToMany",
+        "model": "Category",
+        "table": "promotion_categories"
+      }
+    ],
+    "indexes": [
+      { "name": "idx_promotion_start_date", "columns": ["start_date"] },
+      { "name": "idx_promotion_end_date", "columns": ["end_date"] },
+      { "name": "idx_promotion_is_active", "columns": ["is_active"] }
+    ]
+  },
+  {
+    "name": "AdminPermission",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "description", "type": "text", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      {
+        "type": "belongsToMany",
+        "model": "AdminRole",
+        "table": "admin_role_permissions"
+      }
+    ]
+  },
+  {
+    "name": "AdminRole",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "description", "type": "text", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      {
+        "type": "belongsToMany",
+        "model": "AdminPermission",
+        "table": "admin_role_permissions"
+      },
+      { "type": "belongsToMany", "model": "User", "table": "user_roles" }
+    ]
+  },
+  {
+    "name": "AdminActivityLog",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "admin_id", "type": "bigint" },
+      { "name": "action", "type": "string" },
+      { "name": "details", "type": "text", "nullable": true },
+      { "name": "created_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User", "foreignKey": "admin_id" }
+    ]
+  },
+  {
+    "name": "FurnitureStyle",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      {
+        "type": "hasMany",
+        "model": "UserPreference",
+        "foreignKey": "favorite_furniture_style_id"
+      }
+    ]
+  },
+  {
+    "name": "RoomCapture",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "image_url", "type": "string" },
+      {
+        "name": "calculated_area",
+        "type": "decimal",
+        "precision": 10,
+        "scale": 2
+      },
+      {
+        "name": "confirmed_area",
+        "type": "decimal",
+        "precision": 10,
+        "scale": 2,
+        "nullable": true
+      },
+      {
+        "name": "room_type",
+        "type": "enum",
+        "enum_values": [
+          "living_room",
+          "bedroom",
+          "dining_room",
+          "kids_room",
+          "office"
+        ]
+      },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "hasMany", "model": "FurnitureProposal" }
+    ]
+  },
+  {
+    "name": "FurnitureProposal",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "room_capture_id", "type": "bigint" },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "furniture_json", "type": "json", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "RoomCapture" },
+      { "type": "belongsTo", "model": "User" },
+      { "type": "hasMany", "model": "FurnitureCustomization" }
+    ]
+  },
+  {
+    "name": "FurnitureCustomization",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "proposal_id", "type": "bigint" },
+      { "name": "modified_furniture_json", "type": "json", "nullable": true },
+      {
+        "name": "status",
+        "type": "enum",
+        "enum_values": ["pending", "approved", "rejected"],
+        "default": "pending"
+      },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "belongsTo", "model": "FurnitureProposal" }]
+  },
+  {
+    "name": "Notification",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "sender_id", "type": "bigint" },
+      { "name": "receiver_id", "type": "bigint" },
+      { "name": "message", "type": "text", "nullable": true },
+      { "name": "is_read", "type": "boolean", "default": false },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User", "foreignKey": "sender_id" },
+      { "type": "belongsTo", "model": "User", "foreignKey": "receiver_id" }
+    ]
+  },
+  {
+    "name": "ChatMessage",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "sender_id", "type": "bigint" },
+      { "name": "receiver_id", "type": "bigint" },
+      { "name": "message", "type": "text", "nullable": true },
+      { "name": "created_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User", "foreignKey": "sender_id" },
+      { "type": "belongsTo", "model": "User", "foreignKey": "receiver_id" }
+    ]
+  },
+  {
+    "name": "InventoryLog",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "product_id", "type": "bigint" },
+      { "name": "old_stock", "type": "integer", "nullable": true },
+      { "name": "new_stock", "type": "integer", "nullable": true },
+      { "name": "change_reason", "type": "text", "nullable": true },
+      { "name": "changed_by", "type": "bigint" },
+      { "name": "created_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Product" },
+      { "type": "belongsTo", "model": "User", "foreignKey": "changed_by" }
+    ]
+  },
+  {
+    "name": "ShippingRate",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "base_rate", "type": "decimal", "precision": 10, "scale": 2 },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": []
+  },
+  {
+    "name": "PaymentGateway",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "is_active", "type": "boolean", "default": true },
+      { "name": "config", "type": "json", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": []
+  },
+  {
+    "name": "SupportTicket",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "subject", "type": "string" },
+      { "name": "description", "type": "text", "nullable": true },
+      {
+        "name": "status",
+        "type": "enum",
+        "enum_values": ["open", "in_progress", "closed"],
+        "default": "open"
+      },
+      { "name": "assigned_to", "type": "bigint", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "belongsTo", "model": "User", "foreignKey": "assigned_to" }
+    ]
+  },
+  {
+    "name": "AppSetting",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "setting_key", "type": "string", "unique": true },
+      { "name": "setting_value", "type": "text", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": []
+  }
+]

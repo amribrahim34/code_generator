@@ -1,0 +1,684 @@
+[
+  {
+    "name": "User",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "email", "type": "string", "unique": true },
+      { "name": "password", "type": "string" },
+      { "name": "mobile", "type": "string", "nullable": true },
+      {
+        "name": "user_type",
+        "type": "enum",
+        "enum_values": ["customer", "vendor", "admin"]
+      },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "hasMany", "model": "Order" },
+      { "type": "hasMany", "model": "Address" },
+      { "type": "hasMany", "model": "SupportTicket" },
+      { "type": "hasOne", "model": "Cart" },
+      { "type": "hasMany", "model": "Review" },
+      { "type": "hasOne", "model": "DesignPreference" },
+      { "type": "hasMany", "model": "RoomDesign" },
+      { "type": "hasMany", "model": "Wishlist" },
+      { "type": "hasMany", "model": "LogActivity" },
+      { "type": "hasMany", "model": "SocialAccount" }
+    ]
+  },
+  {
+    "name": "FurnitureItem",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "description", "type": "text" },
+      { "name": "room_type_id", "type": "bigint" },
+      { "name": "furniture_style_id", "type": "bigint" },
+      { "name": "price", "type": "decimal", "precision": 10, "scale": 2 },
+      { "name": "dimensions", "type": "string" },
+      { "name": "vendor_id", "type": "bigint" },
+      { "name": "stock_quantity", "type": "integer" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Room", "foreignKey": "room_type_id" },
+      {
+        "type": "belongsTo",
+        "model": "FurnitureStyle",
+        "foreignKey": "furniture_style_id"
+      },
+      { "type": "belongsTo", "model": "Vendor" },
+      {
+        "type": "belongsToMany",
+        "model": "Color",
+        "table": "furniture_item_colors"
+      },
+      { "type": "hasMany", "model": "Review" },
+      { "type": "hasMany", "model": "RoomDesignItem" },
+      { "type": "hasMany", "model": "Wishlist" }
+    ]
+  },
+  {
+    "name": "Cart",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "hasMany", "model": "CartItem" }
+    ]
+  },
+  {
+    "name": "CartItem",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "cart_id", "type": "bigint" },
+      { "name": "furniture_item_id", "type": "bigint" },
+      { "name": "quantity", "type": "integer" },
+      { "name": "furniture_color_id", "type": "bigint" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Cart" },
+      { "type": "belongsTo", "model": "FurnitureItem" },
+      {
+        "type": "belongsTo",
+        "model": "Color",
+        "foreignKey": "furniture_color_id"
+      }
+    ]
+  },
+  {
+    "name": "Order",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "total", "type": "decimal", "precision": 10, "scale": 2 },
+      {
+        "name": "discount_value",
+        "type": "decimal",
+        "precision": 10,
+        "scale": 2
+      },
+      { "name": "has_coupon", "type": "boolean" },
+      { "name": "payment_method", "type": "string" },
+      { "name": "address", "type": "text" },
+      { "name": "shipping_method", "type": "string" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "hasMany", "model": "OrderItem" },
+      { "type": "hasOne", "model": "PaymentTransaction" },
+      { "type": "hasOne", "model": "ReturnRequest" }
+    ]
+  },
+  {
+    "name": "Category",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "parent_id", "type": "bigint", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Category", "foreignKey": "parent_id" },
+      { "type": "hasMany", "model": "Category", "foreignKey": "parent_id" },
+      { "type": "hasMany", "model": "FurnitureItem" }
+    ]
+  },
+  {
+    "name": "Room",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "hasMany", "model": "FurnitureItem" },
+      { "type": "hasMany", "model": "RoomDesign" }
+    ]
+  },
+  {
+    "name": "Address",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "name", "type": "string" },
+      { "name": "description", "type": "text" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "belongsTo", "model": "User" }]
+  },
+  {
+    "name": "Setting",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "value", "type": "text" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": []
+  },
+  {
+    "name": "ProductDiscount",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "is_percent", "type": "boolean" },
+      { "name": "value", "type": "decimal", "precision": 10, "scale": 2 },
+      { "name": "start_date", "type": "date" },
+      { "name": "end_date", "type": "date" },
+      { "name": "is_active", "type": "boolean" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "belongsTo", "model": "FurnitureItem" }]
+  },
+  {
+    "name": "Conversation",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "type", "type": "string" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "hasMany", "model": "Message" },
+      {
+        "type": "belongsToMany",
+        "model": "User",
+        "table": "conversation_participants"
+      }
+    ]
+  },
+  {
+    "name": "Message",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "conversation_id", "type": "bigint" },
+      { "name": "sender_id", "type": "bigint" },
+      { "name": "content", "type": "text" },
+      { "name": "read_at", "type": "timestamp", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Conversation" },
+      { "type": "belongsTo", "model": "User", "foreignKey": "sender_id" }
+    ]
+  },
+  {
+    "name": "Wallpaper",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "hasMany", "model": "RoomDesign" }]
+  },
+  {
+    "name": "RoomDesignItem",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "room_design_id", "type": "bigint" },
+      { "name": "furniture_item_id", "type": "bigint" },
+      { "name": "position_x", "type": "float" },
+      { "name": "position_y", "type": "float" },
+      { "name": "rotation", "type": "float" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "RoomDesign" },
+      { "type": "belongsTo", "model": "FurnitureItem" }
+    ]
+  },
+  {
+    "name": "DesignPreference",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "room_type_id", "type": "bigint" },
+      { "name": "furniture_style_id", "type": "bigint" },
+      { "name": "preferred_colors", "type": "json" },
+      { "name": "budget_range_id", "type": "bigint" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "belongsTo", "model": "Room", "foreignKey": "room_type_id" },
+      { "type": "belongsTo", "model": "FurnitureStyle" },
+      { "type": "belongsTo", "model": "BudgetRange" }
+    ]
+  },
+  {
+    "name": "CouponCode",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "code", "type": "string", "unique": true },
+      { "name": "is_percent", "type": "boolean" },
+      { "name": "value", "type": "decimal", "precision": 10, "scale": 2 },
+      { "name": "available", "type": "integer" },
+      { "name": "used", "type": "integer" },
+      { "name": "start_date", "type": "date" },
+      { "name": "end_date", "type": "date" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": []
+  },
+  {
+    "name": "Vendor",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "name", "type": "string" },
+      { "name": "description", "type": "text" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "hasMany", "model": "FurnitureItem" }
+    ]
+  },
+  {
+    "name": "OrderItem",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "order_id", "type": "bigint" },
+      { "name": "furniture_item_id", "type": "bigint" },
+      { "name": "quantity", "type": "integer" },
+      { "name": "price", "type": "decimal", "precision": 10, "scale": 2 },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Order" },
+      { "type": "belongsTo", "model": "FurnitureItem" }
+    ]
+  },
+  {
+    "name": "FurnitureStyle",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "hasMany", "model": "FurnitureItem" },
+      { "type": "hasMany", "model": "DesignPreference" }
+    ]
+  },
+  {
+    "name": "Color",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "hex_code", "type": "string" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      {
+        "type": "belongsToMany",
+        "model": "FurnitureItem",
+        "table": "furniture_item_colors"
+      }
+    ]
+  },
+  {
+    "name": "Feed",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "title", "type": "string" },
+      { "name": "description", "type": "text" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": []
+  },
+  {
+    "name": "SupportTicket",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "conversation_id", "type": "bigint" },
+      { "name": "status", "type": "string" },
+      { "name": "priority", "type": "string" },
+      { "name": "category", "type": "string" },
+      { "name": "subject", "type": "string" },
+      { "name": "closed_at", "type": "timestamp", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "belongsTo", "model": "Conversation" },
+      { "type": "hasMany", "model": "SupportTicketNote" }
+    ]
+  },
+  {
+    "name": "SupportTicketNote",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "support_ticket_id", "type": "bigint" },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "content", "type": "text" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "SupportTicket" },
+      { "type": "belongsTo", "model": "User" }
+    ]
+  },
+  {
+    "name": "RoomDesign",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "room_type_id", "type": "bigint" },
+      { "name": "furniture_style_id", "type": "bigint" },
+      { "name": "wallpaper_id", "type": "bigint" },
+      { "name": "room_dimensions", "type": "json" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "belongsTo", "model": "Room", "foreignKey": "room_type_id" },
+      { "type": "belongsTo", "model": "FurnitureStyle" },
+      { "type": "belongsTo", "model": "Wallpaper" },
+      { "type": "hasMany", "model": "RoomDesignItem" }
+    ]
+  },
+  {
+    "name": "BudgetRange",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "min_amount", "type": "decimal", "precision": 10, "scale": 2 },
+      { "name": "max_amount", "type": "decimal", "precision": 10, "scale": 2 },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "hasMany", "model": "DesignPreference" }]
+  },
+  {
+    "name": "Review",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "furniture_item_id", "type": "bigint" },
+      { "name": "review", "type": "text" },
+      { "name": "rating", "type": "integer" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "belongsTo", "model": "FurnitureItem" }
+    ]
+  },
+  {
+    "name": "Notification",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "type", "type": "string" },
+      { "name": "content", "type": "text" },
+      { "name": "is_read", "type": "boolean" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "belongsTo", "model": "User" }]
+  },
+  {
+    "name": "PaymentTransaction",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "order_id", "type": "bigint" },
+      { "name": "amount", "type": "decimal", "precision": 10, "scale": 2 },
+      { "name": "payment_method", "type": "string" },
+      { "name": "transaction_id", "type": "string" },
+      { "name": "status", "type": "string" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "belongsTo", "model": "Order" }]
+  },
+  {
+    "name": "Wishlist",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "furniture_item_id", "type": "bigint" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "belongsTo", "model": "FurnitureItem" }
+    ]
+  },
+  {
+    "name": "LogActivity",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "action", "type": "string" },
+      { "name": "description", "type": "text" },
+      { "name": "ip_address", "type": "string" },
+      { "name": "user_agent", "type": "string" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "belongsTo", "model": "User" }]
+  },
+  {
+    "name": "ReturnRequest",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "order_id", "type": "bigint" },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "reason", "type": "text" },
+      { "name": "status", "type": "string" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Order" },
+      { "type": "belongsTo", "model": "User" }
+    ]
+  },
+  {
+    "name": "SocialAccount",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "provider", "type": "string" },
+      { "name": "provider_id", "type": "string" },
+      { "name": "provider_token", "type": "text" },
+      { "name": "provider_refresh_token", "type": "text", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "belongsTo", "model": "User" }]
+  }
+]

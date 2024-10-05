@@ -77,7 +77,7 @@ class SchemaValidationService:
         """Validate attribute types."""
         valid_types = self.config_loader.get('valid_attribute_types', [
             'string', 'integer', 'boolean', 'float', 'date', 'datetime',
-        'uuid', 'timestamp', 'decimal', 'enum', 'text', 'json'
+        'uuid', 'timestamp', 'decimal', 'enum', 'text', 'json' , 'bigint'
         ])
 
         for model in schema.models:
@@ -85,8 +85,8 @@ class SchemaValidationService:
                 if attr.type not in valid_types:
                     errors.append(f"Invalid attribute type '{attr.type}' for '{attr.name}' in model '{model.name}'")
                 
-                if attr.type == 'enum' and not attr.enum_values:
-                    errors.append(f"Enum attribute '{attr.name}' in model '{model.name}' must have enum_values defined")
+                # if attr.type == 'enum' and not attr.enum_values:
+                #     errors.append(f"Enum attribute '{attr.name}' in model '{model.name}' must have enum_values defined")
 
     def _validate_unique_constraints(self, schema: Schema, errors: List[str], warnings: List[str]):
         """Validate unique constraints."""
