@@ -54,7 +54,7 @@ class RepositoryGenerator(ICodeGenerator):
             'model_variable': to_snake_case(model_name),
             'namespace': f"App\\Repositories\\{repo_type}",
             'model_namespace': self.config_loader.get('model_namespace', 'App\\Models'),
-            'interface_namespace': f"App\\Repositories\\Interfaces\\{model_name}RepositoryInterface",
+            'interface_namespace': f"App\\Repositories\\{repo_type}\\Interfaces\\{model_name}RepositoryInterface",
             'repo_type': repo_type,
             'table_name': pluralize(to_snake_case(model_name)),
         }

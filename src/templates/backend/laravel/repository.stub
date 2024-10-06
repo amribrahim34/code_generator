@@ -69,25 +69,40 @@ class {{ repository_name }} implements {{ model_name }}RepositoryInterface
     }
 
     {% if repo_type == 'Admin' %}
+    public function getTrashed(): Collection
+    {
+        return $this->model->onlyTrashed()->get();
+    }
+
+    public function restore($id): bool
+    {
+        return $this->model->withTrashed()->find($id)->restore();
+    }
+
     public function getStatistics(): array
     {
         // Implement admin-specific statistics
-        return [];
+        return [
+            'total' => $this->model->count(),
+            'trashed' => $this->model->onlyTrashed()->count(),
+            // Add more statistics as needed
+        ];
     }
     {% endif %}
 
     {% if repo_type == 'CustomerWebsite' %}
-    public function getFeatured(): Collection
+    public function getFeatured(int $limit = 5): Collection
     {
-        return $this->model->where('is_featured', true)->get();
+        return $this->model->where('is_featured', true)->limit($limit)->get();
     }
     {% endif %}
 
     {% if repo_type == 'MobileApp' %}
-    public function getNearby($latitude, $longitude, $distance = 10): Collection
+    public function getByLocation(float $latitude, float $longitude, float $radius): Collection
     {
         // Implement nearby search logic
-        return collect();
+        // This is a placeholder implementation and should be adjusted based on your specific needs
+        return $this->model->all();
     }
     {% endif %}
 }

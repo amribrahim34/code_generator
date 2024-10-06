@@ -59,7 +59,7 @@ class ControllerGenerator(ICodeGenerator):
             'model_variable': to_snake_case(model_name),
             'model_plural': pluralize(to_snake_case(model_name)),
             'namespace': f"App\\Http\\Controllers\\{controller_type}",
-            'repository_namespace': f"App\\Repositories\\Interfaces\\{controller_type}",
+            'repository_namespace': f"App\\Repositories\\{controller_type}\\Interfaces",
             'request_namespace': f"App\\Http\\Requests\\{controller_type}",
             'resource_namespace': f"App\\Http\\Resources\\{controller_type}",
             'use_repository': True,
@@ -69,7 +69,7 @@ class ControllerGenerator(ICodeGenerator):
             'api_version': self.config_loader.get('api_versions', {}).get(controller_type.lower(), 'v1'),
             'request_class': f"{model_name}Request",
             'resource_class': f"{model_name}Resource",
-            'repository_interface': f"I{model_name}Repository",
+            'repository_interface': f"{model_name}RepositoryInterface",
             'controller_type': controller_type,
             'translation_key': to_snake_case(model_name),
         }

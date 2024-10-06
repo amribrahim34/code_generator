@@ -39,7 +39,7 @@ interface {{ interface_name }}
      * @param array $data
      * @return bool
      */
-    public function update({{ model_name }} ${{ model_variable }}, array $data): bool;
+    public function update({{ model_name }} ${{ model_variable }}, array $data);
 
     /**
      * Delete a record.
@@ -47,7 +47,7 @@ interface {{ interface_name }}
      * @param {{ model_name }} ${{ model_variable }}
      * @return bool
      */
-    public function delete({{ model_name }} ${{ model_variable }}): bool;
+    public function delete({{ model_name }} ${{ model_variable }});
 
     /**
      * Find a record by its ID.
@@ -63,14 +63,14 @@ interface {{ interface_name }}
      * @param UploadedFile $file
      * @return array
      */
-    public function bulkImport(UploadedFile $file): array;
+    public function bulkImport(UploadedFile $file);
 
     /**
      * Bulk export records to an Excel file.
      *
      * @return string The path to the exported file
      */
-    public function bulkExport(): string;
+    public function bulkExport();
 
     {% if repo_type == 'Admin' %}
     /**
@@ -78,7 +78,7 @@ interface {{ interface_name }}
      *
      * @return Collection
      */
-    public function getTrashed(): Collection;
+    public function getTrashed();
 
     /**
      * Restore a soft deleted record.
@@ -86,7 +86,7 @@ interface {{ interface_name }}
      * @param int|string $id
      * @return bool
      */
-    public function restore($id): bool;
+    public function restore($id);
     {% endif %}
 
     {% if repo_type == 'CustomerWebsite' %}
@@ -96,7 +96,7 @@ interface {{ interface_name }}
      * @param int $limit
      * @return Collection
      */
-    public function getFeatured(int $limit = 5): Collection;
+    public function getFeatured(int $limit = 5);
     {% endif %}
 
     {% if repo_type == 'MobileApp' %}
@@ -108,6 +108,6 @@ interface {{ interface_name }}
      * @param float $radius
      * @return Collection
      */
-    public function getByLocation(float $latitude, float $longitude, float $radius): Collection;
+    public function getByLocation(float $latitude, float $longitude, float $radius);
     {% endif %}
 }
