@@ -1,6 +1,6 @@
 from typing import Dict, Any, Union, List
 from src.core.interfaces.code_generator import ICodeGenerator
-from src.core.entities.schema import Model, Attribute ,Schema
+from src.core.entities.schema import Model, Attribute, Schema
 from src.core.interfaces.template_renderer import ITemplateRenderer
 from src.core.interfaces.config_loader import IConfigLoader
 from src.utilities.string_utils import to_pascal_case, to_snake_case, pluralize
@@ -9,7 +9,6 @@ class RequestGenerator(ICodeGenerator):
     def __init__(self, config_loader: IConfigLoader, template_renderer: ITemplateRenderer):
         self.config_loader = config_loader
         self.template_renderer = template_renderer
-
 
     def generate(self, schema: Schema) -> Dict[str, str]:
         generated_files = {}
@@ -20,27 +19,19 @@ class RequestGenerator(ICodeGenerator):
             for model in schema.models:
                 for operation in operations:
                     request_content = self._generate_request(model, request_type, operation)
-                    model_name = model['name'] if isinstance(model, dict) else model.name
-                    file_path = f"backend/app/Http/Requests/{request_type}/{model_name}/{operation}Request.php"
+                    model_name = model.name if isinstance(model, Model) else model['name']
+                    file_path = f"backend/app/Http/Requests/{request_type}/{model_name}/{operation}{model_name}Request.php"
                     generated_files[file_path] = request_content
 
         return generated_files
 
-    def get_output_path(self, model_name: str) -> str:
-        return f"backend/app/Http/Requests/{model_name}Request.php"
-
-    def render_template(self, template: str, context: Dict[str, Any]) -> str:
-        return self.template_renderer.render('backend/laravel/request.stub', context)
-        
     def _generate_request(self, model: Union[Dict[str, Any], Model], request_type: str, operation: str) -> str:
         context = self.prepare_context(model, request_type, operation)
-        template = self.get_template('request')
         return self.template_renderer.render('backend/laravel/request.stub', context)
 
     def prepare_context(self, model: Union[Dict[str, Any], Model], request_type: str, operation: str) -> Dict[str, Any]:
-        model_name = model['name'] if isinstance(model, dict) else model.name
-        attributes = model['attributes'] if isinstance(model, dict) else model.attributes
-
+        model_name = model.name if isinstance(model, Model) else model['name']
+        
         context = {
             'model_name': model_name,
             'request_name': f"{operation}{model_name}Request",
@@ -49,7 +40,6 @@ class RequestGenerator(ICodeGenerator):
             'operation': operation,
             'rules': self._generate_rules(model, operation),
         }
-        # print(context)  # Debugging: Print context to verify 'rules' are present
         return context
 
     def _generate_rules(self, model: Union[Dict[str, Any], Model], action: str) -> str:

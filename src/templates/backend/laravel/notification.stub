@@ -5,10 +5,10 @@ namespace {{ namespace }};
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Notification as BaseNotification;
 use {{ model_namespace }}\{{ model_name }};
 
-class {{ notification_name }} extends Notification implements ShouldQueue
+class {{ notification_name }} extends BaseNotification implements ShouldQueue
 {
     use Queueable;
 

@@ -62,10 +62,10 @@ class {{ model_name }} extends Model
 
     {% for relationship in relationships %}
     /**
-     * Get the {{ relationship.method_name }} associated with the {{ model_name }}.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\{{ relationship.type|capitalize }}
-     */
+    * Get the {{ relationship.method_name }} associated with the {{ model_name }}.
+    *
+    * @return \Illuminate\Database\Eloquent\Relations\{{ relationship.type|capitalize }}
+    */
     public function {{ relationship.method_name }}(): {{ relationship.type|capitalize }}
     {
         return $this->{{ relationship.type }}({{ relationship.related_model }}::class{% if relationship.foreign_key %}, '{{ relationship.foreign_key }}'{% endif %}{% if relationship.local_key %}, '{{ relationship.local_key }}'{% endif %});

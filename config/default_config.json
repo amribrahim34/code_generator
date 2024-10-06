@@ -178,6 +178,7 @@
         "module": "src.generators.backend.laravel.migration_generator",
         "class": "MigrationGenerator"
       },
+
       {
         "name": "controller",
         "module": "src.generators.backend.laravel.controller_generator",

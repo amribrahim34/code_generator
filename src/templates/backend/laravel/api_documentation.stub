@@ -1,0 +1,61 @@
+# API Documentation
+
+## Base URL
+
+`https://api.yourproject.com`
+
+## Authentication
+
+All API requests require a valid JWT token in the Authorization header:
+
+```
+Authorization: Bearer your_token_here
+```
+
+## Endpoints
+
+{% for namespace in namespaces %}
+### {{ namespace }}
+
+{% for model in models %}
+#### {{ model }}
+
+- `GET /api/{{ namespace|lower }}/{{ model|lower }}s`: List all {{ model|lower }}s
+- `POST /api/{{ namespace|lower }}/{{ model|lower }}s`: Create a new {{ model|lower }}
+- `GET /api/{{ namespace|lower }}/{{ model|lower }}s/{id}`: Get a specific {{ model|lower }}
+- `PUT /api/{{ namespace|lower }}/{{ model|lower }}s/{id}`: Update a specific {{ model|lower }}
+- `DELETE /api/{{ namespace|lower }}/{{ model|lower }}s/{id}`: Delete a specific {{ model|lower }}
+- `GET /api/{{ namespace|lower }}/{{ model|lower }}s/search/{term}`: Search {{ model|lower }}s
+- `POST /api/{{ namespace|lower }}/{{ model|lower }}s/filter`: Filter {{ model|lower }}s
+
+{% endfor %}
+{% endfor %}
+
+## Response Format
+
+All responses are in JSON format and include a `data` object and a `message` string:
+
+```json
+{
+  "data": {},
+  "message": "Success message"
+}
+```
+
+## Error Handling
+
+Errors are returned with appropriate HTTP status codes and include an error message:
+
+```json
+{
+  "message": "Error message"
+}
+```
+
+## Rate Limiting
+
+(Describe any rate limiting policies)
+
+## Pagination
+
+(Describe how pagination works for list endpoints)

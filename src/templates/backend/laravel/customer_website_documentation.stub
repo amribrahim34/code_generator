@@ -1,0 +1,52 @@
+# Customer Website Documentation
+
+## Overview
+
+The Customer Website is built with Vue.js and communicates with the backend API.
+
+## Project Structure
+
+```
+src/
+├── components/
+├── views/
+├── router/
+├── store/
+├── services/
+└── utils/
+```
+
+## Views
+
+{% for model in models %}
+- {{ model }}List
+- {{ model }}Detail
+{% endfor %}
+
+## Components
+
+- List common reusable components here
+
+## Routing
+
+The website uses Vue Router for routing. Routes are defined in `src/router/index.js`.
+
+## State Management
+
+The website uses Vuex for state management. The store is located in `src/store/index.js`.
+
+## API Integration
+
+API calls are made using Axios. The API service is located in `src/services/api.js`.
+
+## Styling
+
+(Describe the styling approach, e.g., SCSS, CSS modules, or Tailwind CSS)
+
+## Testing
+
+(Describe the testing setup and how to run tests)
+
+## Building and Deploying
+
+(Provide instructions for building and deploying the website)

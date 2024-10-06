@@ -1,0 +1,72 @@
+# Backend Documentation
+
+## Overview
+
+The backend is built with Laravel and follows a repository pattern. It's organized into different namespaces for Admin, CustomerWebsite, and CustomerApp.
+
+## Project Structure
+
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── Admin/
+│   │   ├── CustomerWebsite/
+│   │   └── CustomerApp/
+│   ├── Requests/
+│   │   ├── Admin/
+│   │   ├── CustomerWebsite/
+│   │   └── CustomerApp/
+│   └── Resources/
+│       ├── Admin/
+│       ├── CustomerWebsite/
+│       └── CustomerApp/
+├── Models/
+├── Repositories/
+│   ├── Admin/
+│   ├── CustomerWebsite/
+│   └── CustomerApp/
+├── Services/
+└── Providers/
+```
+
+## Models
+
+{% for model in models %}
+- {{ model }}
+{% endfor %}
+
+## Repositories
+
+Each model has a corresponding repository in each namespace:
+
+{% for namespace in namespaces %}
+### {{ namespace }}
+{% for model in models %}
+- {{ model }}Repository
+{% endfor %}
+{% endfor %}
+
+## Controllers
+
+Controllers are organized by namespace and follow RESTful conventions.
+
+## Form Requests
+
+Form requests are used for validation and are located in the `app/Http/Requests` directory.
+
+## Resources
+
+API Resources are used for transforming models and are located in the `app/Http/Resources` directory.
+
+## Services
+
+Any complex business logic is encapsulated in service classes in the `app/Services` directory.
+
+## Testing
+
+Unit and integration tests are located in the `tests` directory. Run tests using `php artisan test`.
+
+## API Documentation
+
+Refer to the [API Documentation](api.md) for detailed information about available endpoints.

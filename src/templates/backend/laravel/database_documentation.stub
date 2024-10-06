@@ -1,0 +1,51 @@
+# Database Documentation
+
+## Overview
+
+This project uses a relational database (e.g., MySQL, PostgreSQL) with the following schema:
+
+{% for model, data in schema.items() %}
+### {{ model }}
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+{% for field in data.fields %}
+| {{ field.name }} | {{ field.type }} | {% if not field.nullable %}NOT NULL{% endif %}{% if field.unique %} UNIQUE{% endif %} |
+{% endfor %}
+
+{% if data.get('relationships') %}
+Relationships:
+{% for relationship in data.relationships %}
+- {{ relationship.type }} {{ relationship.with }}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+
+## Migrations
+
+Database migrations are located in the `database/migrations` directory. To run migrations:
+
+```
+php artisan migrate
+```
+
+## Seeding
+
+Database seeds are located in the `database/seeders` directory. To run seeders:
+
+```
+php artisan db:seed
+```
+
+## Backup and Restore
+
+(Describe the backup and restore procedures)
+
+## Indexing
+
+(Describe any important database indexes)
+
+## Performance Considerations
+
+(Mention any performance considerations or optimizations)

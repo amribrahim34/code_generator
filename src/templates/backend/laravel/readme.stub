@@ -1,0 +1,30 @@
+# {{ project_name }}
+
+## Overview
+
+This project consists of three main components:
+1. Backend API (Laravel)
+2. Customer Website (Vue.js)
+3. Customer App (React Native)
+
+## Documentation
+
+Detailed documentation for developers can be found in the following files:
+
+{% for doc_file in documentation_files %}
+- [{{ doc_file | replace('.md', '') | replace('_', ' ') | title }}]({{ doc_file }})
+{% endfor %}
+
+## Getting Started
+
+1. Clone this repository
+2. Follow the setup instructions in each component's documentation
+3. Refer to the deployment guide for production deployment instructions
+
+## Contributing
+
+Please read our [Contributing Guide](CONTRIBUTING.md) before submitting any Pull Requests.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
