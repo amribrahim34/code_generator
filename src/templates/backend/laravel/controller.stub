@@ -27,7 +27,7 @@ class {{ class_name }} extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/{{ api_version }}/{{ model_plural }}",
+     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}",
      *     operationId="get{{ model_name }}List",
      *     tags={"{{ model_plural }}"},
      *     summary="List all {{ model_plural }}",
@@ -70,7 +70,7 @@ class {{ class_name }} extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/{{ api_version }}/{{ model_plural }}",
+     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}",
      *     operationId="create{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Create a new {{ model_name }}",
@@ -99,7 +99,7 @@ class {{ class_name }} extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/{{ api_version }}/{{ model_plural }}/{id}",
+     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/{id}",
      *     operationId="get{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Get a specific {{ model_name }}",
@@ -130,7 +130,7 @@ class {{ class_name }} extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/{{ api_version }}/{{ model_plural }}/{id}",
+     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/{id}",
      *     operationId="update{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Update a {{ model_name }}",
@@ -170,7 +170,7 @@ class {{ class_name }} extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/{{ api_version }}/{{ model_plural }}/{id}",
+     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/{id}",
      *     operationId="delete{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Delete a {{ model_name }}",
@@ -200,7 +200,7 @@ class {{ class_name }} extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/{{ api_version }}/{{ model_plural }}/bulk-import",
+     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/bulk-import",
      *     operationId="bulkImport{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Bulk import {{ model_plural }}",
@@ -235,7 +235,7 @@ class {{ class_name }} extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/{{ api_version }}/{{ model_plural }}/bulk-update",
+     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/bulk-update",
      *     operationId="bulkUpdate{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Bulk update {{ model_plural }}",
@@ -270,7 +270,7 @@ class {{ class_name }} extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/{{ api_version }}/{{ model_plural }}/bulk-delete",
+     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/bulk-delete",
      *     operationId="bulkDelete{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Bulk delete {{ model_plural }}",
@@ -298,7 +298,7 @@ class {{ class_name }} extends Controller
     {% if controller_type == 'Admin' %}
     /**
      * @OA\Get(
-     *     path="/api/{{ api_version }}/{{ model_plural }}/export",
+     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/export",
      *     operationId="export{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Export {{ model_plural }} data",
@@ -327,7 +327,7 @@ class {{ class_name }} extends Controller
     {% if controller_type == 'Website' %}
     /**
      * @OA\Get(
-     *     path="/api/{{ api_version }}/{{ model_plural }}/featured",
+     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/featured",
      *     operationId="getFeatured{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Get featured {{ model_plural }}",
@@ -351,7 +351,7 @@ class {{ class_name }} extends Controller
     {% if controller_type == 'MobileApp' %}
     /**
      * @OA\Get(
-     *     path="/api/{{ api_version }}/{{ model_plural }}/nearby",
+     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/nearby",
      *     operationId="getNearby{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Get nearby {{ model_plural }}",
