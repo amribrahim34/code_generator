@@ -18,13 +18,13 @@ class MigrationGenerator:
         
         for index, model in enumerate(arranged_models):
             try:
-                print(f"Generating migration for model {model.name}")
+                # print(f"Generating migration for model {model.name}")
                 content = self._generate_migration(model)
                 timestamp = (datetime.now() + timedelta(seconds=index)).strftime('%Y_%m_%d_%H%M%S')
                 file_name = f"{timestamp}_create_{pluralize(to_snake_case(model.name))}_table.php"
                 file_path = f"backend/database/migrations/{file_name}"
                 generated_files[file_path] = content
-                print(f"Successfully generated migration for {model.name}")
+                # print(f"Successfully generated migration for {model.name}")
             except Exception as e:
                 print(f"Error generating migration for model {model.name}: {str(e)}")
         

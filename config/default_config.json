@@ -23,48 +23,7 @@
     "store": "camelCase",
     "route": "kebab-case"
   },
-  "templates": {
-    "directory": "src/templates",
-    "backend": {
-      "model": "backend/laravel/model.stub",
-      "migration": "backend/laravel/migration.stub",
-      "controller": "backend/laravel/controller.stub",
-      "api_controller": "backend/laravel/api_controller.stub",
-      "request": "backend/laravel/request.stub",
-      "resource": "backend/laravel/resource.stub",
-      "collection": "backend/laravel/collection.stub",
-      "policy": "backend/laravel/policy.stub",
-      "factory": "backend/laravel/factory.stub",
-      "seeder": "backend/laravel/seeder.stub",
-      "observer": "backend/laravel/observer.stub",
-      "event": "backend/laravel/event.stub",
-      "listener": "backend/laravel/listener.stub",
-      "job": "backend/laravel/job.stub",
-      "notification": "backend/laravel/notification.stub",
-      "mail": "backend/laravel/mail.stub",
-      "test": "backend/laravel/test.stub",
-      "repository": "backend/laravel/repository.stub",
-      "repository_interface": "backend/laravel/repository_interface.stub",
-      "service": "backend/laravel/service.stub",
-      "trait": "backend/laravel/trait.stub",
-      "middleware": "backend/laravel/middleware.stub",
-      "console_command": "backend/laravel/console_command.stub",
-      "provider": "backend/laravel/provider.stub",
-      "exception": "backend/laravel/exception.stub",
-      "pivot_table": "backend/laravel/pivot_table.stub",
-      "view": "backend/laravel/view.stub",
-      "route": "backend/laravel/route.stub",
-      "config": "backend/laravel/config.stub",
-      "language": "backend/laravel/language.stub"
-    },
-    "frontend": {
-      "component": "frontend/vue/component.vue",
-      "store_module": "frontend/vue/store_module.js",
-      "router": "frontend/vue/router.js",
-      "types": "frontend/vue/types.d.ts",
-      "admin_panel": "frontend/vue/admin_panel.vue"
-    }
-  },
+
   "frontend": {
     "framework": "vue",
     "version": "3.x",
@@ -86,71 +45,7 @@
       "layouts": "src/layouts"
     }
   },
-  "backend": {
-    "framework": "laravel",
-    "version": "10.x",
-    "generators": [
-      "model",
-      "migration",
-      "controller",
-      "api_controller",
-      "request",
-      "resource",
-      "collection",
-      "policy",
-      "factory",
-      "seeder",
-      "observer",
-      "event",
-      "listener",
-      "job",
-      "notification",
-      "mail",
-      "test",
-      "repository",
-      "repository_interface",
-      "service",
-      "trait",
-      "middleware",
-      "console_command",
-      "provider",
-      "exception",
-      "pivot_table",
-      "view",
-      "route",
-      "config",
-      "language"
-    ],
-    "structure": {
-      "models": "app/Models",
-      "controllers": "app/Http/Controllers",
-      "api_controllers": "app/Http/Controllers/API",
-      "requests": "app/Http/Requests",
-      "resources": "app/Http/Resources",
-      "policies": "app/Policies",
-      "repositories": "app/Repositories",
-      "services": "app/Services",
-      "observers": "app/Observers",
-      "events": "app/Events",
-      "listeners": "app/Listeners",
-      "jobs": "app/Jobs",
-      "notifications": "app/Notifications",
-      "mails": "app/Mail",
-      "migrations": "database/migrations",
-      "factories": "database/factories",
-      "seeders": "database/seeders",
-      "tests": "tests",
-      "traits": "app/Traits",
-      "middlewares": "app/Http/Middleware",
-      "commands": "app/Console/Commands",
-      "providers": "app/Providers",
-      "exceptions": "app/Exceptions",
-      "views": "resources/views",
-      "routes": "routes",
-      "config": "config",
-      "lang": "lang"
-    }
-  },
+
   "database": {
     "engine": "mysql",
     "charset": "utf8mb4",
@@ -304,45 +199,6 @@
         "class": "StoreGenerator"
       }
     ]
-  },
-  "features": {
-    "authentication": {
-      "enabled": true,
-      "type": "jwt"
-    },
-    "authorization": {
-      "enabled": true,
-      "use_policies": true
-    },
-    "testing": {
-      "generate_tests": true,
-      "test_framework": "phpunit"
-    },
-    "localization": {
-      "enabled": true,
-      "default_locale": "en",
-      "supported_locales": ["en", "es", "fr"]
-    },
-    "caching": {
-      "enabled": true,
-      "driver": "redis"
-    },
-    "queues": {
-      "enabled": true,
-      "driver": "redis"
-    },
-    "real_time": {
-      "enabled": false,
-      "driver": "pusher"
-    }
-  },
-  "relationships": {
-    "use_inverse_relations": true,
-    "generate_pivot_tables": true,
-    "naming": {
-      "foreign_key": "{table}_id",
-      "pivot_table": "{table1}_{table2}"
-    }
   },
   "code_style": {
     "psr_standards": true,

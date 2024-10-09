@@ -32,7 +32,7 @@ class ComponentGenerator(ICodeGenerator):
         context = self.prepare_context(model, component_type)
         # self.logger.warning("Generating component aaaaaa")
         template_name = f'frontend/vue/{component_type.lower()}_component.stub'
-        self.logger.warning(f"Generating component , this is the template name : {template_name}")
+        # self.logger.warning(f"Generating component , this is the template name : {template_name}")
         # return self.render_template(template, context)
         return self.template_renderer.render(template_name, context)
         
