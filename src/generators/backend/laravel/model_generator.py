@@ -106,8 +106,5 @@ class ModelGenerator(ICodeGenerator):
         # Perform any post-generation tasks here, such as formatting or linting
         pass
 
-# Example usage (this would be part of the BackendGenerationService)
-# config_loader = ConfigLoader()
-# template_renderer = TemplateRenderer()
-# model_generator = ModelGenerator(config_loader, template_renderer)
-# generated_files = model_generator.generate(model)
+    def get_output_path(self, model_name: str ) -> str:
+        return f"backend/app/Models/{model_name}.php"

@@ -89,8 +89,8 @@ class RequestGenerator(ICodeGenerator):
         # Perform any post-generation tasks here, such as formatting or linting
         pass
 
-# Example usage (this would be part of the BackendGenerationService)
-# config_loader = ConfigLoader()
-# template_renderer = TemplateRenderer()
-# request_generator = RequestGenerator(config_loader, template_renderer)
-# generated_files = request_generator.generate(model)
+    def get_output_path(self, model_name: str ) -> str:
+        return f"backend/app/Http/Requests/{model_name}.php"
+    
+    def render_template(self, template: str, context: Dict[str, Any]) -> str:
+        return self.template_renderer.render(template, context)
