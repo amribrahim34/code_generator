@@ -10,17 +10,6 @@ class ControllerGenerator(ICodeGenerator):
         self.config_loader = config_loader
         self.template_renderer = template_renderer
 
-    def generate(self, model: Union[Dict[str, Any], Model]) -> Dict[str, str]:
-        generated_files = {}
-        controller_types = ['Admin', 'Website', 'MobileApp']
-        
-        for controller_type in controller_types:
-            controller_content = self._generate_controller(model, controller_type)
-            model_name = model['name'] if isinstance(model, dict) else model.name
-            file_path = f"app/Http/Controllers/{controller_type}/{model_name}Controller.php"
-            generated_files[file_path] = controller_content
-        
-        return generated_files
 
     def generate(self, schema: Schema) -> Dict[str, str]:
         generated_files = {}
@@ -52,8 +41,9 @@ class ControllerGenerator(ICodeGenerator):
         model_name = model['name'] if isinstance(model, dict) else model.name
         attributes = model['attributes'] if isinstance(model, dict) else model.attributes
         relationships = model['relationships'] if isinstance(model, dict) else model.relationships
-
-        return {
+        use_repository = self.config_loader.get('use_repository' ,False)
+        
+        context =  {
             'class_name': f"{model_name}Controller",
             'model_name': model_name,
             'model_variable': to_snake_case(model_name),
@@ -73,6 +63,20 @@ class ControllerGenerator(ICodeGenerator):
             'controller_type': controller_type,
             'translation_key': to_snake_case(model_name),
         }
+        
+        if use_repository:
+            context.update({
+                'use_repository': True,
+                'repository_namespace': f"App\\Repositories\\Interfaces\\{controller_type}",
+                'repository_interface': f"I{model_name}Repository",
+            })
+        else:
+            context.update({
+                'use_repository': False,
+                'model_namespace': f"App\\Models",
+            })
+
+        return context
 
     def get_template(self, template_name: str) -> str:
         template_path = self.config_loader.get('controller_template_path', 'backend/laravel/controller.stub')

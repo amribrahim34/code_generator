@@ -3,10 +3,12 @@
 namespace {{ namespace }};
 
 use App\Http\Controllers\Controller;
-use App\Models\{{ model_name }};
+use {{ model_namespace }}\{{ model_name }};
 use {{ request_namespace }}\{{ request_class }};
 use {{ resource_namespace }}\{{ resource_class }};
+{% if use_repository %}
 use {{ repository_namespace }}\{{ repository_interface }};
+{% endif %}
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -18,12 +20,14 @@ use Illuminate\Http\Response;
  */
 class {{ class_name }} extends Controller
 {
+    {% if use_repository %}
     protected ${{ model_variable }}Repository;
 
     public function __construct({{ repository_interface }} ${{ model_variable }}Repository)
     {
         $this->{{ model_variable }}Repository = ${{ model_variable }}Repository;
     }
+    {% endif %}
 
     /**
      * @OA\Get(
@@ -64,7 +68,11 @@ class {{ class_name }} extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 15);
+        {% if use_repository %}
         ${{ model_plural }} = $this->{{ model_variable }}Repository->paginate($perPage);
+        {% else %}
+        ${{ model_plural }} = {{ model_name }}::paginate($perPage);
+        {% endif %}
         return {{ resource_class }}::collection(${{ model_plural }});
     }
 
@@ -93,7 +101,11 @@ class {{ class_name }} extends Controller
      */
     public function store({{ request_class }} $request)
     {
+        {% if use_repository %}
         ${{ model_variable }} = $this->{{ model_variable }}Repository->create($request->validated());
+        {% else %}
+        ${{ model_variable }} = {{ model_name }}::create($request->validated());
+        {% endif %}
         return new {{ resource_class }}(${{ model_variable }});
     }
 
@@ -124,7 +136,11 @@ class {{ class_name }} extends Controller
      */
     public function show($id)
     {
+        {% if use_repository %}
         ${{ model_variable }} = $this->{{ model_variable }}Repository->findOrFail($id);
+        {% else %}
+        ${{ model_variable }} = {{ model_name }}::findOrFail($id);
+        {% endif %}
         return new {{ resource_class }}(${{ model_variable }});
     }
 
@@ -164,7 +180,12 @@ class {{ class_name }} extends Controller
      */
     public function update({{ request_class }} $request, $id)
     {
+        {% if use_repository %}
         ${{ model_variable }} = $this->{{ model_variable }}Repository->update($id, $request->validated());
+        {% else %}
+        ${{ model_variable }} = {{ model_name }}::findOrFail($id);
+        ${{ model_variable }}->update($request->validated());
+        {% endif %}
         return new {{ resource_class }}(${{ model_variable }});
     }
 
@@ -194,207 +215,254 @@ class {{ class_name }} extends Controller
      */
     public function destroy($id)
     {
+        {% if use_repository %}
         $this->{{ model_variable }}Repository->delete($id);
+        {% else %}
+        ${{ model_variable }} = {{ model_name }}::findOrFail($id);
+        ${{ model_variable }}->delete();
+        {% endif %}
         return response()->noContent();
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/bulk-import",
-     *     operationId="bulkImport{{ model_name }}",
-     *     tags={"{{ model_plural }}"},
-     *     summary="Bulk import {{ model_plural }}",
-     *     description="Imports multiple {{ model_plural }} at once",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/{{ request_class }}")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="{{ model_plural }} imported successfully",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(ref="#/components/schemas/ValidationError")
-     *     )
-     * )
-     */
-    public function bulkImport(Request $request)
-    {
-        ${{ model_plural }} = $this->{{ model_variable }}Repository->bulkCreate($request->all());
-        return {{ resource_class }}::collection(${{ model_plural }});
-    }
+    * @OA\Post(
+    *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/bulk-import",
+    *     operationId="bulkImport{{ model_name }}",
+    *     tags={"{{ model_plural }}"},
+    *     summary="Bulk import {{ model_plural }}",
+    *     description="Imports multiple {{ model_plural }} at once",
+    *     @OA\RequestBody(
+    *         required=true,
+    *         @OA\JsonContent(
+    *             type="array",
+    *             @OA\Items(ref="#/components/schemas/{{ request_class }}")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=201,
+    *         description="{{ model_plural }} imported successfully",
+    *         @OA\JsonContent(
+    *             type="array",
+    *             @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=422,
+    *         description="Validation error",
+    *         @OA\JsonContent(ref="#/components/schemas/ValidationError")
+    *     )
+    * )
+    */
+   public function bulkImport(Request $request)
+   {
+       {% if use_repository %}
+       ${{ model_plural }} = $this->{{ model_variable }}Repository->bulkCreate($request->all());
+       {% else %}
+       ${{ model_plural }} = {{ model_name }}::insert($request->all());
+       {% endif %}
+       return {{ resource_class }}::collection(${{ model_plural }});
+   }
 
-    /**
-     * @OA\Put(
-     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/bulk-update",
-     *     operationId="bulkUpdate{{ model_name }}",
-     *     tags={"{{ model_plural }}"},
-     *     summary="Bulk update {{ model_plural }}",
-     *     description="Updates multiple {{ model_plural }} at once",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/{{ request_class }}")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="{{ model_plural }} updated successfully",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(ref="#/components/schemas/ValidationError")
-     *     )
-     * )
-     */
-    public function bulkUpdate(Request $request)
-    {
-        ${{ model_plural }} = $this->{{ model_variable }}Repository->bulkUpdate($request->all());
-        return {{ resource_class }}::collection(${{ model_plural }});
-    }
+   /**
+    * @OA\Put(
+    *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/bulk-update",
+    *     operationId="bulkUpdate{{ model_name }}",
+    *     tags={"{{ model_plural }}"},
+    *     summary="Bulk update {{ model_plural }}",
+    *     description="Updates multiple {{ model_plural }} at once",
+    *     @OA\RequestBody(
+    *         required=true,
+    *         @OA\JsonContent(
+    *             type="array",
+    *             @OA\Items(ref="#/components/schemas/{{ request_class }}")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="{{ model_plural }} updated successfully",
+    *         @OA\JsonContent(
+    *             type="array",
+    *             @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=422,
+    *         description="Validation error",
+    *         @OA\JsonContent(ref="#/components/schemas/ValidationError")
+    *     )
+    * )
+    */
+   public function bulkUpdate(Request $request)
+   {
+       {% if use_repository %}
+       ${{ model_plural }} = $this->{{ model_variable }}Repository->bulkUpdate($request->all());
+       {% else %}
+       ${{ model_plural }} = collect($request->all())->map(function ($item) {
+           ${{ model_variable }} = {{ model_name }}::findOrFail($item['id']);
+           ${{ model_variable }}->update($item);
+           return ${{ model_variable }};
+       });
+       {% endif %}
+       return {{ resource_class }}::collection(${{ model_plural }});
+   }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/bulk-delete",
-     *     operationId="bulkDelete{{ model_name }}",
-     *     tags={"{{ model_plural }}"},
-     *     summary="Bulk delete {{ model_plural }}",
-     *     description="Deletes multiple {{ model_plural }} at once",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(type="integer")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=204,
-     *         description="{{ model_plural }} deleted successfully"
-     *     )
-     * )
-     */
-    public function bulkDelete(Request $request)
-    {
-        $this->{{ model_variable }}Repository->bulkDelete($request->all());
-        return response()->noContent();
-    }
+   /**
+    * @OA\Delete(
+    *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/bulk-delete",
+    *     operationId="bulkDelete{{ model_name }}",
+    *     tags={"{{ model_plural }}"},
+    *     summary="Bulk delete {{ model_plural }}",
+    *     description="Deletes multiple {{ model_plural }} at once",
+    *     @OA\RequestBody(
+    *         required=true,
+    *         @OA\JsonContent(
+    *             type="array",
+    *             @OA\Items(type="integer")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=204,
+    *         description="{{ model_plural }} deleted successfully"
+    *     )
+    * )
+    */
+   public function bulkDelete(Request $request)
+   {
+       {% if use_repository %}
+       $this->{{ model_variable }}Repository->bulkDelete($request->all());
+       {% else %}
+       {{ model_name }}::whereIn('id', $request->all())->delete();
+       {% endif %}
+       return response()->noContent();
+   }
 
-    // Additional methods specific to {{ controller_type }} controller
-    {% if controller_type == 'Admin' %}
-    /**
-     * @OA\Get(
-     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/export",
-     *     operationId="export{{ model_name }}",
-     *     tags={"{{ model_plural }}"},
-     *     summary="Export {{ model_plural }} data",
-     *     description="Exports {{ model_plural }} data to a file",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Exported {{ model_plural }} data",
-     *         @OA\Header(
-     *             header="Content-Disposition",
-     *             description="attachment; filename={{ model_plural }}.csv",
-     *             @OA\Schema(type="string")
-     *         ),
-     *         @OA\MediaType(
-     *             mediaType="text/csv",
-     *             @OA\Schema(type="string")
-     *         )
-     *     )
-     * )
-     */
-    public function export()
-    {
-        // Implementation for exporting {{ model_plural }}
-    }
-    {% endif %}
+   // Additional methods specific to {{ controller_type }} controller
+   {% if controller_type == 'Admin' %}
+   /**
+    * @OA\Get(
+    *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/export",
+    *     operationId="export{{ model_name }}",
+    *     tags={"{{ model_plural }}"},
+    *     summary="Export {{ model_plural }} data",
+    *     description="Exports {{ model_plural }} data to a file",
+    *     @OA\Response(
+    *         response=200,
+    *         description="Exported {{ model_plural }} data",
+    *         @OA\Header(
+    *             header="Content-Disposition",
+    *             description="attachment; filename={{ model_plural }}.csv",
+    *             @OA\Schema(type="string")
+    *         ),
+    *         @OA\MediaType(
+    *             mediaType="text/csv",
+    *             @OA\Schema(type="string")
+    *         )
+    *     )
+    * )
+    */
+   public function export()
+   {
+       // Implementation for exporting {{ model_plural }}
+       {% if use_repository %}
+       ${{ model_plural }} = $this->{{ model_variable }}Repository->all();
+       {% else %}
+       ${{ model_plural }} = {{ model_name }}::all();
+       {% endif %}
+       // Add logic to convert ${{ model_plural }} to CSV and return as a download
+   }
+   {% endif %}
 
-    {% if controller_type == 'Website' %}
-    /**
-     * @OA\Get(
-     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/featured",
-     *     operationId="getFeatured{{ model_name }}",
-     *     tags={"{{ model_plural }}"},
-     *     summary="Get featured {{ model_plural }}",
-     *     description="Returns a list of featured {{ model_plural }}",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
-     *         )
-     *     )
-     * )
-     */
-    public function featured()
-    {
-        // Implementation for getting featured {{ model_plural }}
-    }
-    {% endif %}
+   {% if controller_type == 'Website' %}
+   /**
+    * @OA\Get(
+    *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/featured",
+    *     operationId="getFeatured{{ model_name }}",
+    *     tags={"{{ model_plural }}"},
+    *     summary="Get featured {{ model_plural }}",
+    *     description="Returns a list of featured {{ model_plural }}",
+    *     @OA\Response(
+    *         response=200,
+    *         description="Successful operation",
+    *         @OA\JsonContent(
+    *             type="array",
+    *             @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
+    *         )
+    *     )
+    * )
+    */
+   public function featured()
+   {
+       {% if use_repository %}
+       $featured{{ model_plural }} = $this->{{ model_variable }}Repository->getFeatured();
+       {% else %}
+       $featured{{ model_plural }} = {{ model_name }}::where('is_featured', true)->get();
+       {% endif %}
+       return {{ resource_class }}::collection($featured{{ model_plural }});
+   }
+   {% endif %}
 
-    {% if controller_type == 'MobileApp' %}
-    /**
-     * @OA\Get(
-     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/nearby",
-     *     operationId="getNearby{{ model_name }}",
-     *     tags={"{{ model_plural }}"},
-     *     summary="Get nearby {{ model_plural }}",
-     *     description="Returns a list of nearby {{ model_plural }} based on provided coordinates",
-     *     @OA\Parameter(
-     *         name="latitude",
-     *         in="query",
-     *         description="Latitude of the center point",
-     *         required=true,
-     *         @OA\Schema(type="number", format="float")
-     *     ),
-     *     @OA\Parameter(
-     *         name="longitude",
-     *         in="query",
-     *         description="Longitude of the center point",
-     *         required=true,
-     *         @OA\Schema(type="number", format="float")
-     *     ),
-     *     @OA\Parameter(
-     *         name="radius",
-     *         in="query",
-     *         description="Search radius in kilometers",
-     *         required=false,
-     *         @OA\Schema(type="number", format="float", default=10)
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
-     *         )
-     *     )
-     * )
-     */
-     public function nearby(Request $request)
-     {
-         $latitude = $request->input('latitude');
-         $longitude = $request->input('longitude');
-         $radius = $request->input('radius', 10); // Default radius of 10 km if not provided
- 
-         $nearbyItems = $this->{{ model_variable }}Repository->getNearby($latitude, $longitude, $radius);
-         return {{ resource_class }}::collection($nearbyItems);
-     }
-     {% endif %}
+   {% if controller_type == 'MobileApp' %}
+   /**
+    * @OA\Get(
+    *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/nearby",
+    *     operationId="getNearby{{ model_name }}",
+    *     tags={"{{ model_plural }}"},
+    *     summary="Get nearby {{ model_plural }}",
+    *     description="Returns a list of nearby {{ model_plural }} based on provided coordinates",
+    *     @OA\Parameter(
+    *         name="latitude",
+    *         in="query",
+    *         description="Latitude of the center point",
+    *         required=true,
+    *         @OA\Schema(type="number", format="float")
+    *     ),
+    *     @OA\Parameter(
+    *         name="longitude",
+    *         in="query",
+    *         description="Longitude of the center point",
+    *         required=true,
+    *         @OA\Schema(type="number", format="float")
+    *     ),
+    *     @OA\Parameter(
+    *         name="radius",
+    *         in="query",
+    *         description="Search radius in kilometers",
+    *         required=false,
+    *         @OA\Schema(type="number", format="float", default=10)
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Successful operation",
+    *         @OA\JsonContent(
+    *             type="array",
+    *             @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
+    *         )
+    *     )
+    * )
+    */
+   public function nearby(Request $request)
+   {
+       $latitude = $request->input('latitude');
+       $longitude = $request->input('longitude');
+       $radius = $request->input('radius', 10); // Default radius of 10 km if not provided
+
+       {% if use_repository %}
+       $nearbyItems = $this->{{ model_variable }}Repository->getNearby($latitude, $longitude, $radius);
+       {% else %}
+       // This is a simplified example. You might need to adjust this based on your database and requirements
+       $nearbyItems = {{ model_name }}::selectRaw("*, 
+           ( 6371 * acos( cos( radians(?) ) *
+               cos( radians( latitude ) )
+               * cos( radians( longitude ) - radians(?)
+               ) + sin( radians(?) ) *
+               sin( radians( latitude ) )
+           )
+           ) AS distance", [$latitude, $longitude, $latitude])
+           ->having("distance", "<", $radius)
+           ->orderBy("distance")
+           ->get();
+       {% endif %}
+       return {{ resource_class }}::collection($nearbyItems);
+   }
+   {% endif %}
  }
