@@ -4,6 +4,7 @@ namespace {{ namespace }};
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+{{ openapi_schema }}
 class {{ resource_name }} extends JsonResource
 {
     /**

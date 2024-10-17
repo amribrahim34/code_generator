@@ -73,7 +73,12 @@ class {{ class_name }} extends Controller
         {% else %}
         ${{ model_plural }} = {{ model_name }}::paginate($perPage);
         {% endif %}
-        return {{ resource_class }}::collection(${{ model_plural }});
+        
+        if ($request->expectsJson()) {
+            return {{ resource_class }}::collection(${{ model_plural }});
+        }
+        
+        return View::make('{{ model_plural }}.index', compact('{{ model_plural }}'));
     }
 
     /**
@@ -106,7 +111,15 @@ class {{ class_name }} extends Controller
         {% else %}
         ${{ model_variable }} = {{ model_name }}::create($request->validated());
         {% endif %}
-        return new {{ resource_class }}(${{ model_variable }});
+        
+        if ($request->expectsJson()) {
+            return (new {{ resource_class }}(${{ model_variable }}))
+                ->response()
+                ->setStatusCode(Response::HTTP_CREATED);
+        }
+        
+        return redirect()->route('{{ model_plural }}.show', ${{ model_variable }})
+            ->with('success', __('{{ translation_key }}.created_successfully'));
     }
 
     /**
@@ -141,7 +154,12 @@ class {{ class_name }} extends Controller
         {% else %}
         ${{ model_variable }} = {{ model_name }}::findOrFail($id);
         {% endif %}
-        return new {{ resource_class }}(${{ model_variable }});
+        
+        if (request()->expectsJson()) {
+            return new {{ resource_class }}(${{ model_variable }});
+        }
+        
+        return View::make('{{ model_plural }}.show', compact('{{ model_variable }}'));
     }
 
     /**
@@ -186,7 +204,13 @@ class {{ class_name }} extends Controller
         ${{ model_variable }} = {{ model_name }}::findOrFail($id);
         ${{ model_variable }}->update($request->validated());
         {% endif %}
-        return new {{ resource_class }}(${{ model_variable }});
+        
+        if ($request->expectsJson()) {
+            return new {{ resource_class }}(${{ model_variable }});
+        }
+        
+        return redirect()->route('{{ model_plural }}.show', ${{ model_variable }})
+            ->with('success', __('{{ translation_key }}.updated_successfully'));
     }
 
     /**
@@ -221,7 +245,13 @@ class {{ class_name }} extends Controller
         ${{ model_variable }} = {{ model_name }}::findOrFail($id);
         ${{ model_variable }}->delete();
         {% endif %}
-        return response()->noContent();
+        
+        if (request()->expectsJson()) {
+            return response()->noContent();
+        }
+        
+        return redirect()->route('{{ model_plural }}.index')
+            ->with('success', __('{{ translation_key }}.deleted_successfully'));
     }
 
     /**

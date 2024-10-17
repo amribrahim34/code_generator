@@ -28,9 +28,14 @@ class ResourceGenerator(ICodeGenerator):
 
     def render_template(self, context: Dict[str, Any]) -> str:
         return self.template_renderer.render('backend/laravel/resource.stub', context)
-        
+    
     def _generate_resource(self, model: Union[Dict[str, Any], Model], resource_type: str) -> str:
         context = self.prepare_context(model, resource_type)
+        
+        # Add OpenAPI annotations
+        openapi_schema = self._generate_openapi_schema(model, resource_type)
+        context['openapi_schema'] = openapi_schema
+        
         template = self.get_template('resource')
         return self.template_renderer.render('backend/laravel/resource.stub', context)
 
@@ -104,8 +109,46 @@ class ResourceGenerator(ICodeGenerator):
         # Perform any post-generation tasks here, such as formatting or linting
         pass
 
-# Example usage (this would be part of the BackendGenerationService)
-# config_loader = ConfigLoader()
-# template_renderer = TemplateRenderer()
-# resource_generator = ResourceGenerator(config_loader, template_renderer)
-# generated_files = resource_generator.generate(model)
+    def _generate_openapi_schema(self, model: Union[Dict[str, Any], Model], resource_type: str) -> str:
+        model_name = model['name'] if isinstance(model, dict) else model.name
+        attributes = model['attributes'] if isinstance(model, dict) else model.attributes
+        relationships = model['relationships'] if isinstance(model, dict) else model.relationships
+
+        schema_properties = []
+        for attr in attributes:
+            attr_name = attr['name'] if isinstance(attr, dict) else attr.name
+            attr_type = attr['type'] if isinstance(attr, dict) else attr.type
+            schema_properties.append(f'    *     @OA\Property(property="{attr_name}", type="{self._map_type_to_openapi(attr_type)}"),')
+
+        for relation in relationships:
+            relation_name = self._get_relation_method_name(relation)
+            related_model = relation['related_model'] if isinstance(relation, dict) else relation.related_model
+            relation_type = relation['type'] if isinstance(relation, dict) else relation.type
+            if relation_type in ['hasMany', 'belongsToMany']:
+                schema_properties.append(f'    *     @OA\Property(property="{relation_name}", type="array", @OA\Items(ref="#/components/schemas/{related_model}Resource")),')
+            else:
+                schema_properties.append(f'    *     @OA\Property(property="{relation_name}", ref="#/components/schemas/{related_model}Resource"),')
+
+        schema_properties_str = '\n'.join(schema_properties)
+
+        return f'''
+    /**
+    * @OA\Schema(
+    *     schema="{model_name}Resource",
+    *     title="{model_name} Resource",
+    *     description="{model_name} resource representation",
+    {schema_properties_str}
+    * )
+    */'''
+
+    def _map_type_to_openapi(self, attr_type: str) -> str:
+        type_mapping = {
+            'string': 'string',
+            'integer': 'integer',
+            'float': 'number',
+            'boolean': 'boolean',
+            'date': 'string',
+            'datetime': 'string',
+            'text': 'string',
+        }
+        return type_mapping.get(attr_type.lower(), 'string')
