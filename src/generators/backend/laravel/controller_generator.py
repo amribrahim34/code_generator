@@ -13,7 +13,7 @@ class ControllerGenerator(ICodeGenerator):
 
     def generate(self, schema: Schema) -> Dict[str, str]:
         generated_files = {}
-        controller_types = ['Admin', 'Website', 'MobileApp']
+        controller_types = ['Admin', 'CustomerWebsite', 'MobileApp']
 
         for controller_type in controller_types:
             for model in schema.models:
@@ -57,7 +57,7 @@ class ControllerGenerator(ICodeGenerator):
             'model_attributes': attributes,
             'relationships': relationships,
             'api_version': self.config_loader.get('api_versions', {}).get(controller_type.lower(), 'v1'),
-            'request_class': f"{model_name}Request",
+            'request_class': f"{controller_type}{model_name}Request",
             'resource_class': f"{model_name}Resource",
             'repository_interface': f"{model_name}RepositoryInterface",
             'controller_type': controller_type,

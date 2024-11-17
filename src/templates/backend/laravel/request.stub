@@ -4,6 +4,7 @@ namespace {{ namespace }};
 
 use Illuminate\Foundation\Http\FormRequest;
 
+{{ openapi_schema }}
 class {{ request_name }} extends FormRequest
 {
     /**

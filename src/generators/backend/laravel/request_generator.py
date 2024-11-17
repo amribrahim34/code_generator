@@ -27,6 +27,11 @@ class RequestGenerator(ICodeGenerator):
 
     def _generate_request(self, model: Union[Dict[str, Any], Model], request_type: str, operation: str) -> str:
         context = self.prepare_context(model, request_type, operation)
+        
+        # Add OpenAPI annotations
+        openapi_schema = self._generate_openapi_schema(model , request_type , operation)
+        context['openapi_schema'] = openapi_schema
+        
         return self.template_renderer.render('backend/laravel/request.stub', context)
 
     def prepare_context(self, model: Union[Dict[str, Any], Model], request_type: str, operation: str) -> Dict[str, Any]:
@@ -94,3 +99,59 @@ class RequestGenerator(ICodeGenerator):
     
     def render_template(self, template: str, context: Dict[str, Any]) -> str:
         return self.template_renderer.render(template, context)
+    
+    
+    def _generate_openapi_schema(self, model: Union[Dict[str, Any], Model], request_type: str , operation :str) -> str:
+        """
+        Generates OpenAPI schema annotations for request validation.
+        
+        Args:
+            model: The model to generate schema for
+            request_type: Type of request (Admin, CustomerWebsite, MobileApp)
+        """
+        model_name = model['name'] if isinstance(model, dict) else model.name
+        attributes = model['attributes'] if isinstance(model, dict) else model.attributes
+
+        schema_properties = []
+        for attr in attributes:
+            attr_name = attr['name'] if isinstance(attr, dict) else attr.name
+            attr_type = attr['type'] if isinstance(attr, dict) else attr.type
+            
+            # Skip ID field for requests
+            if attr_name.lower() == 'id':
+                continue
+                
+            schema_properties.append(
+                f'    *     @OA\Property(property="{attr_name}", type="{self._map_type_to_openapi(attr_type)}")'
+            )
+
+        schema_properties_str = ',\n'.join(schema_properties)
+
+        return f'''
+        /**
+        * @OA\Schema(
+        *     schema="{operation}{request_type}{model_name}Request",
+        *     title="{operation} {request_type} {model_name} Request",
+        *     description="Request schema for {model_name} operations",
+        {schema_properties_str}
+        * )
+        */'''
+
+    def _map_type_to_openapi(self, attr_type: str) -> str:
+        """
+        Maps model attribute types to OpenAPI types.
+        """
+        type_mapping = {
+            'string': 'string',
+            'integer': 'integer',
+            'float': 'number',
+            'boolean': 'boolean',
+            'date': 'string',
+            'datetime': 'string',
+            'text': 'string',
+            'decimal': 'number',
+            'bigIncrements': 'integer',
+            'unsignedBigInteger': 'integer',
+            'timestamp': 'string'
+        }
+        return type_mapping.get(attr_type.lower(), 'string')

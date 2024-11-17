@@ -1,0 +1,200 @@
+{
+  "models": [
+    {
+      "name": "User",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "string" },
+        { "name": "email", "type": "string", "unique": true },
+        { "name": "email_verified_at", "type": "timestamp", "nullable": true },
+        { "name": "password", "type": "string" },
+        { "name": "phone", "type": "string", "nullable": true },
+        { "name": "position", "type": "string", "nullable": true },
+        { "name": "department", "type": "string", "nullable": true },
+        { "name": "profile_image", "type": "string", "nullable": true },
+        { "name": "is_active", "type": "boolean", "default": true },
+        { "name": "last_login_at", "type": "timestamp", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Role" },
+        { "type": "hasMany", "model": "Task" },
+        { "type": "hasMany", "model": "CustomerInteraction" },
+        { "type": "hasMany", "model": "Deal" }
+      ]
+    },
+    {
+      "name": "Role",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "string", "unique": true },
+        { "name": "description", "type": "text", "nullable": true },
+        { "name": "permissions", "type": "json" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "hasMany", "model": "User" }]
+    },
+    {
+      "name": "Customer",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "company_name", "type": "string" },
+        { "name": "industry", "type": "string", "nullable": true },
+        { "name": "website", "type": "string", "nullable": true },
+        { "name": "phone", "type": "string", "nullable": true },
+        { "name": "email", "type": "string" },
+        { "name": "address_line1", "type": "string" },
+        { "name": "address_line2", "type": "string", "nullable": true },
+        { "name": "city", "type": "string" },
+        { "name": "state", "type": "string" },
+        { "name": "postal_code", "type": "string" },
+        { "name": "country", "type": "string" },
+        { "name": "annual_revenue", "type": "decimal", "nullable": true },
+        { "name": "employee_count", "type": "integer", "nullable": true },
+        { "name": "status", "type": "string", "default": "active" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "hasMany", "model": "Contact" },
+        { "type": "hasMany", "model": "Deal" },
+        { "type": "hasMany", "model": "CustomerInteraction" }
+      ]
+    },
+    {
+      "name": "Contact",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "customer_id", "type": "uuid" },
+        { "name": "first_name", "type": "string" },
+        { "name": "last_name", "type": "string" },
+        { "name": "email", "type": "string" },
+        { "name": "phone", "type": "string", "nullable": true },
+        { "name": "mobile", "type": "string", "nullable": true },
+        { "name": "position", "type": "string", "nullable": true },
+        { "name": "department", "type": "string", "nullable": true },
+        { "name": "is_primary_contact", "type": "boolean", "default": false },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Customer" },
+        { "type": "hasMany", "model": "CustomerInteraction" }
+      ]
+    },
+    {
+      "name": "Lead",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "company_name", "type": "string" },
+        { "name": "contact_name", "type": "string" },
+        { "name": "email", "type": "string" },
+        { "name": "phone", "type": "string", "nullable": true },
+        { "name": "source", "type": "string" },
+        { "name": "status", "type": "string", "default": "new" },
+        { "name": "notes", "type": "text", "nullable": true },
+        { "name": "estimated_value", "type": "decimal", "nullable": true },
+        { "name": "assigned_to", "type": "uuid", "nullable": true },
+        { "name": "last_contacted_at", "type": "timestamp", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User", "foreignKey": "assigned_to" },
+        { "type": "hasMany", "model": "CustomerInteraction" }
+      ]
+    },
+    {
+      "name": "Deal",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "customer_id", "type": "uuid" },
+        { "name": "name", "type": "string" },
+        { "name": "value", "type": "decimal" },
+        { "name": "currency", "type": "string", "default": "USD" },
+        { "name": "stage", "type": "string" },
+        { "name": "status", "type": "string", "default": "open" },
+        { "name": "probability", "type": "integer", "default": 0 },
+        { "name": "expected_close_date", "type": "date" },
+        { "name": "actual_close_date", "type": "date", "nullable": true },
+        { "name": "assigned_to", "type": "uuid" },
+        { "name": "notes", "type": "text", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Customer" },
+        { "type": "belongsTo", "model": "User", "foreignKey": "assigned_to" },
+        { "type": "hasMany", "model": "CustomerInteraction" }
+      ]
+    },
+    {
+      "name": "Task",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "title", "type": "string" },
+        { "name": "description", "type": "text", "nullable": true },
+        { "name": "due_date", "type": "datetime" },
+        { "name": "status", "type": "string", "default": "pending" },
+        { "name": "priority", "type": "string", "default": "medium" },
+        { "name": "assigned_to", "type": "uuid" },
+        { "name": "related_to_type", "type": "string", "nullable": true },
+        { "name": "related_to_id", "type": "uuid", "nullable": true },
+        { "name": "completed_at", "type": "timestamp", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User", "foreignKey": "assigned_to" }
+      ]
+    },
+    {
+      "name": "CustomerInteraction",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "type", "type": "string" },
+        { "name": "subject", "type": "string" },
+        { "name": "description", "type": "text" },
+        { "name": "interaction_date", "type": "datetime" },
+        { "name": "user_id", "type": "uuid" },
+        { "name": "customer_id", "type": "uuid" },
+        { "name": "contact_id", "type": "uuid", "nullable": true },
+        { "name": "deal_id", "type": "uuid", "nullable": true },
+        { "name": "lead_id", "type": "uuid", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "belongsTo", "model": "Customer" },
+        { "type": "belongsTo", "model": "Contact" },
+        { "type": "belongsTo", "model": "Deal" },
+        { "type": "belongsTo", "model": "Lead" }
+      ]
+    },
+    {
+      "name": "Event",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "title", "type": "string" },
+        { "name": "description", "type": "text", "nullable": true },
+        { "name": "start_date", "type": "datetime" },
+        { "name": "end_date", "type": "datetime" },
+        { "name": "location", "type": "string", "nullable": true },
+        { "name": "event_type", "type": "string" },
+        { "name": "status", "type": "string", "default": "scheduled" },
+        { "name": "related_to_type", "type": "string", "nullable": true },
+        { "name": "related_to_id", "type": "uuid", "nullable": true },
+        { "name": "created_by", "type": "uuid" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User", "foreignKey": "created_by" },
+        { "type": "belongsToMany", "model": "User", "table": "event_attendees" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+<template>
+  <div class="{{ model_kebab }}-detail">
+    <h1>{{ model_name }} Details</h1>
+    
+    <div v-if="item">
+      {{ model_attributes | safe }}
+      
+      <div class="actions">
+        <button @click="editItem">Edit</button>
+        <button @click="deleteItem">Delete</button>
+        <button @click="goBack">Back to List</button>
+      </div>
+    </div>
+    
+    <div v-else>
+      Loading...
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { use{{model_name}}Store } from '@/store/{{model_kebab}}';
+
+export default defineComponent({
+  name: '{{model_name}}Detail',
+  setup() {
+    const route = useRoute();
+    const router = useRouter();
+    const {{model_name_lower}}Store = use{{model_name}}Store();
+    const item = ref<any>(null);
+
+    onMounted(async () => {
+      const id = route.params.id as string;
+      try {
+        item.value = await {{model_name_lower}}Store.getById(id);
+      } catch (error) {
+        // Handle error (e.g., show error message, redirect to 404)
+      }
+    });
+
+    const editItem = () => {
+      router.push(`/{{model_kebab}}/${route.params.id}/edit`);
+    };
+
+    const deleteItem = async () => {
+      if (confirm('Are you sure you want to delete this item?')) {
+        try {
+          await {{model_name_lower}}Store.delete(route.params.id as string);
+          router.push('/{{model_kebab}}');
+        } catch (error) {
+          // Handle error
+        }
+      }
+    };
+
+    const goBack = () => {
+      router.push('/{{model_kebab}}');
+    };
+
+    return {
+      item,
+      editItem,
+      deleteItem,
+      goBack,
+    };
+  },
+});
+</script>
+
+<style scoped>
+/* Add your styles here */
+</style>

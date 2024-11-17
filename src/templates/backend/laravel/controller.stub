@@ -32,7 +32,7 @@ class {{ class_name }} extends Controller
     /**
      * @OA\Get(
      *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}",
-     *     operationId="get{{ model_name }}List",
+     *     operationId="get{{ controller_type }}{{ model_name }}List",
      *     tags={"{{ model_plural }}"},
      *     summary="List all {{ model_plural }}",
      *     description="Returns a paginated list of {{ model_plural }}",
@@ -56,9 +56,7 @@ class {{ class_name }} extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
+     *                 property="data"
      *             ),
      *             @OA\Property(property="meta", ref="#/components/schemas/PaginationMeta")
      *         )
@@ -84,23 +82,17 @@ class {{ class_name }} extends Controller
     /**
      * @OA\Post(
      *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}",
-     *     operationId="create{{ model_name }}",
+     *     operationId="create{{ controller_type }}{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Create a new {{ model_name }}",
      *     description="Creates a new {{ model_name }} and returns the created resource",
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/{{ request_class }}")
+     *         @OA\JsonContent(ref="#/components/schemas/Store{{ request_class }}")
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="{{ model_name }} created successfully",
-     *         @OA\JsonContent(ref="#/components/schemas/{{ model_name }}Resource")
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(ref="#/components/schemas/ValidationError")
+     *         description="{{ model_name }} created successfully"
      *     )
      * )
      */
@@ -125,7 +117,7 @@ class {{ class_name }} extends Controller
     /**
      * @OA\Get(
      *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/{id}",
-     *     operationId="get{{ model_name }}",
+     *     operationId="get{{ controller_type }}{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Get a specific {{ model_name }}",
      *     description="Returns a specific {{ model_name }}",
@@ -138,8 +130,7 @@ class {{ class_name }} extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(ref="#/components/schemas/{{ model_name }}Resource")
+     *         description="Successful operation"
      *     ),
      *     @OA\Response(
      *         response=404,
@@ -165,7 +156,7 @@ class {{ class_name }} extends Controller
     /**
      * @OA\Put(
      *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/{id}",
-     *     operationId="update{{ model_name }}",
+     *     operationId="Update{{ controller_type }}{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Update a {{ model_name }}",
      *     description="Updates a {{ model_name }} and returns the updated resource",
@@ -178,21 +169,15 @@ class {{ class_name }} extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/{{ request_class }}")
+     *         @OA\JsonContent(ref="#/components/schemas/Update{{ request_class }}")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="{{ model_name }} updated successfully",
-     *         @OA\JsonContent(ref="#/components/schemas/{{ model_name }}Resource")
+     *         description="{{ model_name }} updated successfully"
      *     ),
      *     @OA\Response(
      *         response=404,
      *         description="{{ model_name }} not found"
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(ref="#/components/schemas/ValidationError")
      *     )
      * )
      */
@@ -216,7 +201,7 @@ class {{ class_name }} extends Controller
     /**
      * @OA\Delete(
      *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/{id}",
-     *     operationId="delete{{ model_name }}",
+     *     operationId="delete{{ controller_type }}{{ model_name }}",
      *     tags={"{{ model_plural }}"},
      *     summary="Delete a {{ model_name }}",
      *     description="Deletes a {{ model_name }}",
@@ -257,29 +242,16 @@ class {{ class_name }} extends Controller
     /**
     * @OA\Post(
     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/bulk-import",
-    *     operationId="bulkImport{{ model_name }}",
+    *     operationId="bulkImport{{ controller_type }}{{ model_name }}",
     *     tags={"{{ model_plural }}"},
     *     summary="Bulk import {{ model_plural }}",
     *     description="Imports multiple {{ model_plural }} at once",
     *     @OA\RequestBody(
-    *         required=true,
-    *         @OA\JsonContent(
-    *             type="array",
-    *             @OA\Items(ref="#/components/schemas/{{ request_class }}")
-    *         )
+    *         required=true
     *     ),
     *     @OA\Response(
     *         response=201,
-    *         description="{{ model_plural }} imported successfully",
-    *         @OA\JsonContent(
-    *             type="array",
-    *             @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
-    *         )
-    *     ),
-    *     @OA\Response(
-    *         response=422,
-    *         description="Validation error",
-    *         @OA\JsonContent(ref="#/components/schemas/ValidationError")
+    *         description="{{ model_plural }} imported successfully"
     *     )
     * )
     */
@@ -296,29 +268,16 @@ class {{ class_name }} extends Controller
    /**
     * @OA\Put(
     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/bulk-update",
-    *     operationId="bulkUpdate{{ model_name }}",
+    *     operationId="bulkUpdate{{ controller_type }}{{ model_name }}",
     *     tags={"{{ model_plural }}"},
     *     summary="Bulk update {{ model_plural }}",
     *     description="Updates multiple {{ model_plural }} at once",
     *     @OA\RequestBody(
-    *         required=true,
-    *         @OA\JsonContent(
-    *             type="array",
-    *             @OA\Items(ref="#/components/schemas/{{ request_class }}")
-    *         )
+    *         required=true
     *     ),
     *     @OA\Response(
     *         response=200,
-    *         description="{{ model_plural }} updated successfully",
-    *         @OA\JsonContent(
-    *             type="array",
-    *             @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
-    *         )
-    *     ),
-    *     @OA\Response(
-    *         response=422,
-    *         description="Validation error",
-    *         @OA\JsonContent(ref="#/components/schemas/ValidationError")
+    *         description="{{ model_plural }} updated successfully"
     *     )
     * )
     */
@@ -339,7 +298,7 @@ class {{ class_name }} extends Controller
    /**
     * @OA\Delete(
     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/bulk-delete",
-    *     operationId="bulkDelete{{ model_name }}",
+    *     operationId="bulkDelete{{ controller_type }}{{ model_name }}",
     *     tags={"{{ model_plural }}"},
     *     summary="Bulk delete {{ model_plural }}",
     *     description="Deletes multiple {{ model_plural }} at once",
@@ -371,7 +330,7 @@ class {{ class_name }} extends Controller
    /**
     * @OA\Get(
     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/export",
-    *     operationId="export{{ model_name }}",
+    *     operationId="export{{ controller_type }}{{ model_name }}",
     *     tags={"{{ model_plural }}"},
     *     summary="Export {{ model_plural }} data",
     *     description="Exports {{ model_plural }} data to a file",
@@ -406,17 +365,13 @@ class {{ class_name }} extends Controller
    /**
     * @OA\Get(
     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/featured",
-    *     operationId="getFeatured{{ model_name }}",
+    *     operationId="getFeatured{{ controller_type }}{{ model_name }}",
     *     tags={"{{ model_plural }}"},
     *     summary="Get featured {{ model_plural }}",
     *     description="Returns a list of featured {{ model_plural }}",
     *     @OA\Response(
     *         response=200,
-    *         description="Successful operation",
-    *         @OA\JsonContent(
-    *             type="array",
-    *             @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
-    *         )
+    *         description="Successful operation"
     *     )
     * )
     */
@@ -435,7 +390,7 @@ class {{ class_name }} extends Controller
    /**
     * @OA\Get(
     *     path="/api/{{ api_version }}/{{ controller_type }}/{{ model_plural }}/nearby",
-    *     operationId="getNearby{{ model_name }}",
+    *     operationId="getNearby{{ controller_type }}{{ model_name }}",
     *     tags={"{{ model_plural }}"},
     *     summary="Get nearby {{ model_plural }}",
     *     description="Returns a list of nearby {{ model_plural }} based on provided coordinates",
@@ -462,11 +417,7 @@ class {{ class_name }} extends Controller
     *     ),
     *     @OA\Response(
     *         response=200,
-    *         description="Successful operation",
-    *         @OA\JsonContent(
-    *             type="array",
-    *             @OA\Items(ref="#/components/schemas/{{ model_name }}Resource")
-    *         )
+    *         description="Successful operation"
     *     )
     * )
     */

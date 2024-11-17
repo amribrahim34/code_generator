@@ -1,0 +1,428 @@
+<template>
+  <Layout>
+    <PageHeader :title="{{ model_name }}" :pageTitle="{{ model_name }}" />
+    <BRow>
+      <BCol lg="12">
+        <BCard no-body :id="{{ model_kebab }}List">
+          <BCardHeader class="border-bottom-dashed">
+            <BRow class="g-4 align-items-center">
+              <BCol sm>
+                <div>
+                  <h5 class="card-title mb-0">{{ model_name }} List</h5>
+                </div>
+              </BCol>
+              <BCol sm="auto">
+                <div class="d-flex flex-wrap align-items-start gap-2">
+                  <BButton
+                    variant="soft-danger"
+                    class="me-1"
+                    id="remove-actions"
+                    @click="deleteMultiple"
+                    v-show="selectedItems.length"
+                  >
+                    <i class="ri-delete-bin-2-line"></i>
+                  </BButton>
+                  <BButton
+                    type="button"
+                    variant="primary"
+                    class="add-btn"
+                    @click="createNew"
+                  >
+                    <i class="ri-add-line align-bottom me-1"></i> Add {{ model_name }}
+                  </BButton>
+                </div>
+              </BCol>
+            </BRow>
+          </BCardHeader>
+
+          <BCardBody class="border-bottom-dashed border-bottom">
+            <BForm>
+              <BRow class="g-3">
+                <BCol xl="6">
+                  <div class="search-box">
+                    <input
+                      type="text"
+                      class="form-control search"
+                      :placeholder="`Search for ${model_name.toLowerCase()}...`"
+                      v-model="searchQuery"
+                    />
+                    <i class="ri-search-line search-icon"></i>
+                  </div>
+                </BCol>
+
+                <!-- Add filter controls here based on attributes -->
+                <BCol xl="6">
+                  <BRow class="g-3">
+                    <BCol sm="4" v-for="filter in filters" :key="filter.key">
+                      <div>
+                        <Multiselect
+                          v-model="filterValues[filter.key]"
+                          :options="filter.options"
+                          :placeholder="filter.label"
+                          class="form-control"
+                        />
+                      </div>
+                    </BCol>
+                  </BRow>
+                </BCol>
+              </BRow>
+            </BForm>
+          </BCardBody>
+
+          <BCardBody>
+            <div>
+              <div class="table-responsive table-card mb-1">
+                <table class="table align-middle table-nowrap">
+                  <thead class="table-light text-muted">
+                    <tr>
+                      <th scope="col" style="width: 50px;">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            v-model="selectAll"
+                            @change="toggleSelectAll"
+                          />
+                        </div>
+                      </th>
+                      {% for attribute in attributes %}
+                      <th @click="sort('{{ attribute.name }}')" 
+                          class="sort" 
+                          :class="{ active: sortBy === '{{ attribute.name }}' }">
+                        {{ attribute.label }}
+                        <i class="ri-arrow-up-down-line ms-1"></i>
+                      </th>
+                      {% endfor %}
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="list form-check-all">
+                    <tr v-for="item in filteredItems" :key="item.id">
+                      <th scope="row">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            :value="item.id"
+                            v-model="selectedItems"
+                          />
+                        </div>
+                      </th>
+                      {% for attribute in attributes %}
+                      <td>
+                        <span v-if="isStatusField('{{ attribute.name }}')"
+                              class="badge text-uppercase"
+                              :class="getStatusClass(item.{{ attribute.name }})">
+                          {{ '{{ item.' + attribute.name + ' }}' }}
+                        </span>
+                        <span v-else>{{ '{{ formatValue(item.' + attribute.name + ') }}' }}</span>
+                      </td>
+                      {% endfor %}
+                      <td>
+                        <ul class="list-inline hstack gap-2 mb-0">
+                          <li class="list-inline-item">
+                            <BLink
+                              href="javascript:void(0);"
+                              class="text-primary d-inline-block"
+                              @click="viewDetails(item)"
+                            >
+                              <i class="ri-eye-fill fs-16"></i>
+                            </BLink>
+                          </li>
+                          <li class="list-inline-item">
+                            <BLink
+                              href="javascript:void(0);"
+                              class="text-primary d-inline-block"
+                              @click="editItem(item)"
+                            >
+                              <i class="ri-pencil-fill fs-16"></i>
+                            </BLink>
+                          </li>
+                          <li class="list-inline-item">
+                            <BLink
+                              href="javascript:void(0);"
+                              class="text-danger d-inline-block"
+                              @click="deleteModalToggle(item)"
+                            >
+                              <i class="ri-delete-bin-5-fill fs-16"></i>
+                            </BLink>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="noresult" style="display: none">
+                  <div class="text-center">
+                    <lord-icon
+                      src="https://cdn.lordicon.com/msoeawqm.json"
+                      trigger="loop"
+                      colors="primary:#121331,secondary:#08a88a"
+                      style="width:75px;height:75px"
+                    />
+                    <h5 class="mt-2">Sorry! No Result Found</h5>
+                    <p class="text-muted mb-0">
+                      We couldn't find any {{ model_name.toLowerCase() }} matching your search criteria.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end">
+                <div class="pagination-wrap hstack gap-2">
+                  <BLink
+                    class="page-item pagination-prev"
+                    href="#"
+                    @click="previousPage"
+                    :disabled="currentPage === 1"
+                  >
+                    Previous
+                  </BLink>
+                  <ul class="pagination listjs-pagination mb-0">
+                    <li v-for="page in pages" 
+                        :key="page"
+                        :class="{ active: currentPage === page }"
+                        @click="currentPage = page">
+                      <BLink class="page" href="#">{{ page }}</BLink>
+                    </li>
+                  </ul>
+                  <BLink
+                    class="page-item pagination-next"
+                    href="#"
+                    @click="nextPage"
+                    :disabled="currentPage === totalPages"
+                  >
+                    Next
+                  </BLink>
+                </div>
+              </div>
+            </div>
+          </BCardBody>
+        </BCard>
+      </BCol>
+    </BRow>
+
+    <!-- Delete Confirmation Modal -->
+    <BModal
+      v-model="deleteModal"
+      modal-class="zoomIn"
+      centered
+      title="Confirm Delete"
+      hide-footer
+    >
+      <div class="mt-2 text-center">
+        <lord-icon
+          src="https://cdn.lordicon.com/gsqxdxog.json"
+          trigger="loop"
+          colors="primary:#f7b84b,secondary:#f06548"
+          style="width:100px;height:100px"
+        />
+        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+          <h4>Are you sure?</h4>
+          <p class="text-muted mx-4 mb-0">
+            Are you sure you want to delete the selected {{ model_name.toLowerCase() }}(s)?
+          </p>
+        </div>
+      </div>
+      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+        <BButton type="button" variant="light" @click="deleteModal = false">
+          Close
+        </BButton>
+        <BButton type="button" variant="danger" @click="confirmDelete">
+          Yes, Delete It!
+        </BButton>
+      </div>
+    </BModal>
+  </Layout>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import Layout from "@/layouts/main.vue";
+import PageHeader from "@/components/page-header";
+import Multiselect from "@vueform/multiselect";
+import { use{{ model_name }}Store } from '@/store/{{ model_kebab }}';
+
+export default defineComponent({
+  name: '{{ model_name }}List',
+
+  components: {
+    Layout,
+    PageHeader,
+    Multiselect
+  },
+
+  setup() {
+    const router = useRouter();
+    const {{ model_name.toLowerCase() }}Store = use{{ model_name }}Store();
+    
+    const searchQuery = ref('');
+    const currentPage = ref(1);
+    const itemsPerPage = ref(10);
+    const sortBy = ref('');
+    const sortDesc = ref(false);
+    const selectedItems = ref<string[]>([]);
+    const deleteModal = ref(false);
+    const itemToDelete = ref(null);
+    const filterValues = ref({});
+
+    const filters = computed(() => {
+      // Define your filters based on attributes
+      return [];
+    });
+
+    const filteredItems = computed(() => {
+      let items = {{ model_name.toLowerCase() }}Store.items;
+
+      // Apply search
+      if (searchQuery.value) {
+        const search = searchQuery.value.toLowerCase();
+        items = items.filter(item => {
+          return Object.values(item).some(val => 
+            String(val).toLowerCase().includes(search)
+          );
+        });
+      }
+
+      // Apply filters
+      Object.entries(filterValues.value).forEach(([key, value]) => {
+        if (value) {
+          items = items.filter(item => item[key] === value);
+        }
+      });
+
+      // Apply sorting
+      if (sortBy.value) {
+        items = [...items].sort((a, b) => {
+          const modifier = sortDesc.value ? -1 : 1;
+          return a[sortBy.value] > b[sortBy.value] ? modifier : -modifier;
+        });
+      }
+
+      return items;
+    });
+
+    const paginatedItems = computed(() => {
+      const start = (currentPage.value - 1) * itemsPerPage.value;
+      const end = start + itemsPerPage.value;
+      return filteredItems.value.slice(start, end);
+    });
+
+    const totalPages = computed(() => 
+      Math.ceil(filteredItems.value.length / itemsPerPage.value)
+    );
+
+    const pages = computed(() => {
+      const range = [];
+      for (let i = 1; i <= totalPages.value; i++) {
+        range.push(i);
+      }
+      return range;
+    });
+
+    const selectAll = computed({
+      get: () => selectedItems.value.length === paginatedItems.value.length,
+      set: (value) => {
+        selectedItems.value = value 
+          ? paginatedItems.value.map(item => item.id)
+          : [];
+      }
+    });
+
+    onMounted(async () => {
+      await {{ model_name.toLowerCase() }}Store.fetchItems();
+    });
+
+    const sort = (column: string) => {
+      if (sortBy.value === column) {
+        sortDesc.value = !sortDesc.value;
+      } else {
+        sortBy.value = column;
+        sortDesc.value = false;
+      }
+    };
+
+    const createNew = () => {
+      router.push(`/{{ model_kebab }}/create`);
+    };
+
+    const viewDetails = (item: any) => {
+      router.push(`/{{ model_kebab }}/${item.id}`);
+    };
+
+    const editItem = (item: any) => {
+      router.push(`/{{ model_kebab }}/${item.id}/edit`);
+    };
+
+    const deleteModalToggle = (item: any) => {
+      itemToDelete.value = item;
+      deleteModal.value = true;
+    };
+
+    const confirmDelete = async () => {
+      try {
+        if (itemToDelete.value) {
+          await {{ model_name.toLowerCase() }}Store.delete(itemToDelete.value.id);
+        } else {
+          await Promise.all(
+            selectedItems.value.map(id => {{ model_name.toLowerCase() }}Store.delete(id))
+          );
+        }
+        deleteModal.value = false;
+        selectedItems.value = [];
+        itemToDelete.value = null;
+      } catch (error) {
+        console.error('Delete failed:', error);
+      }
+    };
+
+    const formatValue = (value: any) => {
+      if (value === null || value === undefined) return '-';
+      if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+      if (value instanceof Date) return value.toLocaleDateString();
+      return String(value);
+    };
+
+    const isStatusField = (fieldName: string) => {
+      return fieldName.toLowerCase().includes('status');
+    };
+
+    const getStatusClass = (status: string) => {
+      const statusLower = status.toLowerCase();
+      return {
+        'bg-success-subtle text-success': statusLower === 'active',
+        'bg-danger-subtle text-danger': statusLower === 'inactive',
+        'bg-warning-subtle text-warning': statusLower === 'pending',
+        'bg-info-subtle text-info': statusLower === 'inprogress'
+      };
+    };
+
+    return {
+      searchQuery,
+      currentPage,
+      itemsPerPage,
+      sortBy,
+      sortDesc,
+      selectedItems,
+      deleteModal,
+      filterValues,
+      filters,
+      paginatedItems,
+      filteredItems,
+      pages,
+      totalPages,
+      selectAll,
+      sort,
+      createNew,
+      viewDetails,
+      editItem,
+      deleteModalToggle,
+      confirmDelete,
+      formatValue,
+      isStatusField,
+      getStatusClass
+    };
+  }
+});
+</script>

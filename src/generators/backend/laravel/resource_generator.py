@@ -125,18 +125,18 @@ class ResourceGenerator(ICodeGenerator):
             related_model = relation['related_model'] if isinstance(relation, dict) else relation.related_model
             relation_type = relation['type'] if isinstance(relation, dict) else relation.type
             if relation_type in ['hasMany', 'belongsToMany']:
-                schema_properties.append(f'    *     @OA\Property(property="{relation_name}", type="array", @OA\Items(ref="#/components/schemas/{related_model}Resource")),')
+                schema_properties.append(f'    *     @OA\Property(property="{relation_name}", type="array", @OA\Items(ref="#/components/schemas/{resource_type}{related_model}Resource")),')
             else:
-                schema_properties.append(f'    *     @OA\Property(property="{relation_name}", ref="#/components/schemas/{related_model}Resource"),')
+                schema_properties.append(f'    *     @OA\Property(property="{relation_name}", ref="#/components/schemas/{resource_type}{related_model}Resource"),')
 
         schema_properties_str = '\n'.join(schema_properties)
 
         return f'''
     /**
     * @OA\Schema(
-    *     schema="{model_name}Resource",
-    *     title="{model_name} Resource",
-    *     description="{model_name} resource representation",
+    *     schema="{resource_type}{model_name}Resource",
+    *     title="{resource_type} {model_name} Resource",
+    *     description="{resource_type} {model_name} resource representation",
     {schema_properties_str}
     * )
     */'''
