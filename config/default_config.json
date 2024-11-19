@@ -80,6 +80,11 @@
         "class": "ControllerGenerator"
       },
       {
+        "name": "route",
+        "module": "src.generators.backend.laravel.route_generator",
+        "class": "RouteGenerator"
+      },
+      {
         "name": "request",
         "module": "src.generators.backend.laravel.request_generator",
         "class": "RequestGenerator"

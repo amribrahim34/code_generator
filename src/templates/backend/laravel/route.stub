@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('api/{{ api_version }}/{{ route_prefix }}')->middleware({{ route_middleware }})->group(function () {
+
+{% for route in routes %}
+    Route::group(['middleware' => 'api'], function () {
+        {% for method in route.methods %}
+            Route::{{ method.method | lower }}('{{ method.uri }}', [ '{{ method.action }}']);
+        {% endfor%}
+    });
+{% endfor %}
+
+{% if route_type == 'Admin' %}
+    Route::group(['prefix' => 'management'], function () {
+        Route::get('/export', [
+            '{{ route_prefix }}\\{{ route_prefix }}Controller@export']);
+    });
+{% endif %}
+
+{% if route_type == 'CustomerWebsite' %}
+    Route::group(['prefix' => 'featured'], function () {
+        Route::get('/', [
+            '{{ route_prefix }}\\{{ route_prefix }}Controller@featured']);
+    });
+{% endif %}
+
+{% if route_type == 'MobileApp' %}
+    Route::group(['prefix' => 'location'], function () {
+        Route::get('/nearby', [
+            '{{ route_prefix }}\\{{ route_prefix }}Controller@nearby']);
+    });
+{% endif %}
+});

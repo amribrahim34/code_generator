@@ -15,7 +15,7 @@ use Illuminate\Routing\Controller as BaseController;
  * )
  * @OA\Server(
  *     description="Your server description",
- *     url="http://your-api-domain.com/api/v1"
+ *     url="http://127.0.0.1:8000"
  * )
  * @OA\SecurityScheme(
  *     securityScheme="bearerAuth",
@@ -29,7 +29,7 @@ use Illuminate\Routing\Controller as BaseController;
  *     @OA\Property(property="current_page", type="integer", example=1),
  *     @OA\Property(property="from", type="integer", example=1),
  *     @OA\Property(property="last_page", type="integer", example=5),
- *     @OA\Property(property="path", type="string", example="http://your-api-url/resource"),
+ *     @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/resource"),
  *     @OA\Property(property="per_page", type="integer", example=15),
  *     @OA\Property(property="to", type="integer", example=15),
  *     @OA\Property(property="total", type="integer", example=50)
