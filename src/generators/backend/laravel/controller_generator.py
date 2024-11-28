@@ -3,7 +3,7 @@ from src.core.interfaces.code_generator import ICodeGenerator
 from src.core.entities.schema import Model, Attribute, Relationship ,Schema
 from src.core.interfaces.template_renderer import ITemplateRenderer
 from src.core.interfaces.config_loader import IConfigLoader
-from src.utilities.string_utils import to_pascal_case, to_snake_case, pluralize
+from src.utilities.string_utils import to_pascal_case, to_snake_case, pluralize ,to_kebab_case
 
 class ControllerGenerator(ICodeGenerator):
     def __init__(self, config_loader: IConfigLoader, template_renderer: ITemplateRenderer):
@@ -46,6 +46,7 @@ class ControllerGenerator(ICodeGenerator):
         context =  {
             'class_name': f"{model_name}Controller",
             'model_name': model_name,
+            'model_name_kebab' : to_kebab_case(model_name),
             'model_variable': to_snake_case(model_name),
             'model_plural': pluralize(to_snake_case(model_name)),
             'namespace': f"App\\Http\\Controllers\\{controller_type}",
@@ -61,6 +62,7 @@ class ControllerGenerator(ICodeGenerator):
             'resource_class': f"{model_name}Resource",
             'repository_interface': f"{model_name}RepositoryInterface",
             'controller_type': controller_type,
+            'controller_type_lower_case': to_kebab_case(controller_type),
             'translation_key': to_snake_case(model_name),
         }
         
