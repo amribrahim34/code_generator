@@ -73,7 +73,11 @@
         "module": "src.generators.backend.laravel.migration_generator",
         "class": "MigrationGenerator"
       },
-
+      {
+        "name": "middleware",
+        "module": "src.generators.backend.laravel.middleware_generator",
+        "class": "MiddlewareGenerator"
+      },
       {
         "name": "controller",
         "module": "src.generators.backend.laravel.controller_generator",
