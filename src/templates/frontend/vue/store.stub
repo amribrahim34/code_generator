@@ -6,17 +6,17 @@ interface {{MODEL_NAME}} {
   {{MODEL_INTERFACE}}
 }
 
-export const use{{MODEL_NAME}}Store = defineStore('{{MODEL_NAME_LOWERCASE}}', () => {
-  const {{MODEL_NAME_PLURAL_LOWERCASE}}: Ref<{{MODEL_NAME}}[]> = ref([])
+export const use{{MODEL_NAME}}Store = defineStore('{{MODEL_NAME_CAMEL}}', () => {
+  const {{MODEL_NAME_PLURAL_SNAKE}}: Ref<{{MODEL_NAME}}[]> = ref([])
   const current{{MODEL_NAME}}: Ref<{{MODEL_NAME}} | null> = ref(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  async function fetch{{MODEL_NAME_PLURAL}}() {
+  async function fetch{{MODEL_NAME_PLURAL_CAMEL}}() {
     loading.value = true
     try {
       const response = await axios.get<{{MODEL_NAME}}[]>('/api/{{MODEL_NAME_PLURAL_LOWERCASE}}')
-      {{MODEL_NAME_PLURAL_LOWERCASE}}.value = response.data
+      {{MODEL_NAME_PLURAL_SNAKE}}.value = response.data
     } catch (err) {
       error.value = 'Failed to fetch {{MODEL_NAME_PLURAL_LOWERCASE}}'
       console.error(err)
@@ -42,7 +42,7 @@ export const use{{MODEL_NAME}}Store = defineStore('{{MODEL_NAME_LOWERCASE}}', ()
     loading.value = true
     try {
       const response = await axios.post<{{MODEL_NAME}}>('/api/{{MODEL_NAME_PLURAL_LOWERCASE}}', {{MODEL_NAME_LOWERCASE}})
-      {{MODEL_NAME_PLURAL_LOWERCASE}}.value.push(response.data)
+      {{MODEL_NAME_PLURAL_SNAKE}}.value.push(response.data)
     } catch (err) {
       error.value = 'Failed to create {{MODEL_NAME_LOWERCASE}}'
       console.error(err)
@@ -55,9 +55,9 @@ export const use{{MODEL_NAME}}Store = defineStore('{{MODEL_NAME_LOWERCASE}}', ()
     loading.value = true
     try {
       const response = await axios.put<{{MODEL_NAME}}>(`/api/{{MODEL_NAME_PLURAL_LOWERCASE}}/${id}`, {{MODEL_NAME_LOWERCASE}})
-      const index = {{MODEL_NAME_PLURAL_LOWERCASE}}.value.findIndex(item => item.id === id)
+      const index = {{MODEL_NAME_PLURAL_SNAKE}}.value.findIndex(item => item.id === id)
       if (index !== -1) {
-        {{MODEL_NAME_PLURAL_LOWERCASE}}.value[index] = response.data
+        {{MODEL_NAME_PLURAL_SNAKE}}.value[index] = response.data
       }
       if (current{{MODEL_NAME}}.value && current{{MODEL_NAME}}.value.id === id) {
         current{{MODEL_NAME}}.value = response.data
@@ -74,7 +74,7 @@ export const use{{MODEL_NAME}}Store = defineStore('{{MODEL_NAME_LOWERCASE}}', ()
     loading.value = true
     try {
       await axios.delete(`/api/{{MODEL_NAME_PLURAL_LOWERCASE}}/${id}`)
-      {{MODEL_NAME_PLURAL_LOWERCASE}}.value = {{MODEL_NAME_PLURAL_LOWERCASE}}.value.filter(item => item.id !== id)
+      {{MODEL_NAME_PLURAL_SNAKE}}.value = {{MODEL_NAME_PLURAL_SNAKE}}.value.filter(item => item.id !== id)
       if (current{{MODEL_NAME}}.value && current{{MODEL_NAME}}.value.id === id) {
         current{{MODEL_NAME}}.value = null
       }
@@ -87,11 +87,11 @@ export const use{{MODEL_NAME}}Store = defineStore('{{MODEL_NAME_LOWERCASE}}', ()
   }
 
   return { 
-    {{MODEL_NAME_PLURAL_LOWERCASE}}, 
+    {{MODEL_NAME_PLURAL_SNAKE}}, 
     current{{MODEL_NAME}}, 
     loading, 
     error, 
-    fetch{{MODEL_NAME_PLURAL}}, 
+    fetch{{MODEL_NAME_PLURAL_CAMEL}}, 
     fetch{{MODEL_NAME}}, 
     create{{MODEL_NAME}}, 
     update{{MODEL_NAME}}, 

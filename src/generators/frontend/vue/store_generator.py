@@ -3,7 +3,7 @@ from src.core.interfaces.code_generator import ICodeGenerator
 from src.core.entities.schema import Schema, Model
 from src.core.interfaces.template_renderer import ITemplateRenderer
 from src.core.interfaces.config_loader import IConfigLoader
-from src.utilities.string_utils import to_pascal_case, to_kebab_case, pluralize ,to_camel_case
+from src.utilities.string_utils import to_pascal_case, to_kebab_case, pluralize ,to_camel_case , to_snake_case
 import os
 import logging
 
@@ -28,21 +28,33 @@ class StoreGenerator(ICodeGenerator):
             # self.logger.warning(f"Generating store for model: {model.name}")
             store_content = self.prepare_context(model)
             # self.logger.warning(f"Generating store for model , store content: {store_content}")
-            file_path = os.path.join(self.store_dir, f"{to_kebab_case(model.name)}Store.ts")
+            file_path = os.path.join(self.store_dir, f"{to_camel_case(model.name)}Store.ts")
             generated_files[file_path] = store_content
 
 
         return generated_files
     
-    def prepare_context(self, model: Dict) -> Dict[str, str]:
+    def prepare_context(self, model: Dict) -> Dict[str, str]:     
+        # Prepare model-specific variables
         model_name = model.name
-        # self.logger.warning(f"prepare context Generating store for model: {model_name}")
         model_name_pascal = to_pascal_case(model.name)
         model_name_camel = to_camel_case(model.name)
+        model_name_lowercase = model.name.lower()
+        model_name_plural_lowercase = to_kebab_case(pluralize(model.name))
+        model_name_plural_snake_case = to_snake_case(pluralize(model.name))
+        model_name_plural_camel_case = to_camel_case(pluralize(model.name))
+        
+        
+        
         template = 'frontend/vue/store.stub'
         context = {
             'MODEL_NAME_PASCAL': model_name_pascal,
             'MODEL_NAME_CAMEL': model_name_camel,
+            'MODEL_NAME': model_name,
+            'MODEL_NAME_LOWERCASE': model_name_lowercase,
+            'MODEL_NAME_PLURAL_LOWERCASE': model_name_plural_lowercase,
+            'MODEL_NAME_PLURAL_SNAKE': model_name_plural_snake_case,
+            'MODEL_NAME_PLURAL_CAMEL': model_name_plural_camel_case,
         }
 
         return self.render_template(template, context)

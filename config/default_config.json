@@ -30,7 +30,7 @@
     "use_typescript": true,
     "use_composition_api": true,
     "output_dir": "admin",
-    "route_dir": "routes",
+    "route_dir": "router",
     "store_dir": "stores",
     "type_dir": "types",
     "state_management": "pinia",
