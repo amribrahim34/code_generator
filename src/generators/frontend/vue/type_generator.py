@@ -28,7 +28,7 @@ class TypeGenerator(ICodeGenerator):
             # self.logger.warning(f"Generating type for model: {model.name}")
             type_content = self.prepare_context(model)
             # self.logger.warning(f"Generating type for model , type content: {type_content}")
-            file_path = os.path.join(self.type_dir, f"{to_kebab_case(model.name)}Type.ts")
+            file_path = os.path.join(self.type_dir, f"{to_camel_case(model.name)}Type.ts")
             generated_files[file_path] = type_content
 
         index_file = self._generate_index_file(schema.models)
@@ -48,7 +48,7 @@ class TypeGenerator(ICodeGenerator):
         model_name_camel = to_camel_case(model.name)
         template = 'frontend/vue/type.stub'
         context = {
-            'MODEL_NAME': model_name_pascal,
+            'MODEL_NAME': model_name_camel,
             'MODEL_ATTRIBUTES': model_attributes,
         }
 

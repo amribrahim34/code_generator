@@ -1,100 +1,92 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { Ref, ref } from 'vue'
-
-interface {{MODEL_NAME}} {
-  {{MODEL_INTERFACE}}
-}
+import type{ 
+  {{MODEL_NAME}}, 
+  Create{{MODEL_NAME}}DTO, 
+  Update{{MODEL_NAME}}DTO 
+} from '@/types/{{MODEL_NAME_CAMEL}}Type'
 
 export const use{{MODEL_NAME}}Store = defineStore('{{MODEL_NAME_CAMEL}}', () => {
-  const {{MODEL_NAME_PLURAL_SNAKE}}: Ref<{{MODEL_NAME}}[]> = ref([])
-  const current{{MODEL_NAME}}: Ref<{{MODEL_NAME}} | null> = ref(null)
-  const loading = ref(false)
-  const error = ref<string | null>(null)
+  state: (): {{MODEL_NAME}}State => ({
+    {{MODEL_NAME_PLURAL_SNAKE}}: [],
+    current{{MODEL_NAME}}: null,
+    loading: false,
+    error: null
+  }),
 
-  async function fetch{{MODEL_NAME_PLURAL_CAMEL}}() {
-    loading.value = true
-    try {
-      const response = await axios.get<{{MODEL_NAME}}[]>('/api/{{MODEL_NAME_PLURAL_LOWERCASE}}')
-      {{MODEL_NAME_PLURAL_SNAKE}}.value = response.data
-    } catch (err) {
-      error.value = 'Failed to fetch {{MODEL_NAME_PLURAL_LOWERCASE}}'
-      console.error(err)
-    } finally {
-      loading.value = false
-    }
-  }
-
-  async function fetch{{MODEL_NAME}}(id: number) {
-    loading.value = true
-    try {
-      const response = await axios.get<{{MODEL_NAME}}>(`/api/{{MODEL_NAME_PLURAL_LOWERCASE}}/${id}`)
-      current{{MODEL_NAME}}.value = response.data
-    } catch (err) {
-      error.value = 'Failed to fetch {{MODEL_NAME_LOWERCASE}}'
-      console.error(err)
-    } finally {
-      loading.value = false
-    }
-  }
-
-  async function create{{MODEL_NAME}}({{MODEL_NAME_LOWERCASE}}: Omit<{{MODEL_NAME}}, 'id'>) {
-    loading.value = true
-    try {
-      const response = await axios.post<{{MODEL_NAME}}>('/api/{{MODEL_NAME_PLURAL_LOWERCASE}}', {{MODEL_NAME_LOWERCASE}})
-      {{MODEL_NAME_PLURAL_SNAKE}}.value.push(response.data)
-    } catch (err) {
-      error.value = 'Failed to create {{MODEL_NAME_LOWERCASE}}'
-      console.error(err)
-    } finally {
-      loading.value = false
-    }
-  }
-
-  async function update{{MODEL_NAME}}(id: number, {{MODEL_NAME_LOWERCASE}}: Partial<{{MODEL_NAME}}>) {
-    loading.value = true
-    try {
-      const response = await axios.put<{{MODEL_NAME}}>(`/api/{{MODEL_NAME_PLURAL_LOWERCASE}}/${id}`, {{MODEL_NAME_LOWERCASE}})
-      const index = {{MODEL_NAME_PLURAL_SNAKE}}.value.findIndex(item => item.id === id)
-      if (index !== -1) {
-        {{MODEL_NAME_PLURAL_SNAKE}}.value[index] = response.data
+  actions: {
+    async function fetch{{MODEL_NAME_PLURAL_CAMEL}}() {
+      loading.value = true
+      try {
+        const response = await axios.get<{{MODEL_NAME}}[]>('/api/{{MODEL_NAME_PLURAL_LOWERCASE}}')
+        {{MODEL_NAME_PLURAL_SNAKE}}.value = response.data
+      } catch (err) {
+        error.value = 'Failed to fetch {{MODEL_NAME_PLURAL_LOWERCASE}}'
+        console.error(err)
+      } finally {
+        loading.value = false
       }
-      if (current{{MODEL_NAME}}.value && current{{MODEL_NAME}}.value.id === id) {
+    }
+
+    async function fetch{{MODEL_NAME}}(id: number) {
+      loading.value = true
+      try {
+        const response = await axios.get<{{MODEL_NAME}}>(`/api/{{MODEL_NAME_PLURAL_LOWERCASE}}/${id}`)
         current{{MODEL_NAME}}.value = response.data
+      } catch (err) {
+        error.value = 'Failed to fetch {{MODEL_NAME_LOWERCASE}}'
+        console.error(err)
+      } finally {
+        loading.value = false
       }
-    } catch (err) {
-      error.value = 'Failed to update {{MODEL_NAME_LOWERCASE}}'
-      console.error(err)
-    } finally {
-      loading.value = false
     }
-  }
 
-  async function delete{{MODEL_NAME}}(id: number) {
-    loading.value = true
-    try {
-      await axios.delete(`/api/{{MODEL_NAME_PLURAL_LOWERCASE}}/${id}`)
-      {{MODEL_NAME_PLURAL_SNAKE}}.value = {{MODEL_NAME_PLURAL_SNAKE}}.value.filter(item => item.id !== id)
-      if (current{{MODEL_NAME}}.value && current{{MODEL_NAME}}.value.id === id) {
-        current{{MODEL_NAME}}.value = null
+    async function create{{MODEL_NAME}}({{MODEL_NAME_LOWERCASE}}: Omit<{{MODEL_NAME}}, 'id'>) {
+      loading.value = true
+      try {
+        const response = await axios.post<{{MODEL_NAME}}>('/api/{{MODEL_NAME_PLURAL_LOWERCASE}}', {{MODEL_NAME_LOWERCASE}})
+        {{MODEL_NAME_PLURAL_SNAKE}}.value.push(response.data)
+      } catch (err) {
+        error.value = 'Failed to create {{MODEL_NAME_LOWERCASE}}'
+        console.error(err)
+      } finally {
+        loading.value = false
       }
-    } catch (err) {
-      error.value = 'Failed to delete {{MODEL_NAME_LOWERCASE}}'
-      console.error(err)
-    } finally {
-      loading.value = false
     }
-  }
 
-  return { 
-    {{MODEL_NAME_PLURAL_SNAKE}}, 
-    current{{MODEL_NAME}}, 
-    loading, 
-    error, 
-    fetch{{MODEL_NAME_PLURAL_CAMEL}}, 
-    fetch{{MODEL_NAME}}, 
-    create{{MODEL_NAME}}, 
-    update{{MODEL_NAME}}, 
-    delete{{MODEL_NAME}} 
+    async function update{{MODEL_NAME}}(id: number, {{MODEL_NAME_LOWERCASE}}: Partial<{{MODEL_NAME}}>) {
+      loading.value = true
+      try {
+        const response = await axios.put<{{MODEL_NAME}}>(`/api/{{MODEL_NAME_PLURAL_LOWERCASE}}/${id}`, {{MODEL_NAME_LOWERCASE}})
+        const index = {{MODEL_NAME_PLURAL_SNAKE}}.value.findIndex(item => item.id === id)
+        if (index !== -1) {
+          {{MODEL_NAME_PLURAL_SNAKE}}.value[index] = response.data
+        }
+        if (current{{MODEL_NAME}}.value && current{{MODEL_NAME}}.value.id === id) {
+          current{{MODEL_NAME}}.value = response.data
+        }
+      } catch (err) {
+        error.value = 'Failed to update {{MODEL_NAME_LOWERCASE}}'
+        console.error(err)
+      } finally {
+        loading.value = false
+      }
+    }
+
+    async function delete{{MODEL_NAME}}(id: number) {
+      loading.value = true
+      try {
+        await axios.delete(`/api/{{MODEL_NAME_PLURAL_LOWERCASE}}/${id}`)
+        {{MODEL_NAME_PLURAL_SNAKE}}.value = {{MODEL_NAME_PLURAL_SNAKE}}.value.filter(item => item.id !== id)
+        if (current{{MODEL_NAME}}.value && current{{MODEL_NAME}}.value.id === id) {
+          current{{MODEL_NAME}}.value = null
+        }
+      } catch (err) {
+        error.value = 'Failed to delete {{MODEL_NAME_LOWERCASE}}'
+        console.error(err)
+      } finally {
+        loading.value = false
+      }
+    }
   }
 })
