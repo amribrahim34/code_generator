@@ -1,0 +1,326 @@
+[
+  {
+    "name": "User",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "email", "type": "string", "unique": true },
+      { "name": "mobile", "type": "string", "unique": true },
+      { "name": "gender", "type": "string", "enum": ["male", "female"] },
+      { "name": "password", "type": "string" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "hasMany", "model": "UserSubscription" },
+      { "type": "hasMany", "model": "Course", "through": "UserCourse" },
+      { "type": "hasMany", "model": "CourseProgress" },
+      { "type": "hasMany", "model": "InstructorReview" },
+      { "type": "hasMany", "model": "CourseReview" },
+      { "type": "hasMany", "model": "ForumThread" },
+      { "type": "hasMany", "model": "ForumPost" },
+      { "type": "hasMany", "model": "ForumReply" }
+    ]
+  },
+  {
+    "name": "Instructor",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "profile_picture", "type": "string" },
+      { "name": "description", "type": "text" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "hasMany", "model": "Course" },
+      { "type": "hasMany", "model": "InstructorReview" }
+    ]
+  },
+  {
+    "name": "Course",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "description", "type": "text" },
+      { "name": "instructor_id", "type": "bigint" },
+      { "name": "category_id", "type": "bigint" },
+      { "name": "thumbnail", "type": "string", "nullable": true },
+      { "name": "price", "type": "decimal", "nullable": true },
+      { "name": "is_active", "type": "boolean", "default": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Instructor" },
+      { "type": "belongsTo", "model": "CourseCategory" },
+      { "type": "hasMany", "model": "Video" },
+      { "type": "hasMany", "model": "CourseProgress" },
+      { "type": "belongsToMany", "model": "User", "through": "UserCourse" },
+      {
+        "type": "belongsToMany",
+        "model": "CertificationProgram",
+        "through": "CertificationCourse"
+      },
+      { "type": "hasMany", "model": "CourseReview" }
+    ]
+  },
+  {
+    "name": "CourseCategory",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "description", "type": "text", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "hasMany", "model": "Course" }]
+  },
+  {
+    "name": "Plan",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "name", "type": "string" },
+      { "name": "description", "type": "text" },
+      { "name": "price", "type": "integer" },
+      { "name": "duration_in_days", "type": "integer" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "hasMany", "model": "UserSubscription" }]
+  },
+  {
+    "name": "UserSubscription",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "plan_id", "type": "bigint" },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "start_date", "type": "date" },
+      { "name": "end_date", "type": "date" },
+      {
+        "name": "status",
+        "type": "string",
+        "enum": ["active", "canceled", "expired"]
+      },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "belongsTo", "model": "Plan" }
+    ]
+  },
+  {
+    "name": "Video",
+    "attributes": [
+      { "name": "id", "type": "bigint" },
+      { "name": "course_id", "type": "bigint" },
+      { "name": "title", "type": "string" },
+      { "name": "description", "type": "text", "nullable": true },
+      { "name": "file_url", "type": "string" },
+      { "name": "duration", "type": "integer" },
+      { "name": "display_order", "type": "integer" },
+      { "name": "is_preview", "type": "boolean", "default": false },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Course" },
+      { "type": "hasMany", "model": "CourseProgress" }
+    ]
+  },
+  {
+    "name": "CourseProgress",
+    "attributes": [
+      { "name": "id", "type": "bigint" },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "video_id", "type": "bigint" },
+      { "name": "progress_percentage", "type": "decimal" },
+      { "name": "last_watched_at", "type": "timestamp" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "belongsTo", "model": "Video" }
+    ]
+  },
+  {
+    "name": "CertificationProgram",
+    "attributes": [
+      { "name": "id", "type": "bigint" },
+      { "name": "name", "type": "string" },
+      { "name": "description", "type": "text" },
+      { "name": "category", "type": "string" },
+      {
+        "name": "level",
+        "type": "string",
+        "enum": ["beginner", "intermediate", "advanced"]
+      },
+      { "name": "is_active", "type": "boolean", "default": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      {
+        "type": "belongsToMany",
+        "model": "Course",
+        "through": "CertificationCourse"
+      }
+    ]
+  },
+  {
+    "name": "CertificationCourse",
+    "attributes": [
+      { "name": "id", "type": "bigint" },
+      { "name": "course_id", "type": "bigint" },
+      { "name": "certification_program_id", "type": "bigint" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "hasMany", "model": "Course" },
+      { "type": "hasMany", "model": "CertificationProgram" }
+    ]
+  },
+  {
+    "name": "InstructorReview",
+    "attributes": [
+      { "name": "id", "type": "bigint" },
+      { "name": "instructor_id", "type": "bigint" },
+      { "name": "user_id", "type": "bigint", "nullable": true },
+      { "name": "rating", "type": "integer" },
+      { "name": "comment", "type": "text", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Instructor" },
+      { "type": "belongsTo", "model": "User" }
+    ]
+  },
+  {
+    "name": "CourseReview",
+    "attributes": [
+      { "name": "id", "type": "bigint" },
+      { "name": "course_id", "type": "bigint" },
+      { "name": "user_id", "type": "bigint", "nullable": true },
+      { "name": "rating", "type": "integer" },
+      { "name": "comment", "type": "text", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "Course" },
+      { "type": "belongsTo", "model": "User" }
+    ]
+  },
+  {
+    "name": "ForumCategory",
+    "attributes": [
+      { "name": "id", "type": "bigint" },
+      { "name": "name", "type": "string" },
+      { "name": "description", "type": "text", "nullable": true },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [{ "type": "hasMany", "model": "ForumThread" }]
+  },
+  {
+    "name": "ForumThread",
+    "attributes": [
+      { "name": "id", "type": "bigint" },
+      { "name": "category_id", "type": "bigint" },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "title", "type": "string" },
+      { "name": "content", "type": "text" },
+      { "name": "views", "type": "integer", "default": 0 },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "ForumCategory" },
+      { "type": "belongsTo", "model": "User" },
+      { "type": "hasMany", "model": "ForumPost" }
+    ]
+  },
+  {
+    "name": "ForumPost",
+    "attributes": [
+      { "name": "id", "type": "bigint" },
+      { "name": "thread_id", "type": "bigint" },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "content", "type": "text" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "ForumThread" },
+      { "type": "belongsTo", "model": "User" },
+      { "type": "hasMany", "model": "ForumReply" }
+    ]
+  },
+  {
+    "name": "ForumReply",
+    "attributes": [
+      { "name": "id", "type": "bigint" },
+      { "name": "post_id", "type": "bigint" },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "content", "type": "text" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "ForumPost" },
+      { "type": "belongsTo", "model": "User" }
+    ]
+  },
+  {
+    "name": "UserCourse",
+    "attributes": [
+      {
+        "name": "id",
+        "type": "bigint",
+        "primaryKey": true,
+        "autoIncrement": true
+      },
+      { "name": "user_id", "type": "bigint" },
+      { "name": "course_id", "type": "bigint" },
+      { "name": "created_at", "type": "timestamp" },
+      { "name": "updated_at", "type": "timestamp" }
+    ],
+    "relationships": [
+      { "type": "belongsTo", "model": "User" },
+      { "type": "belongsTo", "model": "Course" }
+    ]
+  }
+]

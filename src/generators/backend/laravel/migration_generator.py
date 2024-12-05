@@ -71,6 +71,11 @@ class MigrationGenerator:
         prepared_attributes = self._prepare_attributes(model.attributes)
         prepared_relationships = self._prepare_relationships(model.relationships)
         
+        # Transform bigint to bigInteger
+        for attr in prepared_attributes:
+            if attr['type'] == 'bigint':
+                attr['type'] = 'bigInteger'
+        
         # Remove foreign key fields from attributes as they'll be handled in relationships
         foreign_keys = [rel['foreign_key'] for rel in prepared_relationships if 'foreign_key' in rel]
         

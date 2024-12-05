@@ -1,0 +1,336 @@
+{
+  "models": [
+    {
+      "name": "User",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "string" },
+        { "name": "email", "type": "string", "unique": true },
+        { "name": "password", "type": "string" },
+        { "name": "profile_picture", "type": "string", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "hasMany", "model": "Subscription" },
+        { "type": "hasMany", "model": "Course", "through": "UserCourse" },
+        { "type": "hasMany", "model": "Certificate" },
+        { "type": "hasMany", "model": "Interaction" }
+      ]
+    },
+    {
+      "name": "SubscriptionPlan",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "string" },
+        { "name": "price", "type": "decimal" },
+        { "name": "duration", "type": "integer" },
+        {
+          "name": "duration_unit",
+          "type": "string",
+          "enum": ["month", "year"]
+        },
+        { "name": "description", "type": "text" },
+        { "name": "max_courses", "type": "integer" },
+        { "name": "is_active", "type": "boolean" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "hasMany", "model": "Subscription" }]
+    },
+    {
+      "name": "CourseCategory",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "string" },
+        { "name": "description", "type": "text" },
+        { "name": "parent_category_id", "type": "uuid", "nullable": true },
+        { "name": "slug", "type": "string" },
+        { "name": "is_active", "type": "boolean" },
+        { "name": "display_order", "type": "integer" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "hasMany", "model": "Course" },
+        {
+          "type": "belongsTo",
+          "model": "CourseCategory",
+          "name": "parentCategory",
+          "nullable": true
+        }
+      ]
+    },
+    {
+      "Playlist": {
+        "name": "Playlist",
+        "attributes": [
+          { "name": "id", "type": "uuid" },
+          { "name": "course_id", "type": "uuid" },
+          { "name": "name", "type": "string" },
+          { "name": "description", "type": "text" },
+          { "name": "is_public", "type": "boolean" },
+          { "name": "order", "type": "integer" },
+          { "name": "created_by", "type": "uuid" },
+          { "name": "created_at", "type": "timestamp" },
+          { "name": "updated_at", "type": "timestamp" }
+        ],
+        "relationships": [
+          { "type": "belongsTo", "model": "Course" },
+          { "type": "hasMany", "model": "Lesson" },
+          { "type": "belongsTo", "model": "User", "name": "creator" }
+        ]
+      },
+      "name": "CourseProgress",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "user_id", "type": "uuid" },
+        { "name": "course_id", "type": "uuid" },
+        { "name": "lessons_completed", "type": "integer" },
+        { "name": "total_lessons", "type": "integer" },
+        { "name": "completion_percentage", "type": "decimal" },
+        { "name": "last_accessed_at", "type": "timestamp" },
+        {
+          "name": "status",
+          "type": "string",
+          "enum": ["not_started", "in_progress", "completed"]
+        },
+        { "name": "started_at", "type": "timestamp" },
+        { "name": "completed_at", "type": "timestamp", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "belongsTo", "model": "Course" }
+      ]
+    },
+    {
+      "name": "OfflineCourseReservation",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "user_id", "type": "uuid" },
+        { "name": "course_id", "type": "uuid" },
+        { "name": "course_date", "type": "date" },
+        { "name": "course_time", "type": "integer" },
+        { "name": "location", "type": "string" },
+        {
+          "name": "status",
+          "type": "string",
+          "enum": ["pending", "confirmed", "cancelled"]
+        },
+        {
+          "name": "payment_status",
+          "type": "string",
+          "enum": ["unpaid", "paid", "refunded"]
+        },
+        { "name": "notes", "type": "text", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "belongsTo", "model": "Course" }
+      ]
+    },
+    {
+      "name": "CertificationProgram",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "string" },
+        { "name": "description", "type": "text" },
+        { "name": "category", "type": "string" },
+        {
+          "name": "level",
+          "type": "string",
+          "enum": ["beginner", "intermediate", "advanced"]
+        },
+        { "name": "required_courses", "type": "integer" },
+        { "name": "duration_weeks", "type": "integer" },
+        { "name": "certification_validity_months", "type": "integer" },
+        { "name": "is_active", "type": "boolean" },
+        { "name": "price", "type": "decimal" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "hasMany", "model": "Course" },
+        { "type": "hasMany", "model": "Certificate" }
+      ]
+    },
+    {
+      "name": "InstructorReview",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "instructor_id", "type": "uuid" },
+        { "name": "user_id", "type": "uuid" },
+        { "name": "course_id", "type": "uuid", "nullable": true },
+        { "name": "rating", "type": "decimal", "min": 1, "max": 5 },
+        { "name": "review_text", "type": "text" },
+        { "name": "is_anonymous", "type": "boolean" },
+        { "name": "helpful_count", "type": "integer", "default": 0 },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Instructor" },
+        { "type": "belongsTo", "model": "User" },
+        { "type": "belongsTo", "model": "Course", "nullable": true }
+      ]
+    },
+    {
+      "name": "InstructorProfile",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "user_id", "type": "uuid" },
+        { "name": "full_name", "type": "string" },
+        { "name": "professional_title", "type": "string" },
+        { "name": "biography", "type": "text" },
+        { "name": "linkedin_profile", "type": "string", "nullable": true },
+        { "name": "years_of_experience", "type": "integer" },
+        { "name": "average_rating", "type": "decimal", "min": 1, "max": 5 },
+        { "name": "total_courses_taught", "type": "integer" },
+        { "name": "is_featured", "type": "boolean" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "hasMany", "model": "Course" },
+        { "type": "hasMany", "model": "InstructorReview" }
+      ]
+    },
+    {
+      "name": "Subscription",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "user_id", "type": "uuid" },
+        { "name": "plan_name", "type": "string" },
+        { "name": "start_date", "type": "timestamp" },
+        { "name": "end_date", "type": "timestamp" },
+        {
+          "name": "status",
+          "type": "string",
+          "enum": ["active", "cancelled", "expired"]
+        },
+        { "name": "payment_method", "type": "string" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "belongsTo", "model": "User" }]
+    },
+    {
+      "name": "Course",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "title", "type": "string" },
+        { "name": "description", "type": "text" },
+        { "name": "category", "type": "string" },
+        { "name": "skill_level", "type": "string" },
+        { "name": "price", "type": "decimal" },
+        { "name": "duration", "type": "integer" },
+        { "name": "preview_available", "type": "boolean" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Instructor" },
+        { "type": "hasMany", "model": "Lesson" },
+        { "type": "hasMany", "model": "User", "through": "UserCourse" },
+        { "type": "hasMany", "model": "Certificate" }
+      ]
+    },
+    {
+      "name": "Instructor",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "string" },
+        { "name": "email", "type": "string", "unique": true },
+        { "name": "qualifications", "type": "text" },
+        { "name": "experience", "type": "text" },
+        { "name": "profile_picture", "type": "string", "nullable": true },
+        { "name": "average_rating", "type": "decimal", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "hasMany", "model": "Course" },
+        { "type": "hasMany", "model": "Interaction" }
+      ]
+    },
+    {
+      "name": "Lesson",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "course_id", "type": "uuid" },
+        { "name": "title", "type": "string" },
+        {
+          "name": "content_type",
+          "type": "string",
+          "enum": ["video", "text", "quiz"]
+        },
+        { "name": "duration", "type": "integer" },
+        { "name": "order", "type": "integer" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "belongsTo", "model": "Course" }]
+    },
+    {
+      "name": "Certificate",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "user_id", "type": "uuid" },
+        { "name": "course_id", "type": "uuid" },
+        { "name": "issue_date", "type": "timestamp" },
+        { "name": "verification_code", "type": "string", "unique": true },
+        { "name": "status", "type": "string", "enum": ["issued", "revoked"] },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "belongsTo", "model": "Course" }
+      ]
+    },
+    {
+      "name": "Interaction",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "user_id", "type": "uuid" },
+        { "name": "instructor_id", "type": "uuid", "nullable": true },
+        {
+          "name": "type",
+          "type": "string",
+          "enum": ["question", "feedback", "review"]
+        },
+        { "name": "content", "type": "text" },
+        { "name": "rating", "type": "decimal", "nullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "belongsTo", "model": "Instructor", "nullable": true }
+      ]
+    },
+    {
+      "name": "Promotion",
+      "attributes": [
+        { "name": "id", "type": "uuid" },
+        { "name": "code", "type": "string", "unique": true },
+        { "name": "description", "type": "text" },
+        {
+          "name": "discount_type",
+          "type": "string",
+          "enum": ["percentage", "fixed"]
+        },
+        { "name": "discount_value", "type": "decimal" },
+        { "name": "start_date", "type": "timestamp" },
+        { "name": "end_date", "type": "timestamp" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ]
+    }
+  ]
+}
