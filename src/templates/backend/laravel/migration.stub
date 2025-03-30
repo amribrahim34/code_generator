@@ -14,8 +14,7 @@ return new class extends Migration
      public function up()
      {
          Schema::create('{{ table_name }}', function (Blueprint $table) { 
-            $table->unsignedBigInteger('id')->primary();
-
+            $table->id();
             {% for attribute in attributes %}
             {% if attribute.type == 'enum' %}
             $table->enum('{{ attribute.name }}', {{ attribute.enum_values|tojson }}){% if attribute.nullable %}->nullable(){% endif %}{% if attribute.unique %}->unique(){% endif %};
