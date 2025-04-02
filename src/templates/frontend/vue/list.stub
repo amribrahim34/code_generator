@@ -1,0 +1,212 @@
+<template>
+    <div class="list-view">
+      <div class="card">
+        <Toolbar class="mb-4">
+          <template #start>
+            <Button 
+              :label="$t('{{ MODEL_NAME_PLURAL_LOWERCASE }}.create_new')" 
+              icon="pi pi-plus" 
+              class="p-button-success mr-2" 
+              @click="openCreateModal"
+            />
+            <Button 
+              :label="$t('common.export')" 
+              icon="pi pi-upload" 
+              class="p-button-help" 
+              @click="exportData"
+            />
+          </template>
+  
+          <template #end>
+            <Button 
+              :label="$t('common.refresh')" 
+              icon="pi pi-refresh" 
+              class="p-button-text" 
+              @click="loadData"
+            />
+          </template>
+        </Toolbar>
+  
+        <DataTable 
+          ref="dt"
+          :value="{{ MODEL_NAME_PLURAL_LOWERCASE }}"
+          dataKey="id"
+          :paginator="true"
+          :rows="10"
+          :rowsPerPageOptions="[5, 10, 25]"
+          :filters="filters"
+          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+          :currentPageReportTemplate="$t('common.pagination_template')"
+          :globalFilterFields="['{{ _generate_global_filter_fields() }}']"
+          filterDisplay="menu"
+          :loading="loading"
+        >
+          <template #header>
+            <div class="flex justify-content-between align-items-center">
+              <h2 class="m-0">{{ $t('{{ MODEL_NAME_PLURAL_LOWERCASE }}.list_title') }}</h2>
+              <span class="p-input-icon-left">
+                <i class="pi pi-search" />
+                <InputText 
+                  v-model="filters['global'].value" 
+                  :placeholder="$t('common.search')" 
+                  class="w-full" 
+                />
+              </span>
+            </div>
+          </template>
+  
+          <Column 
+            v-for="(column, index) in columns" 
+            :key="index"
+            :field="column.field" 
+            :header="$t(column.header)"
+            :sortable="column.sortable"
+            :style="column.style"
+          >
+            <template #body="{ data }" v-if="column.type === 'boolean'">
+              <Tag 
+                :value="data[column.field] ? $t('common.yes') : $t('common.no')" 
+                :severity="data[column.field] ? 'success' : 'danger'" 
+              />
+            </template>
+            <template #body="{ data }" v-else-if="column.type === 'date'">
+              {{ formatDate(data[column.field]) }}
+            </template>
+          </Column>
+  
+          <Column header="Actions" :exportable="false">
+            <template #body="{ data }">
+              <div class="flex gap-2">
+                <Button 
+                  icon="pi pi-pencil" 
+                  class="p-button-rounded p-button-success" 
+                  @click="editItem(data)"
+                />
+                <Button 
+                  icon="pi pi-trash" 
+                  class="p-button-rounded p-button-danger" 
+                  @click="confirmDelete(data)"
+                />
+              </div>
+            </template>
+          </Column>
+  
+          <template #empty>
+            {{ $t('{{ MODEL_NAME_PLURAL_LOWERCASE }}.no_data') }}
+          </template>
+        </DataTable>
+      </div>
+  
+      <Dialog 
+        v-model:visible="deleteDialog" 
+        :style="{ width: '450px' }" 
+        :header="$t('common.confirm')" 
+        :modal="true"
+      >
+        <div class="confirmation-content">
+          <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+          <span>{{ $t('{{ MODEL_NAME_PLURAL_LOWERCASE }}.delete_confirm', { name: selectedItem?.name }) }}</span>
+        </div>
+        <template #footer>
+          <Button 
+            :label="$t('common.no')" 
+            icon="pi pi-times" 
+            class="p-button-text" 
+            @click="deleteDialog = false"
+          />
+          <Button 
+            :label="$t('common.yes')" 
+            icon="pi pi-check" 
+            class="p-button-text" 
+            @click="deleteItem"
+          />
+        </template>
+      </Dialog>
+    </div>
+  </template>
+  
+  <script setup>
+  import { ref, onMounted, reactive } from 'vue'
+  import { useI18n } from 'vue-i18n'
+  import { FilterMatchMode } from 'primevue/api'
+  import { useConfirm } from 'primevue/useconfirm'
+  
+  const { t } = useI18n()
+  const confirm = useConfirm()
+  
+  const {{ MODEL_NAME_PLURAL_LOWERCASE }} = ref([])
+  const selectedItem = ref(null)
+  const deleteDialog = ref(false)
+  const loading = ref(false)
+  
+  const columns = ref([
+    {{ COLUMNS }}
+  ])
+  
+  const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    {{ FILTER_FIELDS }}
+  })
+  
+  function loadData() {
+    loading.value = true
+    // TODO: Implement actual data fetching logic
+    // Example: 
+    // {{ MODEL_NAME_PLURAL_LOWERCASE }}.value = await {{ MODEL_NAME_LOWERCASE }}Service.getAll()
+    loading.value = false
+  }
+  
+  function openCreateModal() {
+    // Navigate to create page or open create modal
+    // this.$router.push('/{{ MODEL_NAME_PLURAL_KEBAB }}/create')
+  }
+  
+  function editItem(item) {
+    // Navigate to edit page or open edit modal
+    // this.$router.push(`/{{ MODEL_NAME_PLURAL_KEBAB }}/edit/${item.id}`)
+  }
+  
+  function confirmDelete(item) {
+    selectedItem.value = item
+    deleteDialog.value = true
+  }
+  
+  async function deleteItem() {
+    if (selectedItem.value) {
+      try {
+        // TODO: Implement actual delete logic
+        // await {{ MODEL_NAME_LOWERCASE }}Service.delete(selectedItem.value.id)
+        {{ MODEL_NAME_PLURAL_LOWERCASE }}.value = {{ MODEL_NAME_PLURAL_LOWERCASE }}.value.filter(item => item.id !== selectedItem.value.id)
+        deleteDialog.value = false
+        selectedItem.value = null
+      } catch (error) {
+        // Handle error
+        console.error('Delete failed', error)
+      }
+    }
+  }
+  
+  function exportData() {
+    // Implement export logic
+    // Consider using a library like xlsx for exports
+    const exportData = {{ MODEL_NAME_PLURAL_LOWERCASE }}.value.map(item => ({
+      {{ EXPORT_FIELDS }}
+    }))
+    // Implement actual export mechanism
+  }
+  
+  function formatDate(date) {
+    // Implement date formatting
+    return date ? new Date(date).toLocaleDateString() : ''
+  }
+  
+  onMounted(() => {
+    loadData()
+  })
+  </script>
+  
+  <style scoped>
+  .list-view .card {
+    padding: 1rem;
+  }
+  </style>

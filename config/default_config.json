@@ -33,6 +33,7 @@
     "route_dir": "router",
     "store_dir": "stores",
     "type_dir": "types",
+    "view_dir": "views",
     "state_management": "pinia",
     "ui_framework": "primevue",
     "component_structure": {
@@ -184,6 +185,11 @@
         "name": "store",
         "module": "src.generators.frontend.vue.store_generator",
         "class": "StoreGenerator"
+      },
+      {
+        "name": "view",
+        "module": "src.generators.frontend.vue.view_generator",
+        "class": "ViewGenerator"
       }
     ],
     "react_native": [

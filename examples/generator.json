@@ -1,0 +1,225 @@
+{
+  "models": [
+    {
+      "name": "User",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        { "name": "name", "type": "string", "nullable": false },
+        {
+          "name": "email",
+          "type": "string",
+          "unique": true,
+          "nullable": false
+        },
+        { "name": "password", "type": "string", "nullable": false },
+        {
+          "name": "role",
+          "type": "string",
+          "enum": ["admin", "editor", "viewer"],
+          "default": "viewer"
+        },
+        { "name": "theme_preference", "type": "string", "default": "default" },
+        { "name": "language", "type": "string", "default": "en" },
+        { "name": "last_login", "type": "timestamp" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "hasMany", "model": "Project" },
+        { "type": "hasMany", "model": "UserSubscription" }
+      ]
+    },
+    {
+      "name": "Project",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        { "name": "name", "type": "string", "nullable": false },
+        { "name": "description", "type": "text" },
+        { "name": "user_id", "type": "bigint", "nullable": false },
+        {
+          "name": "status",
+          "type": "string",
+          "enum": ["draft", "in_progress", "completed"],
+          "default": "draft"
+        },
+        { "name": "primary_language", "type": "string" },
+        { "name": "database_preference", "type": "string" },
+        { "name": "template_id", "type": "bigint" },
+        { "name": "completion_percentage", "type": "integer", "default": 0 },
+        { "name": "tags", "type": "json" },
+        { "name": "last_updated", "type": "timestamp" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "belongsTo", "model": "ProjectTemplate", "nullable": true },
+        { "type": "hasMany", "model": "ProjectModel" },
+        { "type": "hasMany", "model": "ProjectVersion" }
+      ]
+    },
+    {
+      "name": "ProjectTemplate",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        { "name": "name", "type": "string", "nullable": false },
+        {
+          "name": "category",
+          "type": "string",
+          "enum": ["e-commerce", "crm", "blog", "portfolio", "other"]
+        },
+        { "name": "description", "type": "text" },
+        { "name": "recommended_for", "type": "string" },
+        { "name": "default_configuration", "type": "json" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "hasMany", "model": "Project" }]
+    },
+    {
+      "name": "ProjectModel",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        { "name": "project_id", "type": "bigint", "nullable": false },
+        { "name": "name", "type": "string", "nullable": false },
+        { "name": "description", "type": "text" },
+        { "name": "is_system_model", "type": "boolean", "default": false },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Project" },
+        { "type": "hasMany", "model": "ModelAttribute" }
+      ]
+    },
+    {
+      "name": "ModelAttribute",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        { "name": "project_model_id", "type": "bigint", "nullable": false },
+        { "name": "name", "type": "string", "nullable": false },
+        { "name": "type", "type": "string", "nullable": false },
+        { "name": "is_nullable", "type": "boolean", "default": true },
+        { "name": "is_unique", "type": "boolean", "default": false },
+        { "name": "default_value", "type": "string" },
+        { "name": "validation_rules", "type": "json" },
+        { "name": "is_primary_key", "type": "boolean", "default": false },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "belongsTo", "model": "ProjectModel" }]
+    },
+    {
+      "name": "ProjectVersion",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        { "name": "project_id", "type": "bigint", "nullable": false },
+        { "name": "version_number", "type": "string", "nullable": false },
+        { "name": "configuration_snapshot", "type": "json" },
+        { "name": "notes", "type": "text" },
+        { "name": "created_by", "type": "bigint" },
+        { "name": "created_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "Project" },
+        { "type": "belongsTo", "model": "User", "foreignKey": "created_by" }
+      ]
+    },
+    {
+      "name": "GeneratedCode",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        { "name": "project_id", "type": "bigint", "nullable": false },
+        { "name": "framework", "type": "string", "nullable": false },
+        { "name": "file_path", "type": "string", "nullable": false },
+        { "name": "file_content", "type": "text" },
+        { "name": "file_type", "type": "string" },
+        { "name": "generated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "belongsTo", "model": "Project" }]
+    },
+    {
+      "name": "Plan",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        { "name": "name", "type": "string", "nullable": false },
+        { "name": "description", "type": "text" },
+        { "name": "price", "type": "integer" },
+        { "name": "duration_in_days", "type": "integer" },
+        { "name": "max_projects", "type": "integer" },
+        { "name": "max_models_per_project", "type": "integer" },
+        { "name": "features", "type": "json" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [{ "type": "hasMany", "model": "UserSubscription" }]
+    },
+    {
+      "name": "UserSubscription",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        { "name": "plan_id", "type": "bigint", "nullable": false },
+        { "name": "user_id", "type": "bigint", "nullable": false },
+        { "name": "start_date", "type": "date", "nullable": false },
+        { "name": "end_date", "type": "date", "nullable": false },
+        {
+          "name": "status",
+          "type": "string",
+          "enum": ["active", "canceled", "expired"],
+          "default": "active"
+        },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ],
+      "relationships": [
+        { "type": "belongsTo", "model": "User" },
+        { "type": "belongsTo", "model": "Plan" }
+      ]
+    }
+  ]
+}

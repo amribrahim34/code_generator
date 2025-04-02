@@ -1,0 +1,258 @@
+<template>
+    <div class="{{MODEL_NAME_KEBAB}}-{{VIEW_TYPE}}">
+      <!-- Breadcrumb -->
+      <Breadcrumb :home="home" :model="breadcrumbItems" />
+  
+      <!-- List View -->
+      <template v-if="viewType === 'list'">
+        <Card>
+          <template #title>
+            {{MODEL_NAME_PLURAL}} List
+            <Button 
+              icon="pi pi-plus" 
+              severity="success" 
+              class="float-right" 
+              @click="handleCreate"
+            >
+              Create New
+            </Button>
+          </template>
+  
+          <!-- Filters -->
+          <div class="grid">
+            {{FILTER_FIELDS}}
+            <div class="col-12">
+              <div class="flex gap-2">
+                <Button 
+                  severity="primary" 
+                  @click="applyFilters"
+                >
+                  Filter
+                </Button>
+                <Button 
+                  severity="secondary" 
+                  @click="resetFilters"
+                >
+                  Reset
+                </Button>
+                <Button 
+                  severity="info" 
+                  @click="exportData"
+                >
+                  Export
+                </Button>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Data Table -->
+          <DataTable 
+            :value="dataSource" 
+            :paginator="true" 
+            :rows="pagination.pageSize"
+            :totalRecords="pagination.total"
+            @page="onPage($event)"
+          >
+            {{COLUMNS}}
+            <Column header="Actions" bodyStyle="text-align:center">
+              <template #body="slotProps">
+                <div class="flex justify-content-center gap-2">
+                  <Button 
+                    icon="pi pi-pencil" 
+                    severity="warning" 
+                    @click="handleEdit(slotProps.data)"
+                  />
+                  <Button 
+                    icon="pi pi-trash" 
+                    severity="danger" 
+                    @click="handleDelete(slotProps.data.id)"
+                  />
+                </div>
+              </template>
+            </Column>
+          </DataTable>
+        </Card>
+      </template>
+  
+      <!-- Create/Update View -->
+      <template v-else>
+        <Card>
+          <form @submit.prevent="handleSubmit" class="grid p-fluid">
+            {{FORM_FIELDS}}
+            
+            <div class="col-12">
+              <div class="flex gap-2">
+                <Button 
+                  type="submit" 
+                  severity="success"
+                >
+                  {{ viewType === 'create' ? 'Create' : 'Update' }}
+                </Button>
+                <Button 
+                  type="button" 
+                  severity="secondary" 
+                  @click="handleCancel"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </form>
+        </Card>
+      </template>
+    </div>
+  </template>
+  
+  <script setup>
+  import { ref, reactive, onMounted } from 'vue'
+  import { useToast } from 'primevue/usetoast'
+  import { 
+    get{{MODEL_NAME}}List, 
+    create{{MODEL_NAME}}, 
+    update{{MODEL_NAME}}, 
+    delete{{MODEL_NAME}} 
+  } from '@/api/{{MODEL_NAME_KEBAB}}'
+  
+  const toast = useToast()
+  const viewType = ref('{{VIEW_TYPE}}')
+  
+  const home = ref({
+    icon: 'pi pi-home',
+    route: '/'
+  })
+  
+  const breadcrumbItems = ref([
+    { label: '{{MODEL_NAME_PLURAL}}', route: '/{{MODEL_NAME_PLURAL_KEBAB}}' },
+    { label: '{{VIEW_TYPE_LABEL}}' }
+  ])
+  
+  const formModel = reactive({
+    {{REACTIVE_FORM_FIELDS}}
+  })
+  
+  const pagination = reactive({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  })
+  
+  const filterModel = reactive({
+    {{FILTER_REACTIVE_FIELDS}}
+  })
+  
+  const dataSource = ref([])
+  
+  const fetchData = async () => {
+    try {
+      const params = {
+        page: pagination.current,
+        pageSize: pagination.pageSize,
+        ...filterModel
+      }
+      const response = await get{{MODEL_NAME}}List(params)
+      dataSource.value = response.data.list
+      pagination.total = response.data.total
+    } catch (error) {
+      toast.add({
+        severity: 'error', 
+        summary: 'Error', 
+        detail: 'Failed to load data'
+      })
+    }
+  }
+  
+  const onPage = (event) => {
+    pagination.current = event.page + 1
+    pagination.pageSize = event.rows
+    fetchData()
+  }
+  
+  const applyFilters = () => {
+    pagination.current = 1
+    fetchData()
+  }
+  
+  const resetFilters = () => {
+    Object.keys(filterModel).forEach(key => {
+      filterModel[key] = undefined
+    })
+    pagination.current = 1
+    fetchData()
+  }
+  
+  const exportData = () => {
+    toast.add({
+      severity: 'info', 
+      summary: 'Export', 
+      detail: 'Data export functionality to be implemented'
+    })
+  }
+  
+  const handleCreate = () => {
+    // Navigation logic
+  }
+  
+  const handleEdit = (data) => {
+    // Edit navigation/logic
+  }
+  
+  const handleSubmit = async () => {
+    try {
+      if (viewType.value === 'create') {
+        await create{{MODEL_NAME}}(formModel)
+        toast.add({
+          severity: 'success', 
+          summary: 'Created', 
+          detail: '{{MODEL_NAME}} created successfully'
+        })
+      } else {
+        await update{{MODEL_NAME}}(formModel)
+        toast.add({
+          severity: 'success', 
+          summary: 'Updated', 
+          detail: '{{MODEL_NAME}} updated successfully'
+        })
+      }
+    } catch (error) {
+      toast.add({
+        severity: 'error', 
+        summary: 'Error', 
+        detail: 'Submission failed'
+      })
+    }
+  }
+  
+  const handleDelete = async (id) => {
+    try {
+      await delete{{MODEL_NAME}}(id)
+      toast.add({
+        severity: 'success', 
+        summary: 'Deleted', 
+        detail: '{{MODEL_NAME}} deleted successfully'
+      })
+      fetchData()
+    } catch (error) {
+      toast.add({
+        severity: 'error', 
+        summary: 'Error', 
+        detail: 'Delete failed'
+      })
+    }
+  }
+  
+  const handleCancel = () => {
+    // Navigation logic
+  }
+  
+  onMounted(() => {
+    if (viewType.value === 'list') {
+      fetchData()
+    }
+  })
+  </script>
+  
+  <style scoped>
+  .{{MODEL_NAME_KEBAB}}-{{VIEW_TYPE}} {
+    padding: 1.5rem;
+  }
+  </style>

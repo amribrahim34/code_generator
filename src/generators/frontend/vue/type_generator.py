@@ -93,7 +93,6 @@ class TypeGenerator(ICodeGenerator):
 
 
     def get_template(self, template_name: str) -> str:
-        
         template_path = "frontend/vue/type.stub"
         return self.template_renderer.load_template(template_path)
     
@@ -116,13 +115,3 @@ class TypeGenerator(ICodeGenerator):
         except Exception as e:
             logging.error(f"Error rendering template: {str(e)}")
             raise
-
-
-    
-
-
-    
-
-    
-
-
