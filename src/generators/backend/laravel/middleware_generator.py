@@ -9,9 +9,7 @@ from src.utilities.string_utils import to_pascal_case, to_snake_case, to_kebab_c
 class MiddlewareGenerator(ICodeGenerator):
     def __init__(self, config_loader: IConfigLoader, template_renderer: ITemplateRenderer):
         self.config_loader = config_loader
-        self.template_renderer = template_renderer
-        self.auth_config_generator = AuthConfigModifier(config_loader, template_renderer)
-        
+        self.template_renderer = template_renderer        
 
     def generate(self, schema: Schema) -> Dict[str, str]:
         generated_files = {}
@@ -22,7 +20,6 @@ class MiddlewareGenerator(ICodeGenerator):
             file_path = f"backend/app/Http/Middleware/Is{middleware_type}.php"
             generated_files[file_path] = content
 
-        # self.auth_config_generator.update_auth_config(middleware_types)    
         return generated_files
 
     def get_output_path(self, model_name: str) -> str:

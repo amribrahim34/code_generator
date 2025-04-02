@@ -84,10 +84,6 @@ class ControllerGenerator(ICodeGenerator):
         template_path = self.config_loader.get('controller_template_path', 'backend/laravel/controller.stub')
         return self.template_renderer.load_template(template_path)
 
-    def _generate_swagger_annotations(self, context: Dict[str, Any]) -> str:
-        swagger_template = self.get_template('swagger_controller')
-        return self.template_renderer.render(swagger_template, context)
-
     def _generate_method(self, method_name: str, context: Dict[str, Any]) -> str:
         method_template = self.get_template(f'controller_{method_name}_method')
         return self.template_renderer.render(method_template, context)
