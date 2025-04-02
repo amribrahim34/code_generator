@@ -98,19 +98,3 @@ class IOutputWriter(ABC):
         """
         pass
 
-    @abstractmethod
-    def get_file_handler(self, path: str, mode: str) -> IO:
-        """
-        Get a file handler for the specified path and mode.
-
-        Args:
-            path (str): The path of the file.
-            mode (str): The mode to open the file in ('r', 'w', 'a', etc.).
-
-        Returns:
-            IO: A file handler object.
-
-        Raises:
-            IOError: If there's an error opening the file.
-        """
-        pass

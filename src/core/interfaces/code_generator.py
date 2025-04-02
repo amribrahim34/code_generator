@@ -56,17 +56,6 @@ class ICodeGenerator(ABC):
         """
         pass
 
-    # @abstractmethod
-    # def post_generation_tasks(self, generated_files: Dict[str, str]) -> None:
-    #     """
-    #     Perform any necessary tasks after code generation, such as formatting or linting.
-
-    #     Args:
-    #         generated_files (Dict[str, str]): A dictionary of generated files, where keys are file paths
-    #                                           and values are file contents.
-    #     """
-    #     pass
-
     @abstractmethod
     def prepare_context(self, model: Union[Dict[str, Any], Model]) -> Dict[str, Any]:
         """

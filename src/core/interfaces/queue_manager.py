@@ -99,46 +99,11 @@ class IQueueManager(ABC):
         pass
 
     @abstractmethod
-    async def register_callback(self, event: str, callback: Callable[[str, Any], None]) -> None:
-        """
-        Register a callback function for specific queue events.
-
-        Args:
-            event (str): The event to register the callback for (e.g., 'task_completed', 'task_failed').
-            callback (Callable[[str, Any], None]): The callback function to be called when the event occurs.
-                The callback should accept a task ID and optional data.
-        """
-        pass
-
-    @abstractmethod
     async def get_queue_length(self) -> int:
         """
         Get the current length of the queue.
 
         Returns:
             int: The number of tasks currently in the queue.
-        """
-        pass
-
-    @abstractmethod
-    async def get_pending_tasks(self, limit: int = 10) -> List[dict]:
-        """
-        Get a list of pending tasks.
-
-        Args:
-            limit (int): The maximum number of tasks to return (default: 10).
-
-        Returns:
-            List[dict]: A list of dictionaries containing task information (e.g., task ID, project ID, enqueue time).
-        """
-        pass
-
-    @abstractmethod
-    async def clear_queue(self) -> int:
-        """
-        Clear all pending tasks from the queue.
-
-        Returns:
-            int: The number of tasks that were removed from the queue.
         """
         pass
