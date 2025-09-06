@@ -58,25 +58,11 @@ class StoreGenerator(ICodeGenerator):
         }
 
         return self.render_template(template, context)
-        
-
-    def get_template(self, template_name: str) -> str:
-        
-        template_path = "frontend/vue/store.stub"
-        return self.template_renderer.load_template(template_path)
-    
 
     def validate_model(self, model: Model) -> None:
         if not model.name:
             raise ValueError("Model must have a name")
 
-    def post_generation_tasks(self, generated_files: Dict[str, str]) -> None:
-        # Perform any post-generation tasks here, such as formatting or linting
-        pass
-
-    def get_output_path(self, model_name: str) -> str:
-        return ""
-        
     def render_template(self, template: str, context: Dict) -> str:
         try:
             template = self.template_renderer.render(template, context)

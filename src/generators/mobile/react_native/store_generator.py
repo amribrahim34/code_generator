@@ -15,15 +15,12 @@ class StoreGenerator(ICodeGenerator):
     def generate(self, schema: Schema) -> Dict[str, str]:
         generated_files = {}
 
-        # Generate root reducer
         root_reducer_content = self._generate_root_reducer(schema.models)
         generated_files["mobile/store/rootReducer.js"] = root_reducer_content
 
-        # Generate store configuration
         store_config_content = self._generate_store_config()
         generated_files["mobile/store/configureStore.js"] = store_config_content
 
-        # Generate actions and reducers for each model
         for model in schema.models:
             actions_content = self._generate_actions(model)
             reducer_content = self._generate_reducer(model)
@@ -87,9 +84,6 @@ class StoreGenerator(ICodeGenerator):
             if not model.name:
                 raise ValueError("Model must have a name")
 
-    def post_generation_tasks(self, generated_files: Dict[str, str]) -> None:
-        # Perform any post-generation tasks here, such as formatting or linting
-        pass
 
     def get_output_path(self, file_name: str) -> str:
         return f"src/store/{file_name}"

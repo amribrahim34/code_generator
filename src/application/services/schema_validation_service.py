@@ -85,8 +85,6 @@ class SchemaValidationService:
                 if attr.type not in valid_types:
                     errors.append(f"Invalid attribute type '{attr.type}' for '{attr.name}' in model '{model.name}'")
                 
-                # if attr.type == 'enum' and not attr.enum_values:
-                #     errors.append(f"Enum attribute '{attr.name}' in model '{model.name}' must have enum_values defined")
 
     def _validate_unique_constraints(self, schema: Schema, errors: List[str], warnings: List[str]):
         """Validate unique constraints."""

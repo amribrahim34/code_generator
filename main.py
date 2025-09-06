@@ -18,7 +18,6 @@ config_manager = None
 logger = None
 output_writer = None
 template_renderer = None
-schema_parser = None
 backend_service = None
 frontend_service = None
 react_native_service = None
@@ -39,7 +38,7 @@ def load_schema(schema_path: str) -> Dict[str, Any]:
    raise FileNotFoundError(f"Schema file not found. Tried paths: {', '.join(possible_paths)}")
 
 def initialize_components(config_path: str, log_level: str, output_dir: str):
-    global config_manager, logger, output_writer, template_renderer, schema_parser, \
+    global config_manager, logger, output_writer, template_renderer, \
            backend_service, frontend_service, react_native_service, schema_validation_service
 
     config_manager = ConfigManager(config_path)

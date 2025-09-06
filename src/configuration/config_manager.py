@@ -47,13 +47,11 @@ class ConfigManager:
             if key not in self.config:
                 raise ValueError(f"Missing required configuration key: {key}")
 
-        # Validate backend configuration
         backend_keys = ['output_dir', 'namespace', 'use_soft_deletes']
         for key in backend_keys:
             if key not in self.config['backend']:
                 raise ValueError(f"Missing required backend configuration key: {key}")
 
-        # Validate frontend configuration
         frontend_keys = ['output_dir', 'use_typescript']
         for key in frontend_keys:
             if key not in self.config['frontend']:
@@ -95,13 +93,3 @@ class ConfigManager:
         """Save the current configuration back to the JSON file."""
         with self.config_path.open('w') as config_file:
             json.dump(self.config, config_file, indent=2)
-
-# Usage example
-if __name__ == "__main__":
-    config_manager = ConfigManager("config/default_config.json")
-    config_manager.load_config()
-    config_manager.validate_config()
-    
-    # Example of using the configuration
-    backend_config = config_manager.get_backend_config()
-    print(f"Backend namespace: {backend_config['namespace']}")

@@ -7,7 +7,6 @@ from src.core.interfaces.config_loader import IConfigLoader
 from src.core.interfaces.logger import ILogger
 from src.core.interfaces.output_writer import IOutputWriter
 from src.core.interfaces.template_renderer import ITemplateRenderer
-from src.core.use_cases.generate_react_native_code import GenerateReactNativeCode
 from src.application.dtos.generation_response_dto import GenerationResponseDTO
 
 class ReactNativeGenerationService:
@@ -18,12 +17,6 @@ class ReactNativeGenerationService:
         self.template_renderer = template_renderer
         self.logger.info("This is the React Native generation service")
         self.generators = self._initialize_generators()
-        self.generate_react_native_code = GenerateReactNativeCode(
-            config_loader,
-            logger,
-            output_writer,
-            template_renderer
-        )
         self.output_dir = None
 
     def _initialize_generators(self):

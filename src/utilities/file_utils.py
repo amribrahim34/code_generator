@@ -139,29 +139,3 @@ def change_file_extension(path: str, new_extension: str) -> str:
     """
     root, _ = os.path.splitext(path)
     return f"{root}.{new_extension}"
-
-# Example usage
-if __name__ == "__main__":
-    # Create a test directory
-    test_dir = "test_directory"
-    create_directory(test_dir)
-
-    # Write a test file
-    test_file = os.path.join(test_dir, "test_file.txt")
-    write_file(test_file, "Hello, World!")
-
-    # Read the test file
-    content = read_file(test_file)
-    print(f"File content: {content}")
-
-    # List files in the test directory
-    files = list_files(test_dir)
-    print(f"Files in directory: {files}")
-
-    # Get file size
-    size = get_file_size(test_file)
-    print(f"File size: {size} bytes")
-
-    # Clean up
-    delete_file(test_file)
-    os.rmdir(test_dir)

@@ -69,23 +69,5 @@ def sanitize_filename(filename: str) -> str:
     Sanitize a string to be used as a filename.
     Remove or replace characters that are not suitable for filenames.
     """
-    # Replace spaces and other characters with underscores
     filename = re.sub(r'[^\w\-_\. ]', '_', filename)
-    # Remove any leading or trailing periods or spaces
     return filename.strip('. ')
-
-# Example usage
-if __name__ == "__main__":
-    test_string = "hello_world"
-    print(f"Original: {test_string}")
-    print(f"Camel Case: {to_camel_case(test_string)}")
-    print(f"Pascal Case: {to_pascal_case(test_string)}")
-    print(f"Snake Case: {to_snake_case('helloWorld')}")
-    print(f"Kebab Case: {to_kebab_case('helloWorld')}")
-    print(f"Plural: {pluralize('cat')}")
-    print(f"Singular: {singularize('dogs')}")
-    print(f"Capitalize First: {capitalize_first('hello')}")
-    print(f"Uncapitalize First: {uncapitalize_first('Hello')}")
-    print(f"Split Words: {split_words('helloWorldPython_code')}")
-    print(f"Join Words: {join_words(['hello', 'world', 'python'], '-')}")
-    print(f"Sanitize Filename: {sanitize_filename('Hello World! (file).txt')}")

@@ -6,6 +6,7 @@ from src.core.entities.attribute import Attribute
 from src.core.entities.relationship import Relationship
 from src.infrastructure.adapters.jinja_template_renderer import JinjaTemplateRenderer
 from src.utilities.string_utils import camel_case, snake_case, plural
+from datetime import datetime
 
 class BaseGenerator(ABC):
     def __init__(self, project: Project, template_renderer: JinjaTemplateRenderer):
@@ -28,40 +29,6 @@ class BaseGenerator(ABC):
         """
         return self.template_renderer.render(template_name, context)
 
-    def generate_model(self, model: Model) -> str:
-        """
-        Generates code for a single model.
-        Should be implemented by subclasses.
-        """
-        pass
-
-    def generate_migration(self, model: Model) -> str:
-        """
-        Generates database migration code for a single model.
-        Should be implemented by subclasses.
-        """
-        pass
-
-    def generate_controller(self, model: Model) -> str:
-        """
-        Generates controller code for a single model.
-        Should be implemented by subclasses.
-        """
-        pass
-
-    def generate_route(self, model: Model) -> str:
-        """
-        Generates route code for a single model.
-        Should be implemented by subclasses.
-        """
-        pass
-
-    def generate_view(self, model: Model) -> str:
-        """
-        Generates view code for a single model.
-        Should be implemented by subclasses.
-        """
-        pass
 
     def get_model_attributes(self, model: Model) -> List[Dict[str, Any]]:
         """
@@ -262,8 +229,6 @@ ENV/
         """
         Generates a license file for the project.
         """
-        # For simplicity, we'll just implement the MIT license here
-        # In a real-world scenario, you might want to support multiple license types
         if license_type.upper() == "MIT":
             current_year = datetime.now().year
             license_content = f"""

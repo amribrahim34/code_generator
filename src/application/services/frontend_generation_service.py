@@ -7,7 +7,6 @@ from src.core.interfaces.config_loader import IConfigLoader
 from src.core.interfaces.logger import ILogger
 from src.core.interfaces.output_writer import IOutputWriter
 from src.core.interfaces.template_renderer import ITemplateRenderer
-from src.core.use_cases.generate_frontend_code import GenerateFrontendCode
 from src.application.dtos.generation_response_dto import GenerationResponseDTO
 
 class FrontendGenerationService:
@@ -18,14 +17,7 @@ class FrontendGenerationService:
         self.template_renderer = template_renderer
         self.logger.info("this is the backend generation service")
         self.generators = self._initialize_generators()
-        self.generate_frontend_code = GenerateFrontendCode(
-            config_loader,
-            logger,
-            output_writer,
-            template_renderer
-        )
 
-        
     def _initialize_generators(self):
         generators = []
         generator_configs = self.config_loader.get('generators.frontend', [])
@@ -57,7 +49,6 @@ class FrontendGenerationService:
         response = GenerationResponseDTO()
 
         try:
-            # Copy the frontend template
             self.copy_template()
             
             generated_files = {}
@@ -66,7 +57,6 @@ class FrontendGenerationService:
             
             self.output_writer.write_multiple_files(generated_files)
 
-            # Compile statistics
             statistics = self._compile_statistics(generated_files)
             response.set_statistics(statistics)
 
@@ -92,7 +82,6 @@ class FrontendGenerationService:
             import json
             package_data = json.loads(package_content)
 
-            # Add or update dependencies
             package_data['dependencies'].update({
                 "axios": "^0.21.1",
                 "vuex": "^4.0.0",
@@ -101,7 +90,6 @@ class FrontendGenerationService:
                 "tailwindcss": "^2.0.4"
             })
 
-            # Add or update dev dependencies
             package_data['devDependencies'].update({
                 "@vue/cli-plugin-babel": "~4.5.0",
                 "@vue/cli-plugin-eslint": "~4.5.0",
@@ -110,14 +98,12 @@ class FrontendGenerationService:
                 "@vue/cli-service": "~4.5.0"
             })
 
-            # Add or update scripts
             package_data['scripts'].update({
                 "serve": "vue-cli-service serve",
                 "build": "vue-cli-service build",
                 "lint": "vue-cli-service lint"
             })
 
-            # Write updated package.json
             updated_content = json.dumps(package_data, indent=2)
             self.output_writer.write_file(package_path, updated_content)
 
@@ -140,13 +126,11 @@ class FrontendGenerationService:
     def _generate_dockerfiles(self):
         """Generate Docker-related files for the frontend."""
         try:
-            # Generate Dockerfile
             dockerfile_content = self.template_renderer.render('Dockerfile.frontend', {
                 'node_version': self.config_loader.get('node_version', '14')
             })
             self.output_writer.write_file('Dockerfile', dockerfile_content)
 
-            # Generate docker-compose.yml
             docker_compose_content = self.template_renderer.render('docker-compose.frontend.yml', {
                 'app_name': self.config_loader.get('app_name', 'vue-app')
             })
@@ -176,7 +160,6 @@ class FrontendGenerationService:
             stats["total_files"] += 1
             stats["total_lines"] += content.count('\n') + 1
             
-            # Extract file type from the path
             file_type = file_path.split('/')[-2] if '/' in file_path else 'unknown'
             stats["files_per_type"][file_type] = stats["files_per_type"].get(file_type, 0) + 1
 
@@ -185,13 +168,8 @@ class FrontendGenerationService:
     def copy_template(self) -> str:
         self.logger.info("Copying empty frontend template")
         
-        # Get the directory of the current file
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        # Navigate to the project root
         project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))
-        
-        # Construct the path to the frontend template
         source = os.path.join(project_root, "src", "templates", "frontend", "vue", "template")
         
         self.output_dir = os.path.join(project_root, "output", "admin")

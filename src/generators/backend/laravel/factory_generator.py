@@ -90,12 +90,3 @@ class FactoryGenerator(ICodeGenerator):
             if not model.name or not model.attributes:
                 raise ValueError("Model must have a name and attributes")
 
-    def post_generation_tasks(self, generated_files: Dict[str, str]) -> None:
-        # Perform any post-generation tasks here, such as formatting or linting
-        pass
-
-# Example usage (this would be part of the BackendGenerationService)
-# config_loader = ConfigLoader()
-# template_renderer = TemplateRenderer()
-# factory_generator = FactoryGenerator(config_loader, template_renderer)
-# generated_files = factory_generator.generate(model)

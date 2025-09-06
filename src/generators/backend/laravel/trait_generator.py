@@ -60,7 +60,3 @@ class TraitGenerator(ICodeGenerator):
         else:
             if not model.name or not model.attributes:
                 raise ValueError("Model must have a name and attributes")
-
-    def post_generation_tasks(self, generated_files: Dict[str, str]) -> None:
-        # Perform any post-generation tasks here, such as formatting or linting
-        pass

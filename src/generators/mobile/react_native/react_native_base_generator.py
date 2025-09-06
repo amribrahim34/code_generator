@@ -163,19 +163,15 @@ class ReactNativeBaseGenerator(BaseGenerator):
     def generate_config_files(self) -> Dict[str, str]:
         config_files = {}
         
-        # Generate package.json
         package_json_content = self.render_template('react_native/package.json.j2', {'project_name': self.project.name})
         config_files['package.json'] = package_json_content
         
-        # Generate app.json
         app_json_content = self.render_template('react_native/app.json.j2', {'project_name': self.project.name})
         config_files['app.json'] = app_json_content
         
-        # Generate babel.config.js
         babel_config_content = self.render_template('react_native/babel.config.js.j2', {})
         config_files['babel.config.js'] = babel_config_content
         
-        # Generate metro.config.js
         metro_config_content = self.render_template('react_native/metro.config.js.j2', {})
         config_files['metro.config.js'] = metro_config_content
         

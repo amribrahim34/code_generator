@@ -11,7 +11,6 @@ class SwaggerGenerator:
         }
         self.paths = {}
         self.components = {"schemas": {}}
-        pass
     
     def generate_swagger_doc(self, schema: Schema) -> Dict[str, Any]:
         self._generate_paths(schema)

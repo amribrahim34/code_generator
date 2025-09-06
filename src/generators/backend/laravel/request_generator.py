@@ -28,7 +28,6 @@ class RequestGenerator(ICodeGenerator):
     def _generate_request(self, model: Union[Dict[str, Any], Model], request_type: str, operation: str) -> str:
         context = self.prepare_context(model, request_type, operation)
         
-        # Add OpenAPI annotations
         openapi_schema = self._generate_openapi_schema(model , request_type , operation)
         context['openapi_schema'] = openapi_schema
         
@@ -90,9 +89,6 @@ class RequestGenerator(ICodeGenerator):
             if not model.name or not model.attributes:
                 raise ValueError("Model must have a name and attributes")
 
-    def post_generation_tasks(self, generated_files: Dict[str, str]) -> None:
-        # Perform any post-generation tasks here, such as formatting or linting
-        pass
 
     def get_output_path(self, model_name: str ) -> str:
         return f"backend/app/Http/Requests/{model_name}.php"
@@ -117,7 +113,6 @@ class RequestGenerator(ICodeGenerator):
             attr_name = attr['name'] if isinstance(attr, dict) else attr.name
             attr_type = attr['type'] if isinstance(attr, dict) else attr.type
             
-            # Skip ID field for requests
             if attr_name.lower() == 'id':
                 continue
                 

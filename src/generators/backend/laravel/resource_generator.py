@@ -105,9 +105,6 @@ class ResourceGenerator(ICodeGenerator):
             if not model.name or not model.attributes:
                 raise ValueError("Model must have a name and attributes")
 
-    def post_generation_tasks(self, generated_files: Dict[str, str]) -> None:
-        # Perform any post-generation tasks here, such as formatting or linting
-        pass
 
     def _generate_openapi_schema(self, model: Union[Dict[str, Any], Model], resource_type: str) -> str:
         model_name = model['name'] if isinstance(model, dict) else model.name

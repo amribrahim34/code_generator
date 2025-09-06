@@ -30,7 +30,6 @@ class MiddlewareGenerator(ICodeGenerator):
         return self.template_renderer.render(f'backend/laravel/middleware.stub', context)
 
     def prepare_context(self,middleware_type: str) -> Dict[str, Any]:
-        
         return {
             'middleware_type': middleware_type,
             'class_name': f"Is{middleware_type}",
@@ -54,7 +53,3 @@ class MiddlewareGenerator(ICodeGenerator):
             if not model.name or not model.attributes:
                 raise ValueError("Model must have a name and attributes")
 
-
-    def post_generation_tasks(self, generated_files: Dict[str, str]) -> None:
-        # Perform any post-generation tasks here, such as formatting or linting
-        pass

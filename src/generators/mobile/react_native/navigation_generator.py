@@ -15,11 +15,9 @@ class NavigationGenerator(ICodeGenerator):
     def generate(self, schema: Schema) -> Dict[str, str]:
         generated_files = {}
         
-        # Generate main navigation file
         main_nav_content = self._generate_main_navigation(schema.models)
         generated_files["mobile/components/navigation/MainNavigation.js"] = main_nav_content
         
-        # Generate stack navigators for each model
         for model in schema.models:
             stack_nav_content = self._generate_stack_navigation(model)
             model_name = model.name if isinstance(model, Model) else model['name']
@@ -70,9 +68,6 @@ class NavigationGenerator(ICodeGenerator):
         if not model.name:
             raise ValueError("Model must have a name")
 
-    def post_generation_tasks(self, generated_files: Dict[str, str]) -> None:
-        # Perform any post-generation tasks here, such as formatting or linting
-        pass
 
     def get_output_path(self, file_name: str) -> str:
         return f"src/navigation/{file_name}"

@@ -56,9 +56,6 @@ class PolicyGenerator(ICodeGenerator):
             if not model.name:
                 raise ValueError("Model must have a name")
 
-    def post_generation_tasks(self, generated_files: Dict[str, str]) -> None:
-        # Perform any post-generation tasks here, such as formatting or linting
-        pass
 
 # Example usage (this would be part of the BackendGenerationService)
 # config_loader = ConfigLoader()

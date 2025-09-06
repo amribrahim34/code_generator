@@ -255,9 +255,6 @@ class RouteGenerator(ICodeGenerator):
     def get_output_path(self, route_type: str) -> str:
         return f"routes/{to_snake_case(route_type)}.php"
 
-    def post_generation_tasks(self, generated_files: Dict[str, str]) -> None:
-        # Optional post-generation tasks like formatting or validation
-        pass
     
     
     def get_template(self, template_name: str) -> str:
